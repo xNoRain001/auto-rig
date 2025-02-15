@@ -372,11 +372,18 @@ def gen_mch_ik_toes(ik_toes, ik_foot):
   set_parent(ik_toes, mch_ik_toes_bone, False)
   leg_or_arm_bone_names.append(mch_ik_toes_bone.name)
 
-def gen_leg_or_arm_pole_bone (ik_leg_or_arm, type, fk_leg_or_arm):
+def gen_leg_or_arm_pole_bone (ik_leg_or_arm, type, fk_leg_or_arm, arm_pole_normal, leg_pole_normal):
   name_suffix = 'leg' if type == 'leg' else 'arm'
   tmp = copy_bone(ik_leg_or_arm, scale_factor = 1)
   select_bone(tmp)
-  get_ops().transform.translate(value = (0.5 if type == 'leg' else -0.5, 0, 0), orient_type = 'NORMAL')
+  normal = leg_pole_normal if type == 'leg' else arm_pole_normal
+  flag = 1 if len(normal) == 1 else -1
+  direction = normal if len(normal) == 1 else normal[1]
+  if direction == 'X':
+    get_ops().transform.translate(value = (0.5 * flag, 0, 0), orient_type = 'NORMAL')
+  else:
+    get_ops().transform.translate(value = (0, 0, 0.5 * flag), orient_type = 'NORMAL')
+
   deselect()
   mch_parent_leg_or_arm_pole = extrude_bone(tmp, 'tail', (0, 0.05 if type == 'leg' else -0.05, 0), name = f'mch_parent_{ name_suffix }_pole.l', clear_parent = True)
   leg_or_arm_pole_bone = copy_bone(mch_parent_leg_or_arm_pole, f'{ name_suffix }_pole.l', 2, mch_parent_leg_or_arm_pole, use_connect = False)
@@ -872,7 +879,7 @@ def add_custom_props ():
       # 传递配置项
       ui.update(**value[1])
 
-def rig_leg_or_arm (type):
+def rig_leg_or_arm (type, arm_pole_normal, leg_pole_normal):
   set_mode('EDIT')
   deselect()
 
@@ -909,7 +916,8 @@ def rig_leg_or_arm (type):
   # 因为 tweak_leg 不需要 mch_tweak_leg 处理缩放，因此不放入循环里
   gen_mch_tweak_bones(tweak_bones, mch_tweak_bones)
   gen_tweak_tip_bone(leg_or_arm_bones[-1], tweak_bones, mch_switch_bones)
-  leg_or_arm_pole_bone_name, vis_leg_or_arm_pole_name, mch_parent_leg_or_arm_pole_name = gen_leg_or_arm_pole_bone(ik_bones[0], type, fk_bones[0])
+  set_mode('EDIT')
+  leg_or_arm_pole_bone_name, vis_leg_or_arm_pole_name, mch_parent_leg_or_arm_pole_name = gen_leg_or_arm_pole_bone(ik_bones[0], type, fk_bones[0], arm_pole_normal, leg_pole_normal)
   mch_ik_parent_bone = gen_mch_ik_parent_bone(ik_bones[2])
 
   connect_bones(
@@ -1146,11 +1154,18 @@ def before (self, armature_name):
 
   return passing
 
+def rename_shoulder ():
+  get_edit_bone('org_shoulder.l').name = 'shoulder.l'
+  get_edit_bone('org_shoulder.r').name = 'shoulder.r'
+
 class OBJECT_OT_init_rig (get_operator()):
   bl_idname = 'object.init_rig'
   bl_label = 'Init Rig'
 
   def execute(self, context):
+    armature_name = context.scene.armature_name
+    arm_pole_normal = context.scene.arm_pole_normal
+    leg_pole_normal = context.scene.leg_pole_normal
     armature_name = context.scene.armature_name
     passing = before(self, armature_name)
 
@@ -1161,9 +1176,10 @@ class OBJECT_OT_init_rig (get_operator()):
       gen_prop_bone()
       def_add_copy_transforms()
       add_custom_props()
-      rig_leg_or_arm('leg')
-      rig_leg_or_arm('arm')
+      rig_leg_or_arm('leg', arm_pole_normal, leg_pole_normal)
+      rig_leg_or_arm('arm', arm_pole_normal, leg_pole_normal)
       rig_hand()
       rig_torso()
+      rename_shoulder()
 
     return {'FINISHED'}

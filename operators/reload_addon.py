@@ -7,7 +7,7 @@ class OBJECT_OT_reload_addon (get_operator()):
   bl_label = "Reload Addon"
 
   def execute(self, context):
-    addon_name = 'auto_rig'
+    addon_name = 'auto-rig'
     addon_modules = [m for m in sys.modules if m.startswith(addon_name)]
     # 清空缓存
     for module_name in addon_modules:
