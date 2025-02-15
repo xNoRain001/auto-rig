@@ -28,7 +28,11 @@ from ..libs.blender_utils import (
   def_add_copy_transforms,
   active_object_,
   report_warning,
-  get_object_
+  get_object_,
+  select_bone_head,
+  select_bone_tail,
+  snap_cursor,
+  snap_selected_to_cursor
 )
 
 def gen_tweak_tip_bone (bone, tweak_bones, mch_switch_bones):
@@ -196,7 +200,7 @@ def connect_bones (
 
   set_parent(ik_bones[2], mch_ik_parent_bone, False)
 
-def gen_foot_roll (mch_ik_foot, fk_foot):
+def gen_foot_roll (mch_ik_foot, fk_foot, scene):
   bone = get_edit_bone('org_foot.l')
   mch_foot_roll_bone = extrude_bone(
     bone, 
@@ -206,15 +210,36 @@ def gen_foot_roll (mch_ik_foot, fk_foot):
     clear_parent = True,
     roll = True
   )
+
+
+  heel_location = scene.heel_location
+  select_bone_tail(mch_foot_roll_bone)
+  snap_cursor(heel_location)
+  snap_selected_to_cursor()
+ 
   mch_parent_foot = copy_bone(mch_foot_roll_bone, 'mch_foot_parent.l', 0.5)
   foot_bone = copy_bone(mch_parent_foot, 'ik_foot.l', 2, mch_parent_foot, False)
-  mch_ik_fk_foot_bone = copy_bone(
-    foot_bone, 
-    f'mch_ik_fk_{ foot_bone .name}', 
-    0.25, 
-    fk_foot, 
-    False
-  )
+  # TODO: ??? 这根骨头是做什么的
+  # mch_ik_fk_foot_bone = copy_bone(
+  #   foot_bone, 
+  #   f'mch_ik_fk_{ foot_bone.name }', 
+  #   0.25, 
+  #   fk_foot, 
+  #   False
+  # )
+
+
+  foot_tip_location = scene.foot_tip_location
+  select_bone_head(foot_bone)
+  select_bone_head(mch_parent_foot)
+  snap_cursor(foot_tip_location)
+  snap_selected_to_cursor()
+  deselect()
+  select_bone_tail(foot_bone)
+  snap_cursor(heel_location)
+  snap_selected_to_cursor()
+  deselect()
+
   
   set_parent(mch_ik_foot, mch_foot_roll_bone, False)
   mch_roll_side_bone1 = extrude_bone(
@@ -261,6 +286,20 @@ def gen_foot_roll (mch_ik_foot, fk_foot):
   ops.transform.translate(value = (0, 0.1, 0))
   deselect()
 
+
+  side_01_head_location = scene.side_01_head_location
+  side_02_head_location = scene.side_02_head_location
+  select_bone_head(mch_roll_side_bone1)
+  select_bone_tail(mch_roll_side_bone2)
+  snap_cursor(side_01_head_location)
+  snap_selected_to_cursor()
+  select_bone_head(mch_roll_side_bone2)
+  select_bone_tail(mch_roll_side_bone1)
+  snap_cursor(side_02_head_location)
+  snap_selected_to_cursor()
+  deselect()
+
+
   mch_foot_roll_bone_name = mch_foot_roll_bone.name
   mch_foot_heel_bone_name = mch_foot_heel_bone.name
   foot_heel_bone_name = foot_heel_bone.name
@@ -276,7 +315,7 @@ def gen_foot_roll (mch_ik_foot, fk_foot):
     mch_foot_heel_bone_name,
     foot_heel_bone_name,
     mch_parent_foot_name,
-    mch_ik_fk_foot_bone.name
+    # mch_ik_fk_foot_bone.name
   ])
 
   return [
@@ -372,11 +411,11 @@ def gen_mch_ik_toes(ik_toes, ik_foot):
   set_parent(ik_toes, mch_ik_toes_bone, False)
   leg_or_arm_bone_names.append(mch_ik_toes_bone.name)
 
-def gen_leg_or_arm_pole_bone (ik_leg_or_arm, type, fk_leg_or_arm, arm_pole_normal, leg_pole_normal):
+def gen_leg_or_arm_pole_bone (ik_leg_or_arm, type, fk_leg_or_arm, scene):
   name_suffix = 'leg' if type == 'leg' else 'arm'
   tmp = copy_bone(ik_leg_or_arm, scale_factor = 1)
   select_bone(tmp)
-  normal = leg_pole_normal if type == 'leg' else arm_pole_normal
+  normal = scene.leg_pole_normal if type == 'leg' else scene.arm_pole_normal
   flag = 1 if len(normal) == 1 else -1
   direction = normal if len(normal) == 1 else normal[1]
   if direction == 'X':
@@ -879,7 +918,7 @@ def add_custom_props ():
       # 传递配置项
       ui.update(**value[1])
 
-def rig_leg_or_arm (type, arm_pole_normal, leg_pole_normal):
+def rig_leg_or_arm (type, scene):
   set_mode('EDIT')
   deselect()
 
@@ -917,7 +956,13 @@ def rig_leg_or_arm (type, arm_pole_normal, leg_pole_normal):
   gen_mch_tweak_bones(tweak_bones, mch_tweak_bones)
   gen_tweak_tip_bone(leg_or_arm_bones[-1], tweak_bones, mch_switch_bones)
   set_mode('EDIT')
-  leg_or_arm_pole_bone_name, vis_leg_or_arm_pole_name, mch_parent_leg_or_arm_pole_name = gen_leg_or_arm_pole_bone(ik_bones[0], type, fk_bones[0], arm_pole_normal, leg_pole_normal)
+  (
+    leg_or_arm_pole_bone_name, 
+    vis_leg_or_arm_pole_name, 
+    mch_parent_leg_or_arm_pole_name
+  ) = gen_leg_or_arm_pole_bone(
+    ik_bones[0], type, fk_bones[0], scene
+  )
   mch_ik_parent_bone = gen_mch_ik_parent_bone(ik_bones[2])
 
   connect_bones(
@@ -943,7 +988,14 @@ def rig_leg_or_arm (type, arm_pole_normal, leg_pole_normal):
 
   if type == 'leg':
     inner_tweak_bone_names.append('tweak_foot.l')
-    mch_foot_roll_bone_name, mch_foot_heel_bone_name, foot_heel_bone_name, mch_roll_side_bone1_name, mch_roll_side_bone2_name, mch_parent_foot_name = gen_foot_roll(ik_bones[2], fk_bones[2])
+    (
+      mch_foot_roll_bone_name, 
+      mch_foot_heel_bone_name, 
+      foot_heel_bone_name, 
+      mch_roll_side_bone1_name, 
+      mch_roll_side_bone2_name, 
+      mch_parent_foot_name
+    ) = gen_foot_roll(ik_bones[2], fk_bones[2], scene)
 
     if ik_toes:
       gen_mch_ik_toes(ik_bones[-1], ik_bones[-2])
@@ -1142,7 +1194,6 @@ def before (self, armature_name):
 
     return [passing, error_bone_name]
 
-  # TODO: 骨骼旋转模式修改为 xyz
   active_object_(get_object_(armature_name))
   set_mode('EDIT')
   bone_names = gen_bone_names()
@@ -1155,6 +1206,7 @@ def before (self, armature_name):
   return passing
 
 def rename_shoulder ():
+  set_mode('EDIT')
   get_edit_bone('org_shoulder.l').name = 'shoulder.l'
   get_edit_bone('org_shoulder.r').name = 'shoulder.r'
 
@@ -1163,21 +1215,18 @@ class OBJECT_OT_init_rig (get_operator()):
   bl_label = 'Init Rig'
 
   def execute(self, context):
-    armature_name = context.scene.armature_name
-    arm_pole_normal = context.scene.arm_pole_normal
-    leg_pole_normal = context.scene.leg_pole_normal
-    armature_name = context.scene.armature_name
+    scene = context.scene
+    armature_name = scene.armature_name
     passing = before(self, armature_name)
 
     if passing == True:
       # TODO: 提供颜色选项
-      # TODO: 检测激活对象是否是骨架
       gen_org_bones()
       gen_prop_bone()
       def_add_copy_transforms()
       add_custom_props()
-      rig_leg_or_arm('leg', arm_pole_normal, leg_pole_normal)
-      rig_leg_or_arm('arm', arm_pole_normal, leg_pole_normal)
+      rig_leg_or_arm('leg', scene)
+      rig_leg_or_arm('arm', scene)
       rig_hand()
       rig_torso()
       rename_shoulder()

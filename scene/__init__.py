@@ -16,6 +16,7 @@ def on_update (self, context):
 
 def register():
   # register_classes(classes)
+  add_scene_custom_prop('mesh_name', 'String', '荧_mesh')
   add_scene_custom_prop('armature_name', 'String', '荧_arm')
   # TODO: 色盘
   add_scene_custom_prop('torso_color', 'String')
@@ -28,6 +29,11 @@ def register():
   add_scene_custom_prop('mass', 'Float', 0.1)
   add_scene_custom_prop('goal_min', 'Float', 0.4)
   add_scene_custom_prop('friction', 'Float', 10)
+  common = { 'size': 3, 'subtype': 'COORDINATES' }
+  add_scene_custom_prop('side_01_head_location', 'FloatVector', **common)
+  add_scene_custom_prop('side_02_head_location', 'FloatVector', **common)
+  add_scene_custom_prop('heel_location', 'FloatVector', **common)
+  add_scene_custom_prop('foot_tip_location', 'FloatVector', **common)
   add_scene_custom_prop(
     'rotation_mode', 
     'Enum', 

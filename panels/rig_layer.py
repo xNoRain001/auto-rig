@@ -35,19 +35,21 @@ class VIEW3D_PT_rig_layer (get_panel()):
     col = self.layout.column()
     armature_name = context.scene.armature_name
     armature = get_object_(armature_name)
-    collections_all = armature.data.collections_all
 
-    for collection_group in group['visible']:
-      row = col.row()
+    if armature:
+      collections_all = armature.data.collections_all
 
-      for collection_name in collection_group:
-        if collection_name in collections_all:
-          collection = collections_all[collection_name]
+      for collection_group in group['visible']:
+        row = col.row()
 
-          if collection:
-            row.prop(
-              collections_all[collection_name], 
-              'is_visible', 
-              toggle = True, 
-              text = collection_name
-            )
+        for collection_name in collection_group:
+          if collection_name in collections_all:
+            collection = collections_all[collection_name]
+
+            if collection:
+              row.prop(
+                collections_all[collection_name], 
+                'is_visible', 
+                toggle = True, 
+                text = collection_name
+              )
