@@ -275,7 +275,7 @@ def assign_collection ():
       get_armature().collection_create_and_assign(name = collection_name)
       deselect()
 
-class Init_Bone_Collections (get_operator()):
+class OBJECT_OT_init_bone_collection (get_operator()):
   bl_idname = 'object.init_bone_collection'
   bl_label = 'Init Bone Collection'
 

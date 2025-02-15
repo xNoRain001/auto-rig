@@ -25,7 +25,10 @@ from ..libs.blender_utils import (
   get_active_object,
   get_edit_bones,
   duplicate,
-  def_add_copy_transforms
+  def_add_copy_transforms,
+  active_object_,
+  report_warning,
+  get_object_
 )
 
 def gen_tweak_tip_bone (bone, tweak_bones, mch_switch_bones):
@@ -1090,7 +1093,9 @@ def rig_torso ():
   )
   torso_stretch_to(org_bone_names, tweak_bone_names)
 
-def before (self):
+def before (self, armature_name):
+  passing = True
+
   def gen_bone_names ():
     bone_names = [
       'root',
@@ -1130,25 +1135,25 @@ def before (self):
     return [passing, error_bone_name]
 
   # TODO: 骨骼旋转模式修改为 xyz
+  active_object_(get_object_(armature_name))
   set_mode('EDIT')
   bone_names = gen_bone_names()
   passing, error_bone_name = find_error_bone_name(bone_names)
 
   if not passing:
-    self.report({'WARNING'}, f'绑定失败，缺少骨骼：{ error_bone_name }')
-
-    return {'FINISHED'}
+    report_warning(self, f'绑定失败，缺少骨骼：{ error_bone_name }')
+    passing = False
 
   return passing
 
-class Init_Rig (get_operator()):
+class OBJECT_OT_init_rig (get_operator()):
   bl_idname = 'object.init_rig'
   bl_label = 'Init Rig'
 
   def execute(self, context):
-    passing = before(self)
+    armature_name = context.scene.armature_name
+    passing = before(self, armature_name)
 
-    # True | {'FINISHED'}
     if passing == True:
       # TODO: 提供颜色选项
       # TODO: 检测激活对象是否是骨架

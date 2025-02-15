@@ -121,7 +121,7 @@ def soft_body (friction, mass, goal_min):
       add_child_of_constraint(children_names[index], arm_name)
       add_dampled_track(children_names[index], cube_name)
 
-class Soft_Body (get_operator()):
+class OBJECT_OT_soft_body (get_operator()):
   bl_idname = "object.soft_body"
   bl_label = "Soft Body"
 

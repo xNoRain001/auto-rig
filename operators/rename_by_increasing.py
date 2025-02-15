@@ -2,7 +2,7 @@ import re
 import sys
 from ..libs.blender_utils import get_operator, get_bone_chain, get_selected_bones
  
-class Rename_By_Increasing (get_operator()):
+class OBJECT_OT_rename_by_increasing (get_operator()):
   bl_idname = "object.rename_by_increasing"
   bl_label = "Rename By Increasing"
 

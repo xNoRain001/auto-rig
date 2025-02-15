@@ -54,7 +54,7 @@ def snap_func (type, leg_or_arm, side):
 def gen_custom_rig_ui ():
   armature_name = bpy.data.armatures[0].name
 
-class Snap_Utils (bpy.types.Operator):
+class OBJECT_OT_snap_utils (bpy.types.Operator):
     bl_idname = 'object.snap_utils'
     bl_label = 'Snap Utils'
 

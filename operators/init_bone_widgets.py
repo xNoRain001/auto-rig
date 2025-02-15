@@ -75,7 +75,7 @@ def init_bone_widget ():
   # bonewidget.symmetrize_shape()
   # bpy.ops.pose.select_all(action='DESELECT')
 
-class Init_Bone_Widgets (get_operator()):
+class OBJECT_OT_init_bone_widgets (get_operator()):
   bl_idname = 'object.init_bone_widget'
   bl_label = 'Init Bone Widget'
 
