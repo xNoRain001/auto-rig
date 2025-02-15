@@ -10,19 +10,15 @@ class VIEW3D_PT_snap_utils (get_panel()):
 
   def draw(self, context):
     layout = self.layout
-
-    col = layout.column(align=True)
-    row = col.row()
+    row = layout.row()
     row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'fk_arm.l').param = 'fk-arm-l'
     row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'fk_arm.r').param = 'fk-arm-r'
-    row = col.row()
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_arm.l').param = 'ik-arm-l'
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_arm.r').param = 'ik-arm-r'
-    
-    col = layout.column(align=True)
-    row = col.row()
+    row = layout.row()
     row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'fk_leg.l').param = 'fk-leg-l'
     row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'fk_leg.r').param = 'fk-leg-r'
-    row = col.row()
+    row = layout.row()
+    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_arm.l').param = 'ik-arm-l'
+    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_arm.r').param = 'ik-arm-r'
+    row = layout.row()
     row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_leg.l').param = 'ik-leg-l'
     row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_leg.r').param = 'ik-leg-r'

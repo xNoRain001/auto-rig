@@ -1,6 +1,4 @@
 from collections import defaultdict
-
-from ..const import group
 from ..libs.blender_utils import (
   set_mode, 
   get_edit_bone, 
@@ -16,35 +14,25 @@ from ..libs.blender_utils import (
   get_object_
 )
 
-def gen_map ():
-  map = {}
-
-  for value in group.values():
-    for collection_names in value:
-      for collection_name in collection_names:
-        map[collection_name] = []
-
-  return map
-
 def add_org_bone (bones, map):
   for bone in bones:
     bone_name = bone.name
 
     if bone_name.startswith('org_'):
-      map['org'].append(bone)
+      map['org'].add(bone)
     elif bone_name.startswith('def_'):
-      map['def'].append(bone)
+      map['def'].add(bone)
     elif bone_name.startswith('mch_'):
-      map['mch'].append(bone)
+      map['mch'].add(bone)
 
 def add_root (map):
-  map['root'].append(get_edit_bone('root'))
+  map['root'].add(get_edit_bone('root'))
 
 def add_prosp (map):
-  map['props'].append(get_edit_bone('props'))
+  map['props'].add(get_edit_bone('props'))
 
 def add_torso (map):
-  map['torso'].extend([
+  map['torso'].update([
     get_edit_bone('hips'),
     get_edit_bone('chest'),
     get_edit_bone('torso'),
@@ -53,13 +41,13 @@ def add_torso (map):
     get_edit_bone('shoulder.l'),
     get_edit_bone('shoulder.r'),
   ])
-  map['torso_fk'].extend([
+  map['torso_fk'].update([
     get_edit_bone('fk_hips'),
     get_edit_bone('fk_spine_01'),
     get_edit_bone('fk_spine_02'),
     get_edit_bone('fk_chest'),
   ])
-  map['torso_tweak'].extend([
+  map['torso_tweak'].update([
     get_edit_bone('tweak_hips'),
     get_edit_bone('tweak_spine_01'),
     get_edit_bone('tweak_spine_02'),
@@ -70,68 +58,84 @@ def add_torso (map):
   ])
 
 def add_arm (map):
-  map['arm_fk.l'].extend([
+  map['arm_fk.l'].update([
     get_edit_bone('fk_arm.l'),
     get_edit_bone('fk_forearm.l'),
     get_edit_bone('fk_hand.l'),
   ])
-  map['arm_ik.l'].extend([
+  map['arm_ik.l'].update([
     get_edit_bone('ik_hand.l'),
     get_edit_bone('arm_pole.l'),
     get_edit_bone('vis_arm_pole.l'),
   ])
-  map['arm_tweak.l'].extend([
+  map['arm_tweak.l'].update([
     get_edit_bone('tweak_arm.l'),
     get_edit_bone('tweak_forearm.l'),
     get_edit_bone('tweak_hand.l'),
     get_edit_bone('tweak_tip_hand.l'),
+    get_edit_bone('tweak_arm_01.l'),
+    get_edit_bone('tweak_arm_02.l'),
+    get_edit_bone('tweak_arm_03.l'),
+    get_edit_bone('tweak_arm_04.l'),
+    get_edit_bone('tweak_forearm_01.l'),
+    get_edit_bone('tweak_forearm_02.l'),
+    get_edit_bone('tweak_forearm_03.l'),
+    get_edit_bone('tweak_forearm_04.l'),
   ])
-  map['arm_fk.r'].extend([
+  map['arm_fk.r'].update([
     get_edit_bone('fk_arm.r'),
     get_edit_bone('fk_forearm.r'),
     get_edit_bone('fk_hand.r'),
   ])
-  map['arm_ik.r'].extend([
+  map['arm_ik.r'].update([
     get_edit_bone('ik_hand.r'),
     get_edit_bone('arm_pole.r'),
     get_edit_bone('vis_arm_pole.r'),
   ])
-  map['arm_tweak.r'].extend([
+  map['arm_tweak.r'].update([
     get_edit_bone('tweak_arm.r'),
     get_edit_bone('tweak_forearm.r'),
     get_edit_bone('tweak_hand.r'),
     get_edit_bone('tweak_tip_hand.r'),
+    get_edit_bone('tweak_arm_01.r'),
+    get_edit_bone('tweak_arm_02.r'),
+    get_edit_bone('tweak_arm_03.r'),
+    get_edit_bone('tweak_arm_04.r'),
+    get_edit_bone('tweak_forearm_01.r'),
+    get_edit_bone('tweak_forearm_02.r'),
+    get_edit_bone('tweak_forearm_03.r'),
+    get_edit_bone('tweak_forearm_04.r'),
   ])
 
 def add_leg (map):
-  map['leg_fk.l'].extend([
+  map['leg_fk.l'].update([
     get_edit_bone('fk_leg.l'),
     get_edit_bone('fk_shin.l'),
     get_edit_bone('fk_foot.l'),
   ])
-  map['leg_ik.l'].extend([
+  map['leg_ik.l'].update([
     get_edit_bone('ik_foot.l'),
     get_edit_bone('leg_pole.l'),
     get_edit_bone('vis_leg_pole.l'),
     get_edit_bone('foot_heel.l')
   ])
-  map['leg_tweak.l'].extend([
+  map['leg_tweak.l'].update([
     get_edit_bone('tweak_leg.l'),
     get_edit_bone('tweak_shin.l'),
     get_edit_bone('tweak_foot.l'),
   ])
-  map['leg_fk.r'].extend([
+  map['leg_fk.r'].update([
     get_edit_bone('fk_leg.r'),
     get_edit_bone('fk_shin.r'),
     get_edit_bone('fk_foot.r'),
   ])
-  map['leg_ik.r'].extend([
+  map['leg_ik.r'].update([
     get_edit_bone('ik_foot.r'),
     get_edit_bone('leg_pole.r'),
     get_edit_bone('vis_leg_pole.r'),
     get_edit_bone('foot_heel.r')
   ])
-  map['leg_tweak.r'].extend([
+  map['leg_tweak.r'].update([
     get_edit_bone('tweak_leg.r'),
     get_edit_bone('tweak_shin.r'),
     get_edit_bone('tweak_foot.r'),
@@ -140,24 +144,24 @@ def add_leg (map):
   toes = get_edit_bone('org_toes.l')
 
   if toes:
-    map['leg_fk.l'].append(get_edit_bone('fk_toes.l'))
-    map['leg_ik.l'].append(get_edit_bone('ik_toes.l'))
-    map['leg_tweak.l'].extend([
+    map['leg_fk.l'].add(get_edit_bone('fk_toes.l'))
+    map['leg_ik.l'].add(get_edit_bone('ik_toes.l'))
+    map['leg_tweak.l'].update([
       get_edit_bone('tweak_toes.l'),
       get_edit_bone('tweak_tip_toes.l')
     ])
-    map['leg_fk.r'].append(get_edit_bone('fk_toes.r'))
-    map['leg_ik.r'].append(get_edit_bone('ik_toes.r'))
-    map['leg_tweak.r'].extend([
+    map['leg_fk.r'].add(get_edit_bone('fk_toes.r'))
+    map['leg_ik.r'].add(get_edit_bone('ik_toes.r'))
+    map['leg_tweak.r'].update([
       get_edit_bone('tweak_toes.r'),
       get_edit_bone('tweak_tip_toes.r')
     ])
   else:
-    map['leg_tweak.l'].extend([get_edit_bone('tweak_tip_foot.l')])
-    map['leg_tweak.r'].extend([get_edit_bone('tweak_tip_foot.r')])
+    map['leg_tweak.l'].update([get_edit_bone('tweak_tip_foot.l')])
+    map['leg_tweak.r'].update([get_edit_bone('tweak_tip_foot.r')])
 
 def add_hand (map):
-  map['hand.l'].extend([
+  map['hand.l'].update([
     get_edit_bone('thumb_01.l'),
     get_edit_bone('thumb_02.l'),
     get_edit_bone('thumb_03.l'),
@@ -174,7 +178,7 @@ def add_hand (map):
     get_edit_bone('finger_d_02.l'),
     get_edit_bone('finger_d_03.l'),
   ])
-  map['hand_tweak.l'].extend([
+  map['hand_tweak.l'].update([
     get_edit_bone('tweak_thumb_01.l'),
     get_edit_bone('tweak_thumb_02.l'),
     get_edit_bone('tweak_thumb_03.l'),
@@ -196,7 +200,7 @@ def add_hand (map):
     get_edit_bone('tweak_finger_d_03.l'),
     get_edit_bone('tweak_tip_finger_d_03.l'),
   ])
-  map['hand.r'].extend([
+  map['hand.r'].update([
     get_edit_bone('thumb_01.r'),
     get_edit_bone('thumb_02.r'),
     get_edit_bone('thumb_03.r'),
@@ -213,7 +217,7 @@ def add_hand (map):
     get_edit_bone('finger_d_02.r'),
     get_edit_bone('finger_d_03.r'),
   ])
-  map['hand_tweak.r'].extend([
+  map['hand_tweak.r'].update([
     get_edit_bone('tweak_thumb_01.r'),
     get_edit_bone('tweak_thumb_02.r'),
     get_edit_bone('tweak_thumb_03.r'),
@@ -236,12 +240,25 @@ def add_hand (map):
     get_edit_bone('tweak_tip_finger_d_03.r'),
   ])
 
+def add_other (map, bones):
+  for bone in bones:
+    unassign = True
+
+    for value in map.values():
+      if bone in value:
+        unassign = False
+
+        break
+    
+    if unassign:
+      map['other'].add(bone)
+
 def gen_color_map (map):
   # TODO: UI 选择颜色
   color_map = defaultdict(list)
 
   for collection_name in map.keys():
-    if collection_name.endswith(('tweak.r', 'tweak.l', 'tweak')):
+    if collection_name.startswith('tweak_'):
       color_map['THEME04'].append(collection_name)
     elif collection_name.endswith(('ik.l', 'fk.l')):
       color_map['THEME01'].append(collection_name)
@@ -252,10 +269,11 @@ def gen_color_map (map):
 
   return color_map
 
-def assign_collection (map, color_map):
+def assign_collection (map, color_map, armature):
   pose_bones = get_pose_bones()
-  not_visible = ['def', 'org', 'mch', 'prop']
-  collections_all = get_context().object.data.collections_all
+  visible = ['root', 'torso', 'arm_ik.l', 'arm_ik.r', 'hand.l', 'hand.r', 'leg_ik.l', 'leg_ik.r']
+  # not_visible = ['def', 'org', 'mch', 'props']
+  collections_all = armature.data.collections_all
 
   for collection_name in map.keys():
     color = color_map[collection_name] if collection_name in color_map else None
@@ -264,20 +282,17 @@ def assign_collection (map, color_map):
     for bone in bones:
       if bone:
         select_bone(bone)
-      if color:
-        pose_bones[bone.name].color.palette = color
+
+        if color:
+          pose_bones[bone.name].color.palette = color
 
     get_armature().collection_create_and_assign(name = collection_name)
     deselect()
 
-    if collection_name in not_visible:
+    if collection_name not in visible:
       collections_all[collection_name].is_visible = False
 
-def init_collection (armature_name):
-  set_mode('EDIT')
-  map = gen_map()
-  active_object_(get_object_(armature_name))
-  bones = get_edit_bones()
+def init_map (map, bones):
   add_org_bone(bones, map)
   add_root(map)
   add_prosp(map)
@@ -285,8 +300,18 @@ def init_collection (armature_name):
   add_arm(map)
   add_leg(map)
   add_hand(map)
+  add_other(map, bones)
+
+def init_collection (armature_name):
+  set_mode('EDIT')
+  # 使用 set，而不使用 list，为了在寻找没有被分配的骨骼时节省时间
+  map = defaultdict(set)
+  armature = get_object_(armature_name)
+  active_object_(armature)
+  bones = get_edit_bones()
+  init_map(map, bones)
   color_map = gen_color_map(map)
-  assign_collection(map, color_map)
+  assign_collection(map, color_map, armature)
 
 class OBJECT_OT_init_bone_collection (get_operator()):
   bl_idname = 'object.init_bone_collection'

@@ -1,5 +1,28 @@
-from ..const import group
-from ..libs.blender_utils import get_active_object, get_bone_collections, get_panel, get_collection
+from ..libs.blender_utils import (
+  get_active_object, get_bone_collections, get_panel, get_collection,
+  get_object_, active_object_
+)
+
+group = {
+  'visible': [
+    ['root'],
+    ['torso', 'torso_fk', 'torso_tweak'],
+    ['arm_fk.l', 'arm_fk.r'],
+    ['arm_ik.l', 'arm_ik.r'],
+    ['arm_tweak.l', 'arm_tweak.r'],
+    ['hand.l', 'hand.r'],
+    ['hand_tweak.l', 'hand_tweak.r'],
+    ['leg_fk.l', 'leg_fk.r'],
+    ['leg_ik.l', 'leg_ik.r'],
+    ['leg_tweak.l', 'leg_tweak.r']
+  ],
+  'not_visible': [
+    ['def'],
+    ['org'],
+    ['mch'],
+    ['props']
+  ]
+}
 
 class VIEW3D_PT_rig_layer (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -10,21 +33,21 @@ class VIEW3D_PT_rig_layer (get_panel()):
 
   def draw(self, context):
     col = self.layout.column()
-    armature = get_active_object()
+    armature_name = context.scene.armature_name
+    armature = get_object_(armature_name)
+    collections_all = armature.data.collections_all
 
-    if armature.type == 'ARMATURE':
-      collections = get_bone_collections(armature)
+    for collection_group in group['visible']:
+      row = col.row()
 
-      for collection_group in group['use_in_rig_ui']:
-        row = col.row()
-
-        for collcetion_name in collection_group:
-          collection = get_collection(collcetion_name)
+      for collection_name in collection_group:
+        if collection_name in collections_all:
+          collection = collections_all[collection_name]
 
           if collection:
             row.prop(
-              collections[collcetion_name], 
+              collections_all[collection_name], 
               'is_visible', 
               toggle = True, 
-              text = collcetion_name
+              text = collection_name
             )

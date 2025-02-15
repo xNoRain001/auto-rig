@@ -19,17 +19,12 @@ class VIEW3D_PT_custom_props (get_panel()):
     if not bone:
       return
     
-    # 0.7 表示 label 内容占 70%
-    factor = 0.7
-    # box 会给一个黑色的背景
+    # 给一个黑色的背景
     box = self.layout.box()
-    col = box.column(align = True)
-
+    col = box.column()
     custom_props = custom_props_config.keys()
     
     for custom_prop in custom_props:
-      split = col.row().split(align = True, factor = factor)
-      # row_label = split.row(align = True)
-      # row_label.label(text = custom_prop)
-      row_prop = split.row(align = True)
-      row_prop.prop(bone, f'["{ custom_prop }"]', text = custom_prop)
+      row = col.row()
+      row.label(text = custom_prop)
+      row.prop(bone, f'["{ custom_prop }"]', text = '')

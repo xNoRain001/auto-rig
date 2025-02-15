@@ -1,24 +1,3 @@
-group = {
-  'use_in_rig_ui': [
-    ['root'],
-    ['torso', 'torso_fk', 'torso_tweak'],
-    ['arm_fk.l', 'arm_fk.r'],
-    ['arm_ik.l', 'arm_ik.r'],
-    ['arm_tweak.l', 'arm_tweak.r'],
-    ['hand.l', 'hand.r'],
-    ['hand_tweak.l', 'hand_tweak.r'],
-    ['leg_fk.l', 'leg_fk.r'],
-    ['leg_ik.l', 'leg_ik.r'],
-    ['leg_tweak.l', 'leg_tweak.r']
-  ],
-  'unused_in_rig_ui': [
-    ['def'],
-    ['org'],
-    ['mch'],
-    ['props']
-  ]
-}
-
 custom_props_config = {
   'head_follow': True,
   'neck_follow': True,
