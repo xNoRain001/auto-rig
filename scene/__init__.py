@@ -1,4 +1,5 @@
 from ..libs.blender_utils import register_classes, unregister_classes, add_scene_custom_prop, get_object_
+from .add_bone_colors import add_bone_colors
 
 classes = ()
 
@@ -18,13 +19,7 @@ def register():
   # register_classes(classes)
   add_scene_custom_prop('mesh_name', 'String', '荧_mesh')
   add_scene_custom_prop('armature_name', 'String', '荧_arm')
-  # TODO: 色盘
-  add_scene_custom_prop('torso_color', 'String')
-  add_scene_custom_prop('ik_fk_l_color', 'String')
-  add_scene_custom_prop('ik_fk_r_color', 'String')
-  add_scene_custom_prop('tweak_color', 'String')
-  add_scene_custom_prop('armature_name', 'String', '荧_arm')
-  add_scene_custom_prop('armature_name', 'String', '荧_arm')
+  # PaletteColors
   add_scene_custom_prop('friction', 'Float', 10)
   add_scene_custom_prop('mass', 'Float', 0.1)
   add_scene_custom_prop('goal_min', 'Float', 0.4)
@@ -66,7 +61,8 @@ def register():
       ('-Z', "-Z", ""),
     ]
   )
-
+  add_bone_colors()
+  
 def unregister():
   # unregister_classes(classes)
   pass

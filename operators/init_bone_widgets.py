@@ -1,6 +1,6 @@
 from ..libs.blender_utils import (
   get_pose_bone, get_pose_bones, get_context, get_bone_widget, get_operator,
-  active_object_, get_object_, set_mode
+  active_object_, get_object_, set_mode, get_data
 )
 from math import radians
 
@@ -12,6 +12,7 @@ def add_bone_widget (
   shape = kwargs[prop]
   del kwargs[prop]
   pose_bone.bone.select = True
+  # get_data().window_managers["WinMan"].widget_list = shape
   get_context().scene.widget_list = shape
   get_bone_widget().create_widget(**kwargs)
   pose_bone.bone.select = False
@@ -32,7 +33,7 @@ def gen_shape_map ():
     'vis_arm_pole.l': { 'shape': 'Line' },
     'thumb_01.l': { 'shape': 'Cube', 'global_size': 0.2, 'slide': 0.5 },
     'ik_foot.l': { 'shape': 'Cube', 'slide': 0.5 },
-    'foot_heel.l': { 'shape': 'Roll 1', 'slide': 0.5 },
+    'foot_heel.l': { 'shape': 'Roll 1', 'global_size': 0.5, 'slide': 0.5 },
     'ik_toes.l': { 'shape': 'Roll 3', 'global_size': 0.5, 'slide': 0.5 }
   }
   # 相同配置
@@ -67,11 +68,11 @@ def init_bone_widget (armature_name):
     pose_bone = get_pose_bone(bone_name)
 
     if pose_bone:
-      # 这里统一处理 tweak
-      if bone_name.startswith('tweak_'):
-        add_bone_widget(pose_bone, **{ 'shape': 'Sphere' })
-      else:
-        add_bone_widget(pose_bone, **config)
+      add_bone_widget(pose_bone, **config)
+
+  for pose_bone in get_pose_bones():
+    if pose_bone.name.startswith('tweak_'):
+      add_bone_widget(pose_bone, **{ 'shape': 'Sphere' })
 
   # bone widget 插件 bug，只能手动对称
   # bpy.ops.pose.select_all(action='SELECT')

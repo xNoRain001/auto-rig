@@ -1,7 +1,8 @@
 bl_info = {
   "name": "Auto Rig",
   "blender": (4, 2, 3),
-  "category": "Object",
+  "version": (0, 0, 0),
+  "category": "Rigging",
 }
 
 from .libs.blender_utils import register as utils_register, unregister as utils_unregister

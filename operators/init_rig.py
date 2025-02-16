@@ -1,4 +1,5 @@
 from ..const import custom_props_config
+from ..scene import set_rotation_mode
 from ..libs.blender_utils import (
   set_mode,
   select_bone,
@@ -216,9 +217,19 @@ def gen_foot_roll (mch_ik_foot, fk_foot, scene):
   select_bone_tail(mch_foot_roll_bone)
   snap_cursor(heel_location)
   snap_selected_to_cursor()
+  deselect()
  
-  mch_parent_foot = copy_bone(mch_foot_roll_bone, 'mch_foot_parent.l', 0.5)
-  foot_bone = copy_bone(mch_parent_foot, 'ik_foot.l', 2, mch_parent_foot, False)
+  foot_bone = copy_bone(mch_foot_roll_bone, 'ik_foot.l', clear_parent = True)
+  foot_tip_location = scene.foot_tip_location
+  select_bone_head(foot_bone)
+  snap_cursor(foot_tip_location)
+  snap_selected_to_cursor()
+  deselect()
+  # select_bone_tail(foot_bone)
+  # snap_cursor(heel_location)
+  # snap_selected_to_cursor()
+  mch_parent_foot = copy_bone(foot_bone, 'mch_foot_parent.l', 0.5, clear_parent = True)
+  set_parent(foot_bone, mch_parent_foot, False)
   # TODO: ??? 这根骨头是做什么的
   # mch_ik_fk_foot_bone = copy_bone(
   #   foot_bone, 
@@ -227,21 +238,8 @@ def gen_foot_roll (mch_ik_foot, fk_foot, scene):
   #   fk_foot, 
   #   False
   # )
-
-
-  foot_tip_location = scene.foot_tip_location
-  select_bone_head(foot_bone)
-  select_bone_head(mch_parent_foot)
-  snap_cursor(foot_tip_location)
-  snap_selected_to_cursor()
-  deselect()
-  select_bone_tail(foot_bone)
-  snap_cursor(heel_location)
-  snap_selected_to_cursor()
-  deselect()
-
-  
   set_parent(mch_ik_foot, mch_foot_roll_bone, False)
+  deselect()
   mch_roll_side_bone1 = extrude_bone(
     mch_foot_roll_bone, 
     'tail', 
@@ -451,7 +449,11 @@ def gen_leg_or_arm_pole_bone (ik_leg_or_arm, type, fk_leg_or_arm, scene):
     mch_ik_fk_leg_or_arm_pole_bone.name
   ])
 
-  return [leg_or_arm_pole_bone.name, vis_leg_or_arm_pole.name, mch_parent_leg_or_arm_pole.name]
+  return [
+    leg_or_arm_pole_bone.name, 
+    vis_leg_or_arm_pole.name, 
+    mch_parent_leg_or_arm_pole.name
+  ]
   
 def vis_leg_or_arm_pole_add_stretch_to (bone, target):
   add_stretch_to_constraint (bone, target, 1)
@@ -907,16 +909,17 @@ def gen_prop_bone ():
 def add_custom_props ():
   pose_bone = get_pose_bone('props')
 
-  for key, value in custom_props_config.items():
-    is_list = isinstance(value, list)
+  for prop_name, value in custom_props_config.items():
+    is_dict = isinstance(value, dict)
     # 创建属性
-    pose_bone[key] = value[0] if is_list else value
+    pose_bone[prop_name] = value['default'] if is_dict else value
 
     # 创建属性后才有 ui
-    if is_list:
-      ui = pose_bone.id_properties_ui(key)
+    if is_dict:
+      ui = pose_bone.id_properties_ui(prop_name)
       # 传递配置项
-      ui.update(**value[1])
+      del value['default']
+      ui.update(**value)
 
 def rig_leg_or_arm (type, scene):
   set_mode('EDIT')
@@ -1153,9 +1156,27 @@ def rig_torso ():
   )
   torso_stretch_to(org_bone_names, tweak_bone_names)
 
-def before (self, armature_name):
+def check_foot_ctrl (
+  self,
+  side_01_head_location,
+  side_02_head_location,
+  heel_location,
+  foot_tip_location
+):
   passing = True
 
+  if (
+    side_01_head_location == 
+    side_02_head_location == 
+    heel_location == 
+    foot_tip_location
+  ):
+    passing = False
+    report_warning(self, '未设置脚部控制器位置')
+
+  return passing
+
+def check_bone_name (self, armature_name):
   def gen_bone_names ():
     bone_names = [
       'root',
@@ -1181,27 +1202,55 @@ def before (self, armature_name):
 
   def find_error_bone_name (bone_names):
     passing = True
-    error_bone_name = ''
 
     for bone_name in bone_names:
       bone = get_edit_bone(bone_name)
 
       if not bone:
         passing = False
-        error_bone_name = bone_name
+        report_warning(self, f'绑定失败，缺少骨骼：{ bone_name }')
 
         break
 
-    return [passing, error_bone_name]
+    return passing
 
   active_object_(get_object_(armature_name))
   set_mode('EDIT')
   bone_names = gen_bone_names()
-  passing, error_bone_name = find_error_bone_name(bone_names)
+  passing = find_error_bone_name(bone_names)
+  return passing
 
-  if not passing:
-    report_warning(self, f'绑定失败，缺少骨骼：{ error_bone_name }')
-    passing = False
+def run_checker (
+  self,
+  side_01_head_location,
+  side_02_head_location,
+  heel_location,
+  foot_tip_location,
+  armature_name
+):
+  passing = True
+  checkers = [check_foot_ctrl, check_bone_name]
+  params = [
+    [
+      self,
+      side_01_head_location,
+      side_02_head_location,
+      heel_location,
+      foot_tip_location
+    ],
+    [
+      self,
+      armature_name
+    ],
+  ]
+
+  for index, checker in enumerate(checkers):
+    passing = checker(*params[index])
+
+    if not passing:
+      passing = False
+
+      break
 
   return passing
 
@@ -1217,10 +1266,25 @@ class OBJECT_OT_init_rig (get_operator()):
   def execute(self, context):
     scene = context.scene
     armature_name = scene.armature_name
-    passing = before(self, armature_name)
+    rotation_mode = scene.rotation_mode
+    side_01_head_location = scene.side_01_head_location
+    side_02_head_location = scene.side_02_head_location
+    heel_location = scene.heel_location
+    foot_tip_location = scene.foot_tip_location
+    
+    passing = run_checker(
+      self,
+      side_01_head_location,
+      side_02_head_location,
+      heel_location,
+      foot_tip_location,
+      armature_name
+    )
 
-    if passing == True:
+    if passing:
+      # print('pass')
       # TODO: 提供颜色选项
+      set_rotation_mode(armature_name, rotation_mode)
       gen_org_bones()
       gen_prop_bone()
       def_add_copy_transforms()

@@ -3,44 +3,30 @@ custom_props_config = {
   'neck_follow': True,
   'leg_fk_to_ik.l': True,
   'leg_fk_to_ik.r': True,
-  'leg_ik_parent.l': [
-    # 这个值只是用来创建属性的，会被默认值覆盖
-    1, 
-    # 配置项
-    {
-      'min': 0,
-      'max': 2,
-      'description': '0-root | 1-foot | 2-torso',
-      'default': 1
-    }
-  ],
-  'leg_ik_parent.r': [
-    1, 
-    {
-      'min': 0,
-      'max': 2,
-      'description': '0-root | 1-foot | 2-torso',
-      'default': 1
-    }
-  ],
+  'leg_ik_parent.l': {
+    'min': 0,
+    'max': 2,
+    'description': '0-root | 1-foot | 2-torso',
+    'default': 1
+  },
+  'leg_ik_parent.r': {
+    'min': 0,
+    'max': 2,
+    'description': '0-root | 1-foot | 2-torso',
+    'default': 1
+  },
   'arm_fk_to_ik.l': True,
   'arm_fk_to_ik.r': True,
-  'arm_ik_parent.l': [
-    0,
-    {
-      'min': 0,
-      'max': 4,
-      'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
-      'default': 0
-    }
-  ],
-  'arm_ik_parent.r': [
-    0,
-    {
-      'min': 0,
-      'max': 4,
-      'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
-      'default': 0
-    }
-  ]
+  'arm_ik_parent.l': {
+    'min': 0,
+    'max': 4,
+    'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
+    'default': 0
+  },
+  'arm_ik_parent.r': {
+    'min': 0,
+    'max': 4,
+    'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
+    'default': 0
+  }
 }

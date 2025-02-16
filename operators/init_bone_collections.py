@@ -253,19 +253,22 @@ def add_other (map, bones):
     if unassign:
       map['other'].add(bone)
 
-def gen_color_map (map):
-  # TODO: UI 选择颜色
+def gen_color_map (map, scene):
+  torso_color = scene.torso_color
+  fk_ik_l_color = scene.fk_ik_l_color
+  fk_ik_r_color = scene.fk_ik_r_color
+  tweak_color = scene.tweak_color
   color_map = defaultdict(list)
 
   for collection_name in map.keys():
     if collection_name.startswith('tweak_'):
-      color_map['THEME04'].append(collection_name)
+      color_map[tweak_color].append(collection_name)
     elif collection_name.endswith(('ik.l', 'fk.l')):
-      color_map['THEME01'].append(collection_name)
+      color_map[fk_ik_l_color].append(collection_name)
     elif collection_name.endswith(('ik.r', 'fk.r')):
-      color_map['THEME03'].append(collection_name)
+      color_map[fk_ik_r_color].append(collection_name)
     elif collection_name == 'torso' or collection_name == 'torso_fk':
-      color_map['THEME09'].append(collection_name)
+      color_map[torso_color].append(collection_name)
 
   return color_map
 
@@ -276,7 +279,14 @@ def assign_collection (map, color_map, armature):
   collections_all = armature.data.collections_all
 
   for collection_name in map.keys():
-    color = color_map[collection_name] if collection_name in color_map else None
+    color = None
+
+    for c, collection_names in color_map.items():
+      if collection_name in collection_names:
+        color = c
+
+        break
+
     bones = map[collection_name]
 
     for bone in bones:
@@ -289,6 +299,10 @@ def assign_collection (map, color_map, armature):
     get_armature().collection_create_and_assign(name = collection_name)
     deselect()
 
+  get_armature().collection_show_all()
+  for collection in collections_all:
+    collection_name = collection.name
+    
     if collection_name not in visible:
       collections_all[collection_name].is_visible = False
 
@@ -302,7 +316,8 @@ def init_map (map, bones):
   add_hand(map)
   add_other(map, bones)
 
-def init_collection (armature_name):
+def init_collection (scene):
+  armature_name = scene.armature_name
   set_mode('EDIT')
   # 使用 set，而不使用 list，为了在寻找没有被分配的骨骼时节省时间
   map = defaultdict(set)
@@ -310,7 +325,7 @@ def init_collection (armature_name):
   active_object_(armature)
   bones = get_edit_bones()
   init_map(map, bones)
-  color_map = gen_color_map(map)
+  color_map = gen_color_map(map, scene)
   assign_collection(map, color_map, armature)
 
 class OBJECT_OT_init_bone_collection (get_operator()):
@@ -318,7 +333,6 @@ class OBJECT_OT_init_bone_collection (get_operator()):
   bl_label = 'Init Bone Collection'
 
   def execute(self, context):
-    armature_name = context.scene.armature_name
-    init_collection(armature_name)
+    init_collection(context.scene)
 
     return {'FINISHED'}

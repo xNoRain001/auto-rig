@@ -15,6 +15,14 @@ class VIEW3D_PT_auto_rig (get_panel()):
     layout = self.layout
     scene = context.scene
     row = layout.row()
+    row.prop(scene, 'torso_color', text = 'torso 颜色')
+    row = layout.row()
+    row.prop(scene, 'fk_ik_l_color', text = 'fk l 颜色')
+    row = layout.row()
+    row.prop(scene, 'fk_ik_r_color', text = 'fk r 颜色')
+    row = layout.row()
+    row.prop(scene, 'tweak_color', text = 'tweak 颜色')
+    row = layout.row()
     row.prop(scene, 'mesh_name', text = 'mesh 名称')
     row = layout.row()
     row.prop(scene, 'armature_name', text = '骨架名称')
@@ -36,7 +44,6 @@ class VIEW3D_PT_auto_rig (get_panel()):
     row = layout.row()
     row.operator(OBJECT_OT_init_location.bl_idname, text = '脚尖').type = 'foot_tip'
     row.prop(scene, 'foot_tip_location', text = '')
-
     add_row_with_operator(layout, OBJECT_OT_init_rig.bl_idname, '绑定（请检查骨骼命名和轴向）')
     add_row_with_operator(layout, OBJECT_OT_init_bone_collection.bl_idname, '分配集合')
-    add_row_with_operator(layout, OBJECT_OT_init_bone_widgets.bl_idname, '自定义骨骼')
+    add_row_with_operator(layout, OBJECT_OT_init_bone_widgets.bl_idname, '自定义骨骼 不要选中骨骼 后缀大小写')
