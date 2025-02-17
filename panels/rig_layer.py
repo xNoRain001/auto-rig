@@ -6,15 +6,15 @@ from ..libs.blender_utils import (
 group = {
   'visible': [
     ['root'],
-    ['torso', 'torso_fk', 'torso_tweak'],
+    ['torso', 'torso_fk', 'tweak_torso'],
     ['arm_fk.l', 'arm_fk.r'],
     ['arm_ik.l', 'arm_ik.r'],
-    ['arm_tweak.l', 'arm_tweak.r'],
+    ['tweak_arm.l', 'tweak_arm.r'],
     ['hand.l', 'hand.r'],
-    ['hand_tweak.l', 'hand_tweak.r'],
+    ['tweak_hand.l', 'tweak_hand.r'],
     ['leg_fk.l', 'leg_fk.r'],
     ['leg_ik.l', 'leg_ik.r'],
-    ['leg_tweak.l', 'leg_tweak.r']
+    ['tweak_leg.l', 'tweak_leg.r']
   ],
   'not_visible': [
     ['def'],

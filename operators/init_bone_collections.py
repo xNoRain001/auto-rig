@@ -47,7 +47,7 @@ def add_torso (map):
     get_edit_bone('fk_spine_02'),
     get_edit_bone('fk_chest'),
   ])
-  map['torso_tweak'].update([
+  map['tweak_torso'].update([
     get_edit_bone('tweak_hips'),
     get_edit_bone('tweak_spine_01'),
     get_edit_bone('tweak_spine_02'),
@@ -68,7 +68,7 @@ def add_arm (map):
     get_edit_bone('arm_pole.l'),
     get_edit_bone('vis_arm_pole.l'),
   ])
-  map['arm_tweak.l'].update([
+  map['tweal_arm.l'].update([
     get_edit_bone('tweak_arm.l'),
     get_edit_bone('tweak_forearm.l'),
     get_edit_bone('tweak_hand.l'),
@@ -92,7 +92,7 @@ def add_arm (map):
     get_edit_bone('arm_pole.r'),
     get_edit_bone('vis_arm_pole.r'),
   ])
-  map['arm_tweak.r'].update([
+  map['tweak_arm.r'].update([
     get_edit_bone('tweak_arm.r'),
     get_edit_bone('tweak_forearm.r'),
     get_edit_bone('tweak_hand.r'),
@@ -119,7 +119,7 @@ def add_leg (map):
     get_edit_bone('vis_leg_pole.l'),
     get_edit_bone('foot_heel.l')
   ])
-  map['leg_tweak.l'].update([
+  map['tweak_leg.l'].update([
     get_edit_bone('tweak_leg.l'),
     get_edit_bone('tweak_shin.l'),
     get_edit_bone('tweak_foot.l'),
@@ -135,7 +135,7 @@ def add_leg (map):
     get_edit_bone('vis_leg_pole.r'),
     get_edit_bone('foot_heel.r')
   ])
-  map['leg_tweak.r'].update([
+  map['tweak_leg.r'].update([
     get_edit_bone('tweak_leg.r'),
     get_edit_bone('tweak_shin.r'),
     get_edit_bone('tweak_foot.r'),
@@ -146,19 +146,19 @@ def add_leg (map):
   if toes:
     map['leg_fk.l'].add(get_edit_bone('fk_toes.l'))
     map['leg_ik.l'].add(get_edit_bone('ik_toes.l'))
-    map['leg_tweak.l'].update([
+    map['tweak_leg.l'].update([
       get_edit_bone('tweak_toes.l'),
       get_edit_bone('tweak_tip_toes.l')
     ])
     map['leg_fk.r'].add(get_edit_bone('fk_toes.r'))
     map['leg_ik.r'].add(get_edit_bone('ik_toes.r'))
-    map['leg_tweak.r'].update([
+    map['tweak_leg.r'].update([
       get_edit_bone('tweak_toes.r'),
       get_edit_bone('tweak_tip_toes.r')
     ])
   else:
-    map['leg_tweak.l'].update([get_edit_bone('tweak_tip_foot.l')])
-    map['leg_tweak.r'].update([get_edit_bone('tweak_tip_foot.r')])
+    map['tweak_leg.l'].update([get_edit_bone('tweak_tip_foot.l')])
+    map['tweak_leg.r'].update([get_edit_bone('tweak_tip_foot.r')])
 
 def add_hand (map):
   map['hand.l'].update([
@@ -178,7 +178,7 @@ def add_hand (map):
     get_edit_bone('finger_d_02.l'),
     get_edit_bone('finger_d_03.l'),
   ])
-  map['hand_tweak.l'].update([
+  map['tweak_hand.l'].update([
     get_edit_bone('tweak_thumb_01.l'),
     get_edit_bone('tweak_thumb_02.l'),
     get_edit_bone('tweak_thumb_03.l'),
@@ -217,7 +217,7 @@ def add_hand (map):
     get_edit_bone('finger_d_02.r'),
     get_edit_bone('finger_d_03.r'),
   ])
-  map['hand_tweak.r'].update([
+  map['tweak_hand.r'].update([
     get_edit_bone('tweak_thumb_01.r'),
     get_edit_bone('tweak_thumb_02.r'),
     get_edit_bone('tweak_thumb_03.r'),
@@ -263,9 +263,9 @@ def gen_color_map (map, scene):
   for collection_name in map.keys():
     if collection_name.startswith('tweak_'):
       color_map[tweak_color].append(collection_name)
-    elif collection_name.endswith(('ik.l', 'fk.l')):
+    elif collection_name.endswith(('ik.l', 'fk.l', 'hand.l')):
       color_map[fk_ik_l_color].append(collection_name)
-    elif collection_name.endswith(('ik.r', 'fk.r')):
+    elif collection_name.endswith(('ik.r', 'fk.r', 'hand.r')):
       color_map[fk_ik_r_color].append(collection_name)
     elif collection_name == 'torso' or collection_name == 'torso_fk':
       color_map[torso_color].append(collection_name)

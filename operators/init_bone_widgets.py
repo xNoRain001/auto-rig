@@ -12,29 +12,37 @@ def add_bone_widget (
   shape = kwargs[prop]
   del kwargs[prop]
   pose_bone.bone.select = True
-  # get_data().window_managers["WinMan"].widget_list = shape
-  get_context().scene.widget_list = shape
-  get_bone_widget().create_widget(**kwargs)
+  name = pose_bone.name
+  mirror_name = None
+  mirror_bone = None
+  if name.endswith('.l'):
+    mirror_name = name[:-2] + '.r'
+    mirror_bone = get_pose_bone(mirror_name)
+    mirror_bone.bone.select = True
+  get_context().scene.shape = shape
   pose_bone.bone.select = False
+  if name.endswith('.l'):
+    mirror_bone.bone.select = False
 
 def gen_shape_map ():
   rotation = (radians(90), radians(0), radians(0))
   shape_map = {
-    'root': { 'shape': 'Root 1' },
-    'props': { 'shape': 'Gear Complex', 'rotation': rotation },
-    'head': { 'shape': 'Circle', 'slide': 1 },
-    'neck': { 'shape': 'Circle', 'slide': 0.5 },
+    'root': { 'shape': 'Root' },
+    'props': { 'shape': 'Gear Complex' },
+    'head': { 'shape': 'Circle' },
+    'neck': { 'shape': 'Circle' },
+    'shoulder.l': { 'shape': 'Chest' },
     'torso': { 'shape': 'Cube' },
-    'chest': { 'shape': 'Chest', 'rotation': rotation },
-    'hips': { 'shape': 'Chest', 'rotation': rotation },
+    'chest': { 'shape': 'Chest' },
+    'hips': { 'shape': 'Chest' },
     'fk_arm.l': { 'shape': 'FK Limb 2' },
     'ik_hand.l': { 'shape': 'Cube' },
     'arm_pole.l': { 'shape': 'Sphere' },
     'vis_arm_pole.l': { 'shape': 'Line' },
-    'thumb_01.l': { 'shape': 'Cube', 'global_size': 0.2, 'slide': 0.5 },
-    'ik_foot.l': { 'shape': 'Cube', 'slide': 0.5 },
-    'foot_heel.l': { 'shape': 'Roll 1', 'global_size': 0.5, 'slide': 0.5 },
-    'ik_toes.l': { 'shape': 'Roll 3', 'global_size': 0.5, 'slide': 0.5 }
+    'thumb_01.l': { 'shape': 'Cube' },
+    'ik_foot.l': { 'shape': 'Cube' },
+    'foot_heel.l': { 'shape': 'Roll' },
+    'ik_toes.l': { 'shape': 'Roll' }
   }
   # 相同配置
   config = {
@@ -73,11 +81,6 @@ def init_bone_widget (armature_name):
   for pose_bone in get_pose_bones():
     if pose_bone.name.startswith('tweak_'):
       add_bone_widget(pose_bone, **{ 'shape': 'Sphere' })
-
-  # bone widget 插件 bug，只能手动对称
-  # bpy.ops.pose.select_all(action='SELECT')
-  # bonewidget.symmetrize_shape()
-  # bpy.ops.pose.select_all(action='DESELECT')
 
 class OBJECT_OT_init_bone_widgets (get_operator()):
   bl_idname = 'object.init_bone_widget'
