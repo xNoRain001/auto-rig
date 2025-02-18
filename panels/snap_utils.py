@@ -1,4 +1,4 @@
-from ..libs.blender_utils import get_panel
+from ..libs.blender_utils import get_panel, get_object_
 from ..operators.snap_utils import OBJECT_OT_snap_utils
 
 class VIEW3D_PT_snap_utils (get_panel()):
@@ -9,16 +9,54 @@ class VIEW3D_PT_snap_utils (get_panel()):
   bl_idname = "VIEW3D_PT_snap_utils"
 
   def draw(self, context):
-    layout = self.layout
-    row = layout.row()
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'fk_arm.l').param = 'fk-arm-l'
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'fk_arm.r').param = 'fk-arm-r'
-    row = layout.row()
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_arm.l').param = 'ik-arm-l'
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_arm.r').param = 'ik-arm-r'
-    row = layout.row()
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'fk_leg.l').param = 'fk-leg-l'
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'fk_leg.r').param = 'fk-leg-r'
-    row = layout.row()
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_leg.l').param = 'ik-leg-l'
-    row.operator(OBJECT_OT_snap_utils.bl_idname, text = 'ik_leg.r').param = 'ik-leg-r'
+    armature_name = context.scene.armature_name
+    armature = get_object_(armature_name)
+
+    if armature:
+      collections_all = armature.data.collections_all
+
+      layout = self.layout
+      row = layout.row()
+      row.operator(
+        OBJECT_OT_snap_utils.bl_idname, 
+        text = 'fk_arm.l',
+        depress = collections_all['arm_fk.l'].is_visible
+      ).param = 'fk-arm-l'
+      row.operator(
+        OBJECT_OT_snap_utils.bl_idname,
+        text = 'fk_arm.r',
+        depress = collections_all['arm_fk.r'].is_visible
+      ).param = 'fk-arm-r'
+      row = layout.row()
+      row.operator(
+        OBJECT_OT_snap_utils.bl_idname,
+        text = 'ik_arm.l',
+        depress = collections_all['arm_ik.l'].is_visible
+      ).param = 'ik-arm-l'
+      row.operator(
+        OBJECT_OT_snap_utils.bl_idname,
+        text = 'ik_arm.r',
+        depress = collections_all['arm_ik.r'].is_visible
+      ).param = 'ik-arm-r'
+      row = layout.row()
+      row.operator(
+        OBJECT_OT_snap_utils.bl_idname,
+        text = 'fk_leg.l',
+        depress = collections_all['leg_fk.l'].is_visible
+      ).param = 'fk-leg-l'
+      row.operator(
+        OBJECT_OT_snap_utils.bl_idname,
+        text = 'fk_leg.r',
+        depress = collections_all['leg_fk.l'].is_visible
+      ).param = 'fk-leg-r'
+      row = layout.row()
+      row.operator(
+        OBJECT_OT_snap_utils.bl_idname,
+        text = 'ik_leg.l',
+        depress = collections_all['leg_ik.l'].is_visible
+      ).param = 'ik-leg-l'
+      row.operator(
+        OBJECT_OT_snap_utils.bl_idname,
+        text = 'ik_leg.r',
+        depress = collections_all['leg_ik.r'].is_visible
+      ).param = 'ik-leg-r'
