@@ -6,8 +6,8 @@ class VIEW3D_PT_reload_addon (get_panel()):
   bl_region_type = 'UI'
   bl_category = 'Item'
   bl_label = "Reload Addon"
-  bl_idname = "VIEW3D_PT_reload_addon"
+  bl_idname = "VIEW3D_PT_reload_auto_rig_addon"
 
   def draw(self, context):
     layout = self.layout
-    add_row_with_operator(layout, OBJECT_OT_reload_addon.bl_idname, 'Reload Addon')
+    add_row_with_operator(layout, OBJECT_OT_reload_addon.bl_idname, 'Reload Auto Rig Addon')

@@ -919,9 +919,8 @@ def add_custom_props ():
     # 创建属性后才有 ui
     if is_dict:
       ui = pose_bone.id_properties_ui(prop_name)
-      # 传递配置项
-      del value['default']
-      ui.update(**value)
+      params = { k: v for k, v in value.items() if k != 'default' }
+      ui.update(**params)
 
 def rig_leg_or_arm (type, scene):
   set_mode('EDIT')

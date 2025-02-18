@@ -68,7 +68,7 @@ def add_arm (map):
     get_edit_bone('arm_pole.l'),
     get_edit_bone('vis_arm_pole.l'),
   ])
-  map['tweal_arm.l'].update([
+  map['tweak_arm.l'].update([
     get_edit_bone('tweak_arm.l'),
     get_edit_bone('tweak_forearm.l'),
     get_edit_bone('tweak_hand.l'),
@@ -267,7 +267,11 @@ def gen_color_map (map, scene):
       color_map[fk_ik_l_color].append(collection_name)
     elif collection_name.endswith(('ik.r', 'fk.r', 'hand.r')):
       color_map[fk_ik_r_color].append(collection_name)
-    elif collection_name == 'torso' or collection_name == 'torso_fk':
+    elif (
+      collection_name == 'torso' or 
+      collection_name == 'torso_fk' or
+      collection_name == 'root'
+    ):
       color_map[torso_color].append(collection_name)
 
   return color_map

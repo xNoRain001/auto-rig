@@ -25,7 +25,6 @@ def add_bone_widget (
     mirror_bone.bone.select = False
 
 def gen_shape_map ():
-  rotation = (radians(90), radians(0), radians(0))
   shape_map = {
     'root': { 'shape': 'Root' },
     'props': { 'shape': 'Gear Complex' },

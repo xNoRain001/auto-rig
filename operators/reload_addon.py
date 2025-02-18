@@ -3,8 +3,8 @@ from ..libs.blender_utils import get_operator, get_ops
 
 # Debug
 class OBJECT_OT_reload_addon (get_operator()):
-  bl_idname = "object.reload_addon"
-  bl_label = "Reload Addon"
+  bl_idname = "object.reload_auto_rig_addon"
+  bl_label = "Reload Auto Rig Addon"
 
   def execute(self, context):
     addon_name = 'auto-rig'

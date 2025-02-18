@@ -45,5 +45,5 @@ class VIEW3D_PT_auto_rig (get_panel()):
     row.operator(OBJECT_OT_init_location.bl_idname, text = '脚尖').type = 'foot_tip'
     row.prop(scene, 'foot_tip_location', text = '')
     add_row_with_operator(layout, OBJECT_OT_init_rig.bl_idname, '绑定（请检查骨骼命名和轴向）')
-    add_row_with_operator(layout, OBJECT_OT_init_bone_collection.bl_idname, '分配集合')
     add_row_with_operator(layout, OBJECT_OT_init_bone_widgets.bl_idname, '自定义骨骼')
+    add_row_with_operator(layout, OBJECT_OT_init_bone_collection.bl_idname, '分配集合')
