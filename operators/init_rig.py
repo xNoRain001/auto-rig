@@ -911,16 +911,17 @@ def gen_prop_bone ():
 def add_custom_props ():
   pose_bone = get_pose_bone('props')
 
-  for prop_name, value in custom_props_config.items():
-    is_dict = isinstance(value, dict)
+  for item in custom_props_config:
+    prop_name = item['prop_name']
+    config = item['config']
     # 创建属性
-    pose_bone[prop_name] = value['default'] if is_dict else value
+    pose_bone[prop_name] = config['default']
+    _config = { k: v for k, v in config.items() if k != 'default' }
 
     # 创建属性后才有 ui
-    if is_dict:
+    if len(_config.keys()):
       ui = pose_bone.id_properties_ui(prop_name)
-      params = { k: v for k, v in value.items() if k != 'default' }
-      ui.update(**params)
+      ui.update(**_config)
 
 def rig_leg_or_arm (type, scene):
   set_mode('EDIT')

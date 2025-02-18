@@ -1,10 +1,11 @@
 from ..libs.blender_utils import get_panel, get_object_
 from ..operators.snap_utils import OBJECT_OT_snap_utils
+from ..const import bl_category
 
 class VIEW3D_PT_snap_utils (get_panel()):
   bl_space_type = 'VIEW_3D'
   bl_region_type = 'UI'
-  bl_category = 'Item'
+  bl_category = bl_category
   bl_label = "Snap Utils"
   bl_idname = "VIEW3D_PT_snap_utils"
 

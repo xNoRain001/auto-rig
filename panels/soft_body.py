@@ -1,10 +1,11 @@
 from ..libs.blender_utils import get_panel, add_row_with_operator, add_row, add_scene_custom_prop
 from ..operators.soft_body import OBJECT_OT_soft_body
+from ..const import bl_category
 
 class VIEW3D_PT_soft_body (get_panel()):
   bl_space_type = 'VIEW_3D'
   bl_region_type = 'UI'
-  bl_category = "Item"
+  bl_category = bl_category
   bl_label = "Soft Body"
   bl_idname = "VIEW3D_PT_soft_body"
 

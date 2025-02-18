@@ -2,6 +2,7 @@ from ..libs.blender_utils import (
   get_active_object, get_bone_collections, get_panel, get_collection,
   get_object_, active_object_
 )
+from ..const import bl_category
 
 group = {
   'visible': [
@@ -27,7 +28,7 @@ group = {
 class VIEW3D_PT_rig_layer (get_panel()):
   bl_space_type = 'VIEW_3D'
   bl_region_type = 'UI'
-  bl_category = 'Item'
+  bl_category = bl_category
   bl_label = "Rig Layer"
   bl_idname = "VIEW3D_PT_rig_layer"
 

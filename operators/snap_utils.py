@@ -1,6 +1,10 @@
 from ..libs.blender_utils import (
-  get_pose_bone, get_context, get_active_object, get_ops, get_props, get_operator,
-  get_bone_collections
+  get_pose_bone, 
+  get_context, 
+  get_active_object, 
+  get_ops, 
+  get_props, 
+  get_operator
 )
 
 def snap (source, target):
@@ -64,10 +68,9 @@ def snap_func (fk_or_ik, leg_or_arm, side):
   ik_collection.is_visible = True
   fk_collection.is_visible = True
 
-  for pbone in bones:
-    get_active_object().data.bones.active = pbone.bone
-
-    if get_context().scene.tool_settings.use_keyframe_insert_auto:
+  if get_context().scene.tool_settings.use_keyframe_insert_auto:
+    for pbone in bones:
+      get_active_object().data.bones.active = pbone.bone
       get_ops().anim.keyframe_insert_menu(type='Available')
 
   if is_fk:
