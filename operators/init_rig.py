@@ -185,7 +185,8 @@ def connect_bones (
   fk_bones, 
   mch_switch_bones, 
   tweak_bones,
-  mch_ik_parent_bone
+  mch_ik_parent_bone,
+  type
 ):
   set_parent(tweak_bones[0], mch_twist_leg_or_arm, False)
 
@@ -199,7 +200,8 @@ def connect_bones (
        set_parent(ik_bones[index], ik_bones[index - 1], True)
        set_parent(fk_bones[index], fk_bones[index - 1], True)
 
-  set_parent(ik_bones[2], mch_ik_parent_bone, False)
+  if type == 'arm':
+    set_parent(ik_bones[2], mch_ik_parent_bone, False)
 
 def gen_foot_roll (mch_ik_foot, fk_foot, scene):
   bone = get_edit_bone('org_foot.l')
@@ -228,7 +230,7 @@ def gen_foot_roll (mch_ik_foot, fk_foot, scene):
   # select_bone_tail(foot_bone)
   # snap_cursor(heel_location)
   # snap_selected_to_cursor()
-  mch_parent_foot = copy_bone(foot_bone, 'mch_foot_parent.l', 0.5, clear_parent = True)
+  mch_parent_foot = copy_bone(foot_bone, 'mch_parent_ik_foot.l', 0.5, clear_parent = True)
   set_parent(foot_bone, mch_parent_foot, False)
   # TODO: ??? 这根骨头是做什么的
   # mch_ik_fk_foot_bone = copy_bone(
@@ -966,7 +968,12 @@ def rig_leg_or_arm (type, scene):
   ) = gen_leg_or_arm_pole_bone(
     ik_bones[0], type, fk_bones[0], scene
   )
-  mch_ik_parent_bone = gen_mch_ik_parent_bone(ik_bones[2])
+  if type == 'arm':
+    mch_ik_parent_bone = gen_mch_ik_parent_bone(ik_bones[2])
+    mch_ik_parent_bone_name = mch_ik_parent_bone.name
+  else:
+    # 脚架中会生成
+    mch_ik_parent_bone = None
 
   connect_bones(
     mch_int_leg_or_arm, 
@@ -975,10 +982,10 @@ def rig_leg_or_arm (type, scene):
     fk_bones, 
     mch_switch_bones, 
     tweak_bones,
-    mch_ik_parent_bone
+    mch_ik_parent_bone,
+    type
   )
 
-  mch_ik_parent_bone_name = mch_ik_parent_bone.name
   bone_names = bones_to_bone_names(leg_or_arm_bones)
   tweak_bone_names = bones_to_bone_names(tweak_bones)
   mch_tweak_bone_names = bones_to_bone_names(mch_tweak_bones)
@@ -1220,6 +1227,22 @@ def check_bone_name (self, armature_name):
   passing = find_error_bone_name(bone_names)
   return passing
 
+def check_parent_setting (self):
+  passing = True
+  def_hips = get_edit_bone('def_hips')
+  def_leg_l = get_edit_bone('def_leg.l')
+  def_leg_r = get_edit_bone('def_leg.r')
+  list = [[def_leg_l, def_hips], [def_leg_r, def_hips]]
+
+  for item in list:
+    if item[0].parent != item[1]:
+      passing = False
+      report_warning(self, f'{ item[0].name } parent is not { item[1].name }')
+
+      break
+
+  return passing
+
 def run_checker (
   self,
   side_01_head_location,
@@ -1229,7 +1252,7 @@ def run_checker (
   armature_name
 ):
   passing = True
-  checkers = [check_foot_ctrl, check_bone_name]
+  checkers = [check_foot_ctrl, check_bone_name, check_parent_setting]
   params = [
     [
       self,
@@ -1242,6 +1265,7 @@ def run_checker (
       self,
       armature_name
     ],
+    [self]
   ]
 
   for index, checker in enumerate(checkers):
@@ -1282,8 +1306,6 @@ class OBJECT_OT_init_rig (get_operator()):
     )
 
     if passing:
-      # print('pass')
-      # TODO: 提供颜色选项
       set_rotation_mode(armature_name, rotation_mode)
       gen_org_bones()
       gen_prop_bone()
