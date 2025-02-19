@@ -1,66 +1,22 @@
-from ..libs.blender_utils import register_classes, unregister_classes, add_scene_custom_prop, get_object_
+from ..libs.blender_utils import register_classes, unregister_classes
 from .add_bone_colors import add_bone_colors
+from .add_armature_name import add_armature_name
+from .add_mesh_name import add_mesh_name
+from .add_pole_target_normal import add_pole_target_normal
+from .add_rotation_mode import add_rotation_mode
+from .add_foot_ctrl import add_foot_ctrl
+from .add_soft_body_config import add_soft_body_config
 
 classes = ()
 
-def set_rotation_mode (armature_name, mode):
-  bones = get_object_(armature_name).pose.bones
-
-  for bone in bones:
-    bone.rotation_mode = mode
-
-def on_update (self, context):
-  armature_name = context.scene.armature_name
-  mode = self.rotation_mode
-
-  set_rotation_mode(armature_name, mode)
-
 def register():
   # register_classes(classes)
-  add_scene_custom_prop('mesh_name', 'String', '荧_mesh')
-  add_scene_custom_prop('armature_name', 'String', '荧_arm')
-  # PaletteColors
-  add_scene_custom_prop('friction', 'Float', 10)
-  add_scene_custom_prop('mass', 'Float', 0.1)
-  add_scene_custom_prop('goal_min', 'Float', 0.4)
-  add_scene_custom_prop('friction', 'Float', 10)
-  common = { 'size': 3, 'subtype': 'COORDINATES' }
-  add_scene_custom_prop('side_01_head_location', 'FloatVector', **common)
-  add_scene_custom_prop('side_02_head_location', 'FloatVector', **common)
-  add_scene_custom_prop('heel_location', 'FloatVector', **common)
-  add_scene_custom_prop('foot_tip_location', 'FloatVector', **common)
-  add_scene_custom_prop(
-    'rotation_mode', 
-    'Enum', 
-    'XYZ', 
-    items = [
-      ('QUATERNION', "QUATERNION", ""),
-      ('XYZ', "XYZ", ""),
-    ],
-    update = on_update
-  )
-  add_scene_custom_prop(
-    'arm_pole_normal', 
-    'Enum', 
-    'X', 
-    items = [
-      ('X', "X", ""),
-      ('-X', "-X", ""),
-      ('Z', "Z", ""),
-      ('-Z', "-Z", ""),
-    ]
-  )
-  add_scene_custom_prop(
-    'leg_pole_normal', 
-    'Enum', 
-    '-Z', 
-    items = [
-      ('X', "X", ""),
-      ('-X', "-X", ""),
-      ('Z', "Z", ""),
-      ('-Z', "-Z", ""),
-    ]
-  )
+  add_armature_name()
+  add_mesh_name()
+  add_pole_target_normal()
+  add_rotation_mode()
+  add_foot_ctrl()
+  add_soft_body_config()
   add_bone_colors()
   
 def unregister():

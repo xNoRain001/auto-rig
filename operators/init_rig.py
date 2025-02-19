@@ -1,5 +1,5 @@
 from ..const import custom_props_config
-from ..scene import set_rotation_mode
+from ..scene.add_rotation_mode import set_rotation_mode
 from ..libs.blender_utils import (
   set_mode,
   select_bone,

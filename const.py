@@ -4,6 +4,7 @@ custom_props_config = [
     'config': {
       'default': True
     },
+    # Custom Props UI Panel
     'is_visible': True
   },
   {

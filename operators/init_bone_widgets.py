@@ -1,6 +1,6 @@
 from ..libs.blender_utils import (
   get_pose_bone, get_pose_bones, get_context, get_bone_widget, get_operator,
-  active_object_, get_object_, set_mode, get_data
+  active_object_, get_object_, set_mode, get_data, report_error
 )
 from math import radians
 
@@ -38,8 +38,8 @@ def gen_shape_map ():
     'ik_hand.l': { 'shape': 'Cube' },
     'arm_pole.l': { 'shape': 'Sphere' },
     'vis_arm_pole.l': { 'shape': 'Line' },
-    'thumb_01.l': { 'shape': 'Cube' },
-    'ik_foot.l': { 'shape': 'Cube' },
+    'thumb_01.l': { 'shape': 'Cube_Mini' },
+    'ik_foot.l': { 'shape': 'Cuboid' },
     'foot_heel.l': { 'shape': 'Roll' },
     'ik_toes.l': { 'shape': 'Roll' }
   }
@@ -81,12 +81,25 @@ def init_bone_widget (armature_name):
     if pose_bone.name.startswith('tweak_'):
       add_bone_widget(pose_bone, **{ 'shape': 'Sphere' })
 
+def checker (self, scene):
+  passing = True
+
+  if not hasattr(scene, 'shape'):
+    passing = False
+    report_error(self, 'Cannot found bone widget addon')
+
+  return passing
+
 class OBJECT_OT_init_bone_widgets (get_operator()):
   bl_idname = 'object.init_bone_widget'
   bl_label = 'Init Bone Widget'
 
   def execute(self, context):
+    scene = context.scene
     armature_name = context.scene.armature_name
-    init_bone_widget(armature_name)
+    passing = checker(self, scene)
+
+    if passing:
+      init_bone_widget(armature_name)
 
     return {'FINISHED'}
