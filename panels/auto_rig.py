@@ -3,6 +3,7 @@ from ..operators.init_rig import OBJECT_OT_init_rig
 from ..operators.init_bone_collections import OBJECT_OT_init_bone_collection
 from ..operators.init_bone_widgets import OBJECT_OT_init_bone_widgets
 from ..operators.init_location import OBJECT_OT_init_location
+from ..operators.rig_weapon import OBJECT_OT_rig_weapon
 from ..const import bl_category
 
 class VIEW3D_PT_auto_rig (get_panel()):
@@ -48,3 +49,4 @@ class VIEW3D_PT_auto_rig (get_panel()):
     add_row_with_operator(layout, OBJECT_OT_init_rig.bl_idname, '绑定（请检查轴向）')
     add_row_with_operator(layout, OBJECT_OT_init_bone_widgets.bl_idname, '自定义骨骼')
     add_row_with_operator(layout, OBJECT_OT_init_bone_collection.bl_idname, '分配集合')
+    add_row_with_operator(layout, OBJECT_OT_rig_weapon.bl_idname, '绑定武器')

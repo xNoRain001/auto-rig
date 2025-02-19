@@ -1,4 +1,3 @@
-from ..const import custom_props_config
 from ..scene.add_rotation_mode import set_rotation_mode
 from ..libs.blender_utils import (
   set_mode,
@@ -35,6 +34,81 @@ from ..libs.blender_utils import (
   snap_cursor,
   snap_selected_to_cursor
 )
+
+custom_props_config = [
+  {
+    'prop_name': 'head_follow',
+    'config': {
+      'default': True
+    }
+  },
+  {
+    'prop_name': 'neck_follow',
+    'config': {
+      'default': True
+    }
+  },
+  {
+    'prop_name': 'leg_fk_to_ik.l',
+    'config': {
+      'default': True
+    }
+  },
+  {
+    'prop_name': 'leg_fk_to_ik.r',
+    'config': {
+      'default': True
+    }
+  },
+  {
+    'prop_name': 'leg_ik_parent.l',
+    'config': {
+      'min': 0,
+      'max': 2,
+      'description': '0-root | 1-foot | 2-torso',
+      'default': 1
+    }
+  },
+  {
+    'prop_name': 'leg_ik_parent.r',
+    'config': {
+      'min': 0,
+      'max': 2,
+      'description': '0-root | 1-foot | 2-torso',
+      'default': 1
+    }
+  },
+  {
+    'prop_name': 'arm_fk_to_ik.l',
+    'config': {
+      'default': True
+    }
+  },
+  {
+    'prop_name': 'arm_fk_to_ik.r',
+    'config': {
+      'default': True
+    }
+  },
+  {
+    'prop_name': 'arm_ik_parent.l',
+    'config': {
+      'min': 0,
+      'max': 4,
+      'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
+      'default': 0
+    }
+  },
+  {
+    'prop_name': 'arm_ik_parent.r',
+    'config': {
+      'min': 0,
+      'max': 4,
+      'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
+      'default': 0
+    }
+  }
+]
 
 def gen_tweak_tip_bone (bone, tweak_bones, mch_switch_bones):
   name = bone.name.replace('org_', 'tweak_tip_')
@@ -908,7 +982,7 @@ def gen_prop_bone ():
       parent_connect = False
     )
 
-def add_custom_props ():
+def add_custom_props (custom_props_config):
   pose_bone = get_pose_bone('props')
 
   for item in custom_props_config:
@@ -1310,7 +1384,7 @@ class OBJECT_OT_init_rig (get_operator()):
       gen_org_bones()
       gen_prop_bone()
       def_add_copy_transforms()
-      add_custom_props()
+      add_custom_props(custom_props_config)
       rig_leg_or_arm('leg', scene)
       rig_leg_or_arm('arm', scene)
       rig_hand()

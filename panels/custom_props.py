@@ -1,8 +1,16 @@
-from ..const import custom_props_config, bl_category
+from ..const import bl_category
 from ..libs.blender_utils import (
   get_panel, add_row_with_operator, get_pose_bone, get_active_object,
   get_object_
 )
+
+not_visible = [
+  'mmd_bone',
+  'leg_fk_to_ik.l',
+  'leg_fk_to_ik.r',
+  'arm_fk_to_ik.l',
+  'arm_fk_to_ik.r'
+]
 
 class VIEW3D_PT_custom_props (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -24,12 +32,11 @@ class VIEW3D_PT_custom_props (get_panel()):
       # 给一个黑色的背景
       box = self.layout.box()
       col = box.column()
-      for item in custom_props_config:
-        is_visible = item['is_visible']
-
-        if is_visible:
+      for prop_name in bone.keys():
+        if prop_name not in not_visible:
           row = col.row()
-          prop_name = item['prop_name']
           row.label(text = prop_name)
           row.prop(bone, f'["{ prop_name }"]', text = '')
+
+        
       
