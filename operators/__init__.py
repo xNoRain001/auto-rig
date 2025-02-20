@@ -7,6 +7,8 @@ from .snap_utils import OBJECT_OT_snap_utils
 from .soft_body import OBJECT_OT_soft_body
 from .init_location import OBJECT_OT_init_location
 from .rig_weapon import OBJECT_OT_rig_weapon
+from .add_target import OBJECT_OT_add_target
+from .remove_target import OBJECT_OT_remove_target
 
 classes = (
   OBJECT_OT_init_rig,
@@ -16,7 +18,9 @@ classes = (
   OBJECT_OT_snap_utils,
   OBJECT_OT_soft_body,
   OBJECT_OT_init_location,
-  OBJECT_OT_rig_weapon
+  OBJECT_OT_rig_weapon,
+  OBJECT_OT_add_target,
+  OBJECT_OT_remove_target
 )
 
 def register():

@@ -6,6 +6,7 @@ from .add_pole_target_normal import add_pole_target_normal
 from .add_rotation_mode import add_rotation_mode
 from .add_foot_ctrl import add_foot_ctrl
 from .add_soft_body_config import add_soft_body_config
+from .add_dynamic_parent import add_dynamic_parent
 
 classes = ()
 
@@ -18,6 +19,7 @@ def register():
   add_foot_ctrl()
   add_soft_body_config()
   add_bone_colors()
+  add_dynamic_parent()
   
 def unregister():
   # unregister_classes(classes)

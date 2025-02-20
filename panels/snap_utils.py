@@ -14,50 +14,58 @@ class VIEW3D_PT_snap_utils (get_panel()):
     armature = get_object_(armature_name)
 
     if armature:
-      collections_all = armature.data.collections_all
+      bone = armature.pose.bones.get('props')
 
+      if not bone:
+        return
+      
+      arm_fK_to_ik_l = bone['arm_fk_to_ik.l']
+      arm_fK_to_ik_r = bone['arm_fk_to_ik.r']
+      leg_fK_to_ik_l = bone['leg_fk_to_ik.l']
+      leg_fK_to_ik_r = bone['leg_fk_to_ik.r']
+      
       layout = self.layout
       row = layout.row()
       row.operator(
         OBJECT_OT_snap_utils.bl_idname, 
         text = 'fk_arm.l',
-        depress = collections_all['arm_fk.l'].is_visible
+        depress = not arm_fK_to_ik_l
       ).param = 'fk-arm-l'
       row.operator(
         OBJECT_OT_snap_utils.bl_idname,
         text = 'fk_arm.r',
-        depress = collections_all['arm_fk.r'].is_visible
+        depress = not arm_fK_to_ik_r
       ).param = 'fk-arm-r'
       row = layout.row()
       row.operator(
         OBJECT_OT_snap_utils.bl_idname,
         text = 'ik_arm.l',
-        depress = collections_all['arm_ik.l'].is_visible
+        depress = arm_fK_to_ik_l
       ).param = 'ik-arm-l'
       row.operator(
         OBJECT_OT_snap_utils.bl_idname,
         text = 'ik_arm.r',
-        depress = collections_all['arm_ik.r'].is_visible
+        depress = arm_fK_to_ik_r
       ).param = 'ik-arm-r'
       row = layout.row()
       row.operator(
         OBJECT_OT_snap_utils.bl_idname,
         text = 'fk_leg.l',
-        depress = collections_all['leg_fk.l'].is_visible
+        depress = not leg_fK_to_ik_l
       ).param = 'fk-leg-l'
       row.operator(
         OBJECT_OT_snap_utils.bl_idname,
         text = 'fk_leg.r',
-        depress = collections_all['leg_fk.l'].is_visible
+        depress = not leg_fK_to_ik_r
       ).param = 'fk-leg-r'
       row = layout.row()
       row.operator(
         OBJECT_OT_snap_utils.bl_idname,
         text = 'ik_leg.l',
-        depress = collections_all['leg_ik.l'].is_visible
+        depress = leg_fK_to_ik_l
       ).param = 'ik-leg-l'
       row.operator(
         OBJECT_OT_snap_utils.bl_idname,
         text = 'ik_leg.r',
-        depress = collections_all['leg_ik.r'].is_visible
+        depress = leg_fK_to_ik_r
       ).param = 'ik-leg-r'
