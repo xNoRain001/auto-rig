@@ -6,10 +6,10 @@ from ..libs.blender_utils import (
 
 not_visible = [
   'mmd_bone',
-  'leg_fk_to_ik.l',
-  'leg_fk_to_ik.r',
-  'arm_fk_to_ik.l',
-  'arm_fk_to_ik.r'
+  'leg_fk_to_ik_l',
+  'leg_fk_to_ik_r',
+  'arm_fk_to_ik_l',
+  'arm_fk_to_ik_r'
 ]
 
 class VIEW3D_PT_custom_props (get_panel()):
@@ -28,7 +28,7 @@ class VIEW3D_PT_custom_props (get_panel()):
 
       if not bone:
         return
-      
+            
       # 给一个黑色的背景
       box = self.layout.box()
       col = box.column()

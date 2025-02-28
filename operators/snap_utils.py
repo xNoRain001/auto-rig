@@ -54,6 +54,7 @@ def snap_func (fk_or_ik, leg_or_arm, side):
     mch_ik_fk_arm_pole = get_pose_bone(f"mch_ik_fk_{ 'leg' if leg else 'arm'}_pole.{ side }")
     ik_hand = get_pose_bone(f"ik_{ 'foot' if leg else 'hand'}.{ side }")
     ik_pole = get_pose_bone(f"{ 'leg' if leg else 'arm'}_pole.{ side }")
+    print('aa')
     snap(fk_hand, ik_hand)
     context.view_layer.update()
     snap(mch_ik_fk_arm_pole, ik_pole)

@@ -49,19 +49,19 @@ custom_props_config = [
     }
   },
   {
-    'prop_name': 'leg_fk_to_ik.l',
+    'prop_name': 'leg_fk_to_ik_l',
     'config': {
       'default': True
     }
   },
   {
-    'prop_name': 'leg_fk_to_ik.r',
+    'prop_name': 'leg_fk_to_ik_r',
     'config': {
       'default': True
     }
   },
   {
-    'prop_name': 'leg_ik_parent.l',
+    'prop_name': 'leg_ik_parent_l',
     'config': {
       'min': 0,
       'max': 2,
@@ -70,7 +70,7 @@ custom_props_config = [
     }
   },
   {
-    'prop_name': 'leg_ik_parent.r',
+    'prop_name': 'leg_ik_parent_r',
     'config': {
       'min': 0,
       'max': 2,
@@ -79,19 +79,19 @@ custom_props_config = [
     }
   },
   {
-    'prop_name': 'arm_fk_to_ik.l',
+    'prop_name': 'arm_fk_to_ik_l',
     'config': {
       'default': True
     }
   },
   {
-    'prop_name': 'arm_fk_to_ik.r',
+    'prop_name': 'arm_fk_to_ik_r',
     'config': {
       'default': True
     }
   },
   {
-    'prop_name': 'arm_ik_parent.l',
+    'prop_name': 'arm_ik_parent_l',
     'config': {
       'min': 0,
       'max': 4,
@@ -100,7 +100,7 @@ custom_props_config = [
     }
   },
   {
-    'prop_name': 'arm_ik_parent.r',
+    'prop_name': 'arm_ik_parent_r',
     'config': {
       'min': 0,
       'max': 4,
@@ -942,7 +942,9 @@ def torso_stretch_to (org_bone_names, tweak_bone_names):
   for index, org_bone_name in enumerate(org_bone_names):
     add_stretch_to_constraint(org_bone_name, tweak_bone_names[index + 1])
 
+# def -> org
 def gen_org_bones ():
+  # 找出所有 def 骨骼
   def select_def_bones (edit_bones):
     for edit_bone in edit_bones:
       name = edit_bone.name
@@ -951,6 +953,7 @@ def gen_org_bones ():
         # 隐藏的骨骼也会被选中
         select_bone(edit_bone)
 
+  # def_hand.l -> org_hand.l
   def rename_org_bones (edit_bones):
     for edit_bone in edit_bones:
       if edit_bone.select:
@@ -960,7 +963,6 @@ def gen_org_bones ():
             .replace('.001', '')
         )
   
-  deselect()
   edit_bones = get_edit_bones()
   select_def_bones(edit_bones)
   # 隐藏的骨骼不会被复制
@@ -982,7 +984,7 @@ def gen_prop_bone ():
       parent_connect = False
     )
 
-def add_custom_props (custom_props_config):
+def add_custom_props ():
   pose_bone = get_pose_bone('props')
 
   for item in custom_props_config:
@@ -995,6 +997,7 @@ def add_custom_props (custom_props_config):
     # 创建属性后才有 ui
     if len(_config.keys()):
       ui = pose_bone.id_properties_ui(prop_name)
+      # 更新默认配置
       ui.update(**_config)
 
 def rig_leg_or_arm (type, scene):
@@ -1257,7 +1260,7 @@ def check_foot_ctrl (
 
   return passing
 
-def check_bone_name (self, armature_name):
+def check_bone_name (self):
   def gen_bone_names ():
     bone_names = [
       'root',
@@ -1295,25 +1298,32 @@ def check_bone_name (self, armature_name):
 
     return passing
 
-  active_object_(get_object_(armature_name))
-  set_mode('EDIT')
   bone_names = gen_bone_names()
   passing = find_error_bone_name(bone_names)
   return passing
 
 def check_parent_setting (self):
   passing = True
-  def_hips = get_edit_bone('def_hips')
-  def_leg_l = get_edit_bone('def_leg.l')
-  def_leg_r = get_edit_bone('def_leg.r')
-  list = [[def_leg_l, def_hips], [def_leg_r, def_hips]]
+  parent_list = [['def_leg.l', 'def_hips'], ['def_leg.r', 'def_hips']]
 
-  for item in list:
-    if item[0].parent != item[1]:
+  for item, parent in parent_list:
+    if get_edit_bone(item).parent != get_edit_bone(parent):
       passing = False
-      report_warning(self, f'{ item[0].name } parent is not { item[1].name }')
+      report_warning(self, f'{ item } parent is not { parent }')
 
       break
+
+  return passing
+
+def check_armature (self, armature):
+  passing = True
+
+  if not armature or armature.type != 'ARMATURE':
+    passing = False
+    report_warning(self, f'{ armature } 不存在或类型不为骨架')
+
+  active_object_(armature)
+  set_mode('EDIT')
 
   return passing
 
@@ -1323,11 +1333,17 @@ def run_checker (
   side_02_head_location,
   heel_location,
   foot_tip_location,
-  armature_name
+  armature
 ):
   passing = True
-  checkers = [check_foot_ctrl, check_bone_name, check_parent_setting]
+  checkers = [
+    check_armature, 
+    check_foot_ctrl, 
+    check_bone_name, 
+    check_parent_setting
+  ]
   params = [
+    [self, armature],
     [
       self,
       side_01_head_location,
@@ -1335,10 +1351,7 @@ def run_checker (
       heel_location,
       foot_tip_location
     ],
-    [
-      self,
-      armature_name
-    ],
+    [self],
     [self]
   ]
 
@@ -1369,6 +1382,7 @@ class OBJECT_OT_init_rig (get_operator()):
     side_02_head_location = scene.side_02_head_location
     heel_location = scene.heel_location
     foot_tip_location = scene.foot_tip_location
+    armature = get_object_(armature_name)
     
     passing = run_checker(
       self,
@@ -1376,19 +1390,19 @@ class OBJECT_OT_init_rig (get_operator()):
       side_02_head_location,
       heel_location,
       foot_tip_location,
-      armature_name
+      armature
     )
 
     if passing:
-      set_rotation_mode(armature_name, rotation_mode)
+      set_rotation_mode(armature, rotation_mode)
       gen_org_bones()
       gen_prop_bone()
-      def_add_copy_transforms()
-      add_custom_props(custom_props_config)
-      rig_leg_or_arm('leg', scene)
-      rig_leg_or_arm('arm', scene)
-      rig_hand()
-      rig_torso()
-      rename_shoulder()
+      def_add_copy_transforms(armature)
+      add_custom_props()
+      # rig_leg_or_arm('leg', scene)
+      # rig_leg_or_arm('arm', scene)
+      # rig_hand()
+      # rig_torso()
+      # rename_shoulder()
 
     return {'FINISHED'}
