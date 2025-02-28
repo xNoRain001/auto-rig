@@ -6,7 +6,7 @@ from .snap_utils import VIEW3D_PT_snap_utils
 from .rig_layer import VIEW3D_PT_rig_layer
 from .soft_body import VIEW3D_PT_soft_body
 from .dynamic_parent import VIEW3D_PT_dynamic_parent, Armature_Targets
-from .wiggle import VIEW3D_PT_wiggle
+from .add_wiggle import VIEW3D_PT_add_wiggle
 
 classes = (
   VIEW3D_PT_reload_auto_rig_addon,
@@ -17,7 +17,7 @@ classes = (
   VIEW3D_PT_soft_body,
   # VIEW3D_PT_dynamic_parent,
   # Armature_Targets,
-  VIEW3D_PT_wiggle
+  VIEW3D_PT_add_wiggle
 )
 
 def register():
