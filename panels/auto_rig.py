@@ -17,36 +17,36 @@ class VIEW3D_PT_auto_rig (get_panel()):
     layout = self.layout
     scene = context.scene
     row = layout.row()
-    row.prop(scene, 'torso_color', text = 'Torso')
+    row.prop(scene, 'torso_color', text = 'Torso Color')
     row = layout.row()
-    row.prop(scene, 'fk_ik_l_color', text = 'L Ctrl')
+    row.prop(scene, 'fk_ik_l_color', text = 'L Ctrl Color')
     row = layout.row()
-    row.prop(scene, 'fk_ik_r_color', text = 'R Ctrl')
+    row.prop(scene, 'fk_ik_r_color', text = 'R Ctrl Color')
     row = layout.row()
-    row.prop(scene, 'tweak_color', text = 'Tweaker')
+    row.prop(scene, 'tweak_color', text = 'Tweak Color')
     row = layout.row()
-    row.prop(scene, 'mesh_name', text = 'mesh 名称')
+    row.prop(scene, 'mesh_name', text = 'mesh name')
     row = layout.row()
-    row.prop(scene, 'armature_name', text = '骨架名称')
+    row.prop(scene, 'armature_name', text = 'armature name')
     row = layout.row()
-    row.prop(scene, 'rotation_mode', text = '旋转模式')
+    row.prop(scene, 'rotation_mode', text = 'rotation mode')
     row = layout.row()
-    row.prop(scene, 'arm_pole_normal', text = '手臂极向方向')
+    row.prop(scene, 'arm_pole_normal', text = 'arm pole normal')
     row = layout.row()
-    row.prop(scene, 'leg_pole_normal', text = '腿极向方向')
+    row.prop(scene, 'leg_pole_normal', text = 'leg pole normal')
     row = layout.row()
-    row.operator(OBJECT_OT_init_location.bl_idname, text = '滚动骨 1').type = 'side_01'
+    row.operator(OBJECT_OT_init_location.bl_idname, text = 'Roll 1').type = 'side_01'
     row.prop(scene, 'side_01_head_location', text = '')
     row = layout.row()
-    row.operator(OBJECT_OT_init_location.bl_idname, text = '滚动骨 2').type = 'side_02'
+    row.operator(OBJECT_OT_init_location.bl_idname, text = 'Roll 2').type = 'side_02'
     row.prop(scene, 'side_02_head_location', text = '')
     row = layout.row()
-    row.operator(OBJECT_OT_init_location.bl_idname, text = '脚后跟').type = 'heel'
+    row.operator(OBJECT_OT_init_location.bl_idname, text = 'Heel').type = 'heel'
     row.prop(scene, 'heel_location', text = '')
     row = layout.row()
-    row.operator(OBJECT_OT_init_location.bl_idname, text = '脚尖').type = 'foot_tip'
+    row.operator(OBJECT_OT_init_location.bl_idname, text = 'Foot tip').type = 'foot_tip'
     row.prop(scene, 'foot_tip_location', text = '')
-    add_row_with_operator(layout, OBJECT_OT_init_rig.bl_idname, '绑定（请检查轴向）')
-    add_row_with_operator(layout, OBJECT_OT_init_bone_widgets.bl_idname, '自定义骨骼')
-    add_row_with_operator(layout, OBJECT_OT_init_bone_collection.bl_idname, '分配集合')
-    add_row_with_operator(layout, OBJECT_OT_rig_weapon.bl_idname, '绑定武器')
+    add_row_with_operator(layout, OBJECT_OT_init_rig.bl_idname, 'Rig Body')
+    add_row_with_operator(layout, OBJECT_OT_init_bone_widgets.bl_idname, 'Custom Bone')
+    add_row_with_operator(layout, OBJECT_OT_init_bone_collection.bl_idname, 'Assign Collection')
+    add_row_with_operator(layout, OBJECT_OT_rig_weapon.bl_idname, 'Rig Weapon')

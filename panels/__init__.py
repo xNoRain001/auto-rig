@@ -15,8 +15,8 @@ classes = (
   VIEW3D_PT_snap_utils, 
   VIEW3D_PT_rig_layer,
   VIEW3D_PT_soft_body,
-  VIEW3D_PT_dynamic_parent,
-  Armature_Targets,
+  # VIEW3D_PT_dynamic_parent,
+  # Armature_Targets,
   VIEW3D_PT_wiggle
 )
 
