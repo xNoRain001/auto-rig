@@ -19,6 +19,8 @@ class VIEW3D_PT_snap_utils (get_panel()):
       if not bone:
         return
       
+      return
+      
       arm_fK_to_ik_l = bone['arm_fk_to_ik.l']
       arm_fK_to_ik_r = bone['arm_fk_to_ik.r']
       leg_fK_to_ik_l = bone['leg_fk_to_ik.l']

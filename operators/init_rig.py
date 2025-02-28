@@ -25,14 +25,14 @@ from ..libs.blender_utils import (
   get_active_object,
   get_edit_bones,
   duplicate,
-  def_add_copy_transforms,
   active_object_,
   report_warning,
   get_object_,
   select_bone_head,
   select_bone_tail,
   snap_cursor,
-  snap_selected_to_cursor
+  snap_selected_to_cursor,
+  get_pose_bones
 )
 
 custom_props_config = [
@@ -109,6 +109,32 @@ custom_props_config = [
     }
   }
 ]
+
+# 所有 def 骨骼添加复制变换约束
+def def_bone_add_copy_transforms (armature = None):
+  set_mode('POSE')
+  pose_bones = get_pose_bones()
+  
+  for pose_bone in pose_bones:
+    name = pose_bone.name
+
+    if name.startswith('def_'):
+      # TODO: 不一定存在
+      org_name = name.replace('def_', 'org_')
+      constraints = pose_bone.constraints
+
+      # org_constraints = get_pose_bone(org_name).constraints
+      # while len(org_constraints):
+      #   org_constraints.remove(org_constraints[0])
+
+      # 清空骨骼的所有约束
+      while len(constraints):
+        constraints.remove(constraints[0])
+
+      # 如果里面才进入 POSE，每一次循环都会切换模式，性能非常差，推测相同模式之间切换
+      # 也会造成性能影响
+      # tip: transforms 约束不进入 POSE 也能添加
+      add_copy_transforms_constraints(name, org_name, target = armature)
 
 def gen_tweak_tip_bone (bone, tweak_bones, mch_switch_bones):
   name = bone.name.replace('org_', 'tweak_tip_')
@@ -950,8 +976,11 @@ def gen_org_bones ():
       name = edit_bone.name
 
       if name.startswith('def_'):
+        org_bone = get_edit_bone(name.replace('def_', 'org_'))
+
         # 隐藏的骨骼也会被选中
-        select_bone(edit_bone)
+        if not org_bone:
+          select_bone(edit_bone)
 
   # def_hand.l -> org_hand.l
   def rename_org_bones (edit_bones):
@@ -984,7 +1013,7 @@ def gen_prop_bone ():
       parent_connect = False
     )
 
-def add_custom_props ():
+def add_custom_props (custom_props_config):
   pose_bone = get_pose_bone('props')
 
   for item in custom_props_config:
@@ -1397,12 +1426,13 @@ class OBJECT_OT_init_rig (get_operator()):
       set_rotation_mode(armature, rotation_mode)
       gen_org_bones()
       gen_prop_bone()
-      def_add_copy_transforms(armature)
-      add_custom_props()
-      # rig_leg_or_arm('leg', scene)
-      # rig_leg_or_arm('arm', scene)
-      # rig_hand()
-      # rig_torso()
-      # rename_shoulder()
+      def_bone_add_copy_transforms(armature)
+      add_custom_props(custom_props_config)
+      # TODO: refactor
+      rig_leg_or_arm('leg', scene)
+      rig_leg_or_arm('arm', scene)
+      rig_hand()
+      rig_torso()
+      rename_shoulder()
 
     return {'FINISHED'}
