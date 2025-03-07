@@ -22,8 +22,7 @@ class Armature_Targets (get_ui_list()):
     index
   ):
     scene = context.scene
-    armature_name = scene.armature_name
-    armature = get_object_(armature_name)
+    armature = scene.armature
     pose = armature.pose
     pose_bone = get_pose_bone(scene.dynamic_parent_bone)
     # print()
@@ -66,9 +65,7 @@ class VIEW3D_PT_dynamic_parent (get_panel()):
   def draw(self, context):
     layout = self.layout
     scene = context.scene
-    mesh_name = scene.mesh_name
-    armature_name = scene.armature_name
-    armature = get_object_(armature_name)
+    armature = scene.armature
 
     if armature:
       layout.prop_search(scene, "dynamic_parent_bone", armature.pose, "bones", text="")

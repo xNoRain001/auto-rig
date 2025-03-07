@@ -34,8 +34,7 @@ class VIEW3D_PT_rig_layer (get_panel()):
 
   def draw(self, context):
     col = self.layout.column()
-    armature_name = context.scene.armature_name
-    armature = get_object_(armature_name)
+    armature = context.scene.armature
 
     if armature:
       collections_all = armature.data.collections_all

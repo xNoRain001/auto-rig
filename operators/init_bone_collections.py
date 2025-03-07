@@ -321,11 +321,10 @@ def init_map (map, bones):
   add_other(map, bones)
 
 def init_collection (scene):
-  armature_name = scene.armature_name
+  armature = scene.armature
   set_mode('EDIT')
   # 使用 set，而不使用 list，为了在寻找没有被分配的骨骼时节省时间
   map = defaultdict(set)
-  armature = get_object_(armature_name)
   active_object_(armature)
   bones = get_edit_bones()
   init_map(map, bones)

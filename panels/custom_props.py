@@ -20,8 +20,7 @@ class VIEW3D_PT_custom_props (get_panel()):
   bl_idname = "VIEW3D_PT_custom_props"
 
   def draw(self, context):
-    armature_name = context.scene.armature_name
-    armature = get_object_(armature_name)
+    armature = context.scene.armature
 
     if armature:
       bone = armature.pose.bones.get('props')

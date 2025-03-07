@@ -66,8 +66,8 @@ def gen_shape_map ():
 
   return shape_map
 
-def init_bone_widget (armature_name):
-  active_object_(get_object_(armature_name))
+def init_bone_widget (armature):
+  active_object_(get_object_(armature))
   set_mode('POSE')
   shape_map = gen_shape_map()
 
@@ -96,10 +96,10 @@ class OBJECT_OT_init_bone_widgets (get_operator()):
 
   def execute(self, context):
     scene = context.scene
-    armature_name = context.scene.armature_name
+    armature = context.scene.armature
     passing = checker(self, scene)
 
     if passing:
-      init_bone_widget(armature_name)
+      init_bone_widget(armature)
 
     return {'FINISHED'}

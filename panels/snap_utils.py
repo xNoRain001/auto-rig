@@ -10,21 +10,18 @@ class VIEW3D_PT_snap_utils (get_panel()):
   bl_idname = "VIEW3D_PT_snap_utils"
 
   def draw(self, context):
-    armature_name = context.scene.armature_name
-    armature = get_object_(armature_name)
+    armature = context.scene.armature
 
     if armature:
       bone = armature.pose.bones.get('props')
 
-      if not bone:
+      if not bone or not bone.get('initialized'):
         return
       
-      return
-      
-      arm_fK_to_ik_l = bone['arm_fk_to_ik.l']
-      arm_fK_to_ik_r = bone['arm_fk_to_ik.r']
-      leg_fK_to_ik_l = bone['leg_fk_to_ik.l']
-      leg_fK_to_ik_r = bone['leg_fk_to_ik.r']
+      arm_fK_to_ik_l = bone['arm_fk_to_ik_l']
+      arm_fK_to_ik_r = bone['arm_fk_to_ik_r']
+      leg_fK_to_ik_l = bone['leg_fk_to_ik_l']
+      leg_fK_to_ik_r = bone['leg_fk_to_ik_r']
       
       layout = self.layout
       row = layout.row()

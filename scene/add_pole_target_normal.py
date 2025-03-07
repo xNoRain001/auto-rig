@@ -19,5 +19,3 @@ def add_pole_target_normal ():
     '-Z', 
     items = items
   )
-  
-  

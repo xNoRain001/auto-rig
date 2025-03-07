@@ -14,6 +14,12 @@ from ..libs.blender_utils import (
   report_warning,
   is_pose_mode,
   get_selected_pose_bones,
+  get_armature,
+  select_bone,
+  deselect,
+  get_object_,
+  get_bone_collection,
+  get_bone_collections
 )
 from .init_rig import add_custom_props, gen_org_bones, def_bone_add_copy_transforms
 
@@ -73,7 +79,15 @@ def get_bone_names ():
 
   return bone_names
 
-def auto_fk (bone_name, parent, phy_bone_parent, stretch_bone_names, phy_bone_names, transforms_bone_names):
+def auto_fk (
+  bone_name, 
+  parent, 
+  phy_bone_parent, 
+  stretch_bone_names, 
+  phy_bone_names, 
+  transforms_bone_names,
+  new_bone_names
+):
   set_mode('EDIT')
   bone = get_edit_bone(bone_name)
   tweak_bone = gen_tweak_bone(bone)
@@ -81,6 +95,18 @@ def auto_fk (bone_name, parent, phy_bone_parent, stretch_bone_names, phy_bone_na
   mch_bone = gen_mch_bone(fk_bone)
   mch_int_bone = gen_mch_int_bone(mch_bone)
   phy_bone = gen_phy_bone(mch_int_bone)
+
+  tweak_bone_name = tweak_bone.name
+  mch_bone_name = mch_bone.name
+  phy_bone_name = phy_bone.name
+  new_bone_names.extend([
+    bone.name,
+    tweak_bone_name,
+    fk_bone.name,
+    mch_bone_name,
+    mch_int_bone.name,
+    phy_bone_name
+  ])
   
   # 上一个 fk bone
   if parent:
@@ -88,14 +114,13 @@ def auto_fk (bone_name, parent, phy_bone_parent, stretch_bone_names, phy_bone_na
     stretch_bone_names.append([
       # org bone
       parent.children[0].children[0].name, 
-      tweak_bone.name
+      tweak_bone_name
     ])
     transforms_bone_names.append([
-      mch_bone.name,
+      mch_bone_name,
       parent.name
     ])
 
-  phy_bone_name = phy_bone.name
   phy_bone_names.append(phy_bone_name)
 
   # 上一个 phy bone
@@ -104,7 +129,15 @@ def auto_fk (bone_name, parent, phy_bone_parent, stretch_bone_names, phy_bone_na
 
   children = bone.children
   if len(children):
-    auto_fk(children[0].name, fk_bone, phy_bone, stretch_bone_names, phy_bone_names, transforms_bone_names)
+    auto_fk(
+      children[0].name, 
+      fk_bone, 
+      phy_bone, 
+      stretch_bone_names, 
+      phy_bone_names, 
+      transforms_bone_names,
+      new_bone_names
+    )
 
 def add_driver (pose_bone_name, wiggle_prop):
   pose_bone = get_pose_bone(pose_bone_name)
@@ -221,8 +254,40 @@ def run_checker (
 
   return passing
 
-def add_wiggle (wiggle_prop, wiggle_influence):
+def create_bone_collections (names, bone_collections):
+  deselect()
+
+  for name in names:
+    if not bone_collections.get(name):
+      get_armature().collection_create_and_assign(name = name)
+
+def assign_collection (new_bone_names, armature):
+  set_mode('EDIT')
+  bone_collections = get_bone_collections(armature)
+  # create_bone_collections(['phy', 'mch', 'def', 'org'], bone_collections)
+
+  for bone_name in new_bone_names:
+    bone = get_edit_bone(bone_name)
+    select_bone(bone)
+
+    if bone_name.startswith('phy_'):
+      get_armature().collection_unassign_named(name = 'other', bone_name = bone_name)
+      get_armature().collection_assign(name = 'phy')
+    elif bone_name.startswith('mch_'):
+      get_armature().collection_unassign_named(name = 'other', bone_name = bone_name)
+      get_armature().collection_assign(name = 'mch')
+    elif bone_name.startswith('def_'):
+      get_armature().collection_unassign_named(name = 'other', bone_name = bone_name)
+      get_armature().collection_assign(name = 'def')
+    elif bone_name.startswith('org_'):
+      get_armature().collection_unassign_named(name = 'other', bone_name = bone_name)
+      get_armature().collection_assign(name = 'org')
+
+    deselect()
+
+def add_wiggle (wiggle_prop, wiggle_influence, armature):
   mode = get_mode()
+  new_bone_names = []
   # 最后需要添加约束，所以保存名称
   bone_names = get_bone_names()
   stretch_bone_names = []
@@ -235,9 +300,10 @@ def add_wiggle (wiggle_prop, wiggle_influence):
     # 当 phy bone 变换时，所有骨骼都会有相同的变换
     # mch int bone 的父级是上一个 fk bone，mch bone 复制上一个 fk_bone 的变换，
     # 当 fk bone 变换时，其他 fk bone 也会变换并且带有过渡效果
-    auto_fk(bone_name, None, None, stretch_bone_names, phy_bone_names, transforms_bone_names)
+    auto_fk(bone_name, None, None, stretch_bone_names, phy_bone_names, transforms_bone_names, new_bone_names)
     add_constraints(wiggle_prop, wiggle_influence, stretch_bone_names, phy_bone_names, transforms_bone_names)
 
+  assign_collection(new_bone_names, armature)
   # 还原回最开始时的模式
   set_mode(mode)
 
@@ -255,6 +321,7 @@ class OBJECT_OT_add_wiggle (get_operator()):
 
     if passing:
       wiggle_influence = scene.wiggle_influence
+      armature = scene.armature
       add_custom_props([{
         'prop_name': wiggle_prop,
         'config': {
@@ -263,6 +330,6 @@ class OBJECT_OT_add_wiggle (get_operator()):
           'default': wiggle_influence
         }
       }])
-      add_wiggle(wiggle_prop, wiggle_influence)
+      add_wiggle(wiggle_prop, wiggle_influence, armature)
 
     return {'FINISHED'}

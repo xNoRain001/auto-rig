@@ -1,10 +1,13 @@
-# pip install blender_utils --target "C:\Users\xNoRain\AppData\Roaming\Blender Foundation\Blender\4.2\scripts\addons\auto-rig\libs"
-
 bl_info = {
   "name": "Auto Rig",
-  "blender": (4, 2, 3),
-  "version": (0, 0, 0),
+  'author': 'xNoRain001',
+  'version': (0, 0, 0),
+  'blender': (4, 1, 0),
   "category": "Rigging",
+  'location': 'View3D > Sidebar > Auto Rig',
+  'description': 'Blender auto rig addon.',
+  'doc_url': 'https://github.com/xNoRain001/auto-rig',
+  'tracker_url': 'https://github.com/xNoRain001/auto-rig/issues'
 }
 
 from .libs.blender_utils import register as utils_register, unregister as utils_unregister

@@ -35,6 +35,9 @@ from ..libs.blender_utils import (
   get_pose_bones
 )
 
+from ..hooks.gen_org_bones import gen_org_bones
+from ..hooks.gen_props_bone import gen_props_bone
+
 custom_props_config = [
   {
     'prop_name': 'head_follow',
@@ -493,7 +496,7 @@ def mch_switch_bone_add_driver (mch_switch_bone_names, type, direction):
     var.name = f'{ name_prefix }_fk_to_ik.{ direction }'.replace('.', '_')
     var.targets[0].id_type = 'OBJECT'
     var.targets[0].id = get_active_object()
-    var.targets[0].data_path = f'pose.bones["props"]["{ name_prefix }_fk_to_ik.{ direction }"]'
+    var.targets[0].data_path = f'pose.bones["props"]["{ name_prefix }_fk_to_ik_{ direction }"]'
 
 def mch_ik_toes_add_copy_rotation (bone, target):
   add_copy_rotation_constraints(
@@ -577,7 +580,7 @@ def mch_parent_leg_or_arm_pole_add_driver (name, type, direction):
     var.name = f'{ name_prefix }_ik_parent.{ direction }'.replace('.', '_')
     var.targets[0].id_type = 'OBJECT'
     var.targets[0].id = get_active_object()
-    var.targets[0].data_path = f'pose.bones["props"]["{ name_prefix }_ik_parent.{ direction }"]'
+    var.targets[0].data_path = f'pose.bones["props"]["{ name_prefix }_ik_parent_{ direction }"]'
     driver.expression = f'{ var.name } == { index }'
 
 def mch_parent_foot_add_driver (name, type):
@@ -597,7 +600,7 @@ def mch_parent_foot_add_driver (name, type):
     var.name = f'leg_ik_parent.{ type }'.replace('.', '_')
     var.targets[0].id_type = 'OBJECT'
     var.targets[0].id = get_active_object()
-    var.targets[0].data_path = f'pose.bones["props"]["leg_ik_parent.{ type }"]'
+    var.targets[0].data_path = f'pose.bones["props"]["leg_ik_parent_{ type }"]'
     drivers.append(driver)
   
   drivers[0].expression = f'{ var.name } == 0 or { var.name } == 1'
@@ -746,6 +749,7 @@ def finger_master_add_copy_rotation (mch_bone_names):
     influence = 0.6
   )
 
+# TODO: delete it
 def gen_torso_fk_bone (org_bones):
   org_hips = org_bones[0]
   org_spine_01 = org_bones[1]
@@ -968,51 +972,6 @@ def torso_stretch_to (org_bone_names, tweak_bone_names):
   for index, org_bone_name in enumerate(org_bone_names):
     add_stretch_to_constraint(org_bone_name, tweak_bone_names[index + 1])
 
-# def -> org
-def gen_org_bones ():
-  # 找出所有 def 骨骼
-  def select_def_bones (edit_bones):
-    for edit_bone in edit_bones:
-      name = edit_bone.name
-
-      if name.startswith('def_'):
-        org_bone = get_edit_bone(name.replace('def_', 'org_'))
-
-        # 隐藏的骨骼也会被选中
-        if not org_bone:
-          select_bone(edit_bone)
-
-  # def_hand.l -> org_hand.l
-  def rename_org_bones (edit_bones):
-    for edit_bone in edit_bones:
-      if edit_bone.select:
-        edit_bone.name = (
-          edit_bone.name
-            .replace('def_', 'org_')
-            .replace('.001', '')
-        )
-  
-  edit_bones = get_edit_bones()
-  select_def_bones(edit_bones)
-  # 隐藏的骨骼不会被复制
-  duplicate()
-  rename_org_bones(edit_bones)
-  deselect()
-
-def gen_prop_bone ():
-  props_bone = get_edit_bone('props')
-
-  if not props_bone:
-    head = get_edit_bone('org_head')
-    extrude_bone(
-      head, 
-      'tail', 
-      (0, 0, head.length), 
-      name = 'props',
-      parent = get_edit_bone('root'), 
-      parent_connect = False
-    )
-
 def add_custom_props (custom_props_config):
   pose_bone = get_pose_bone('props')
 
@@ -1028,6 +987,8 @@ def add_custom_props (custom_props_config):
       ui = pose_bone.id_properties_ui(prop_name)
       # 更新默认配置
       ui.update(**_config)
+
+  pose_bone['initialized'] = True
 
 def rig_leg_or_arm (type, scene):
   set_mode('EDIT')
@@ -1313,7 +1274,7 @@ def check_bone_name (self):
 
     return bone_names
 
-  def find_error_bone_name (bone_names):
+  def _check_bone_name (bone_names):
     passing = True
 
     for bone_name in bone_names:
@@ -1328,7 +1289,7 @@ def check_bone_name (self):
     return passing
 
   bone_names = gen_bone_names()
-  passing = find_error_bone_name(bone_names)
+  passing = _check_bone_name(bone_names)
   return passing
 
 def check_parent_setting (self):
@@ -1347,10 +1308,11 @@ def check_parent_setting (self):
 def check_armature (self, armature):
   passing = True
 
-  if not armature or armature.type != 'ARMATURE':
+  if not armature:
     passing = False
-    report_warning(self, f'{ armature } 不存在或类型不为骨架')
+    report_warning(self, '缺少骨架')
 
+  # 如果此时处于网格编辑模式下，必须先激活骨骼再切换到编辑模式，这样才是骨骼编辑模式
   active_object_(armature)
   set_mode('EDIT')
 
@@ -1405,13 +1367,12 @@ class OBJECT_OT_init_rig (get_operator()):
 
   def execute(self, context):
     scene = context.scene
-    armature_name = scene.armature_name
+    armature = scene.armature
     rotation_mode = scene.rotation_mode
     side_01_head_location = scene.side_01_head_location
     side_02_head_location = scene.side_02_head_location
     heel_location = scene.heel_location
     foot_tip_location = scene.foot_tip_location
-    armature = get_object_(armature_name)
     
     passing = run_checker(
       self,
@@ -1423,9 +1384,10 @@ class OBJECT_OT_init_rig (get_operator()):
     )
 
     if passing:
+      # TODO: 相关骨骼全部显示
       set_rotation_mode(armature, rotation_mode)
       gen_org_bones()
-      gen_prop_bone()
+      gen_props_bone()
       def_bone_add_copy_transforms(armature)
       add_custom_props(custom_props_config)
       # TODO: refactor
@@ -1434,5 +1396,6 @@ class OBJECT_OT_init_rig (get_operator()):
       rig_hand()
       rig_torso()
       rename_shoulder()
+      pass
 
     return {'FINISHED'}

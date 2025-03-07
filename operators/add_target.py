@@ -20,10 +20,9 @@ class OBJECT_OT_add_target (get_operator()):
 
   def execute(self, context):
     scene = context.scene
-    armature_name = scene.armature_name
+    armature = scene.armature
     var_name = scene.var_name
     data_path = scene.data_path
-    armature = get_object_(armature_name)
     pose_bone = get_pose_bone(scene.dynamic_parent_bone)
     constraints = pose_bone.constraints
 
