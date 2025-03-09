@@ -4,6 +4,18 @@ def set_parent (bone, target, use_connect = False):
   bone.use_connect = use_connect
   bone.parent = target
 
+def _init_parent (config):
+  for item in config:
+    bone_name, parent_bone_name, use_connect = item
+    bone = get_edit_bone(bone_name)
+    parent_bone = get_edit_bone(parent_bone_name) if parent_bone_name else parent_bone_name
+    
+    if not bone:
+      print(f'{ bone_name } 不存在')
+      continue
+
+    set_parent(bone, parent_bone, use_connect)
+
 def init_parent ():
   # 遍历绑定完成的模型中每一个骨骼，输出它们的父级和连接状态
   config = [
@@ -226,13 +238,4 @@ def init_parent ():
     ['ik_hand.l', 'mch_parent_ik_hand.l', False]
   ]
 
-  for item in config:
-    bone_name, parent_bone_name, use_connect = item
-    bone = get_edit_bone(bone_name)
-    parent_bone = get_edit_bone(parent_bone_name) if parent_bone_name else parent_bone_name
-    
-    if not bone:
-      print(f'{ bone_name } 不存在')
-      continue
-
-    set_parent(bone, parent_bone, use_connect)
+  _init_parent(config)

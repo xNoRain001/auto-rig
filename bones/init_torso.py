@@ -1,4 +1,7 @@
 def init_torso ():
+  torso_collection = 'torso'
+  torso_fk_collection = 'torso_fk'
+  
   return [
     # fk_bones
     {
@@ -8,7 +11,8 @@ def init_torso ():
       'operator_config': {
         'head_or_tail': 'head',
         'scale_factor': (0, 2, 0)
-      }
+      },
+      'collection': torso_collection,
     },
     {
       'name': 'chest',
@@ -16,7 +20,8 @@ def init_torso ():
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 0.75,
-      }
+      },
+      'collection': torso_collection,
     },
     {
       'name': 'hips',
@@ -24,7 +29,8 @@ def init_torso ():
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 0.5,
-      }
+      },
+      'collection': torso_collection,
     },
     {
       'name': 'fk_spine_01',
@@ -33,7 +39,8 @@ def init_torso ():
       'operator_config': {
         'head_or_tail': 'head',
         'scale_factor': (0, 0, 1)
-      }
+      },
+      'collection': torso_fk_collection,
     },
     {
       'name': 'fk_hips',
@@ -42,7 +49,8 @@ def init_torso ():
       'operator_config': {
         'head_or_tail': 'tail',
         'scale_factor': (0, 0, 1)
-      }
+      },
+      'collection': torso_fk_collection,
     },
     {
       'name': 'fk_spine_02',
@@ -50,7 +58,8 @@ def init_torso ():
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 1,
-      }
+      },
+      'collection': torso_fk_collection,
     },
     {
       'name': 'fk_chest',
@@ -58,7 +67,8 @@ def init_torso ():
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 1,
-      }
+      },
+      'collection': torso_fk_collection,
     },
     {
       'name': 'neck',
@@ -66,7 +76,8 @@ def init_torso ():
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 1,
-      }
+      },
+      'collection': torso_collection,
     },
     {
       'name': 'head',
@@ -74,7 +85,8 @@ def init_torso ():
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 1,
-      }
+      },
+      'collection': torso_collection,
     },
     # tweak bones
     {

@@ -56,6 +56,14 @@ def add_driver (name, index, config):
         _target.id = get_active_object()
         _target.data_path = data_path
 
+def _init_drivers (config):
+  for item in config:
+    name = item['name']
+    index = item['index']
+    config = item['config']
+
+    add_driver(name, index, config)
+
 def init_drivers ():
 
   torso_config = init_torso()
@@ -66,9 +74,4 @@ def init_drivers ():
   set_mode('POSE')
 
   for config in configs:
-    for item in config:
-      name = item['name']
-      index = item['index']
-      config = item['config']
-
-      add_driver(name, index, config)
+    _init_drivers(config)

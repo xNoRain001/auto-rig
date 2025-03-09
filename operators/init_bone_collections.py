@@ -11,8 +11,10 @@ from ..libs.blender_utils import (
   get_edit_bones,
   get_pose_bones,
   active_object_,
-  get_object_
+  get_object_,
+  get_bone_collections
 )
+from .add_wiggle import check_armature
 
 def add_org_bone (bones, map):
   for bone in bones:
@@ -280,7 +282,7 @@ def assign_collection (map, color_map, armature):
   pose_bones = get_pose_bones()
   visible = ['root', 'torso', 'arm_ik.l', 'arm_ik.r', 'hand.l', 'hand.r', 'leg_ik.l', 'leg_ik.r']
   # not_visible = ['def', 'org', 'mch', 'props']
-  collections_all = armature.data.collections_all
+  bone_collections = get_bone_collections(armature)
 
   for collection_name in map.keys():
     color = None
@@ -300,15 +302,20 @@ def assign_collection (map, color_map, armature):
         if color:
           pose_bones[bone.name].color.palette = color
 
-    get_armature().collection_create_and_assign(name = collection_name)
+    if collection_name not in bone_collections:
+      get_armature().collection_create_and_assign(name = collection_name)
+    else:
+      get_armature().collection_assign(name = collection_name)
+
     deselect()
 
   get_armature().collection_show_all()
-  for collection in collections_all:
+
+  for collection in bone_collections:
     collection_name = collection.name
     
     if collection_name not in visible:
-      collections_all[collection_name].is_visible = False
+      bone_collections[collection_name].is_visible = False
 
 def init_map (map, bones):
   add_org_bone(bones, map)
@@ -331,11 +338,39 @@ def init_collection (scene):
   color_map = gen_color_map(map, scene)
   assign_collection(map, color_map, armature)
 
+
+def run_checker (
+  self,
+  armature
+):
+  passing = True
+  checkers = [
+    check_armature
+  ]
+  params = [
+    [self, armature],
+  ]
+
+  for index, checker in enumerate(checkers):
+    passing = checker(*params[index])
+
+    if not passing:
+      passing = False
+
+      break
+
+  return passing
+
 class OBJECT_OT_init_bone_collection (get_operator()):
   bl_idname = 'object.init_bone_collection'
   bl_label = 'Init Bone Collection'
 
   def execute(self, context):
-    init_collection(context.scene)
+    scene = context.scene
+    armature = scene.armature
+    passing = run_checker(self, armature)
+
+    if passing:
+      init_collection(scene)
 
     return {'FINISHED'}

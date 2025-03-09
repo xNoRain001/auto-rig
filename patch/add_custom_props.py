@@ -75,8 +75,8 @@ custom_props_config = [
   }
 ]
 
-def add_custom_props (scene, item):
-  # 获取 pose bones，如果之前没有切换到 POSE模式，必须先切换一次， 之后获取不用切换
+def _add_custom_props (custom_props_config):
+  # 获取 pose bones，如果之前没有切换到 POSE模式，必须先切换一次，之后获取不用切换
   # 到 POSE 也能获取到
   set_mode('POSE')
   pose_bone = get_pose_bone('props')
@@ -85,6 +85,7 @@ def add_custom_props (scene, item):
     prop_name = item['prop_name']
     config = item['config']
     # 创建属性
+    print(prop_name)
     pose_bone[prop_name] = config['default']
     _config = { k: v for k, v in config.items() if k != 'default' }
 
@@ -96,3 +97,7 @@ def add_custom_props (scene, item):
 
   pose_bone['initialized'] = True
   set_mode('EDIT')
+
+def add_custom_props (scene, config):
+  _add_custom_props(custom_props_config)
+  

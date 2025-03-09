@@ -11,6 +11,7 @@ org_master_bone_names = [
 org_bone_names = []
 
 def init_hand ():
+  hand_collection = 'hand'
   config = []
 
   for org_master_bone_name in org_master_bone_names:

@@ -8,6 +8,7 @@ from .add_foot_ctrl import add_foot_ctrl
 from .add_soft_body_config import add_soft_body_config
 from .add_dynamic_parent import add_dynamic_parent
 from .add_wiggle_config import add_wiggle_config
+from .add_line_width import add_line_width
 
 classes = ()
 
@@ -22,6 +23,7 @@ def register():
   add_bone_colors()
   add_dynamic_parent()
   add_wiggle_config()
+  add_line_width()
   
 def unregister():
   # unregister_classes(classes)

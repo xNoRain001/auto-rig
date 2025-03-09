@@ -1,14 +1,7 @@
 from ..libs.blender_utils import (
   get_operator, 
   get_selected_bones,
-  copy_bone,
-  add_stretch_to_constraint,
-  add_damped_track_constraints,
-  add_copy_transforms_constraints,
   set_mode,
-  get_pose_bone,
-  get_active_object,
-  add_limit_rotation_constraints,
   get_edit_bone,
   get_mode,
   report_warning,
@@ -17,47 +10,17 @@ from ..libs.blender_utils import (
   get_armature,
   select_bone,
   deselect,
-  get_object_,
-  get_bone_collection,
-  get_bone_collections
+  get_bone_collections,
+  get_bone_chain_names,
+  deselect_bones
 )
-from ..patch.add_custom_props import add_custom_props
+from ..patch.add_custom_props import _add_custom_props
 from ..bones.init_org_bones import init_org_bones
 from ..constraints import def_bone_add_copy_transforms
-
-def gen_tweak_bone (org_bone):
-  tweak_bone_name = org_bone.name.replace('org_', 'tweak_')
-  tweak_bone = copy_bone(org_bone, tweak_bone_name, 0.25, use_connect = False)
-  org_bone.parent = tweak_bone
-
-  return tweak_bone
-
-def gen_fk_bone (tweak_bone):
-  fk_bone_name = tweak_bone.name.replace('tweak_', '')
-  fk_bone = copy_bone(tweak_bone, fk_bone_name, 2, use_connect = False)
-  tweak_bone.parent = fk_bone
-
-  return fk_bone
-
-def gen_mch_bone (fk_bone):
-  mch_bone_name = 'mch_' + fk_bone.name
-  mch_bone = copy_bone(fk_bone, mch_bone_name, 0.5, use_connect = False)
-  fk_bone.parent = mch_bone
-
-  return mch_bone
-
-def gen_mch_int_bone (mch_bone):
-  mch_int_bone_name = mch_bone.name.replace('mch_', 'mch_int_')
-  mch_int_bone = copy_bone(mch_bone, mch_int_bone_name, 0.5, use_connect = False)
-  mch_bone.parent = mch_int_bone
-
-  return mch_int_bone
-
-def gen_phy_bone (mch_int_bone):
-  phy_bone_name = mch_int_bone.name.replace('mch_int_', 'phy_')
-  phy_bone = copy_bone(mch_int_bone, phy_bone_name, 3, use_connect = False)
-
-  return phy_bone
+from ..bones import _init_bones
+from ..bones.init_parent import _init_parent
+from ..constraints import _init_constraints
+from ..drivers import _init_drivers
 
 def get_bone_names ():
   # 可能在 POSE 模式下选中骨骼
@@ -81,129 +44,14 @@ def get_bone_names ():
 
   return bone_names
 
-def auto_fk (
-  bone_name, 
-  parent, 
-  phy_bone_parent, 
-  stretch_bone_names, 
-  phy_bone_names, 
-  transforms_bone_names,
-  new_bone_names
-):
-  set_mode('EDIT')
-  bone = get_edit_bone(bone_name)
-  tweak_bone = gen_tweak_bone(bone)
-  fk_bone = gen_fk_bone(tweak_bone)
-  mch_bone = gen_mch_bone(fk_bone)
-  mch_int_bone = gen_mch_int_bone(mch_bone)
-  phy_bone = gen_phy_bone(mch_int_bone)
+def check_armature (self, armature):
+  passing = True
 
-  tweak_bone_name = tweak_bone.name
-  mch_bone_name = mch_bone.name
-  phy_bone_name = phy_bone.name
-  new_bone_names.extend([
-    bone.name,
-    tweak_bone_name,
-    fk_bone.name,
-    mch_bone_name,
-    mch_int_bone.name,
-    phy_bone_name
-  ])
-  
-  # 上一个 fk bone
-  if parent:
-    mch_int_bone.parent = parent
-    stretch_bone_names.append([
-      # org bone
-      parent.children[0].children[0].name, 
-      tweak_bone_name
-    ])
-    transforms_bone_names.append([
-      mch_bone_name,
-      parent.name
-    ])
+  if not armature:
+    passing = False
+    report_warning(self, 'Armature 不能为空')
 
-  phy_bone_names.append(phy_bone_name)
-
-  # 上一个 phy bone
-  if phy_bone_parent:
-    phy_bone.parent = phy_bone_parent
-
-  children = bone.children
-  if len(children):
-    auto_fk(
-      children[0].name, 
-      fk_bone, 
-      phy_bone, 
-      stretch_bone_names, 
-      phy_bone_names, 
-      transforms_bone_names,
-      new_bone_names
-    )
-
-def add_driver (pose_bone_name, wiggle_prop):
-  pose_bone = get_pose_bone(pose_bone_name)
-  constraints = pose_bone.constraints
-  
-  for constraint in constraints:
-    if constraint.type == 'DAMPED_TRACK':
-      constraint.driver_remove("influence")
-      driver = constraint.driver_add("influence").driver
-      driver.type = 'AVERAGE'
-      var = driver.variables.new()
-      var.name = wiggle_prop
-      target = var.targets[0]
-      target.id_type = 'OBJECT'
-      target.id = get_active_object()
-      target.data_path = f'pose.bones["props"]["{ wiggle_prop }"]'
-
-def clear_list (stretch_bone_names, phy_bone_names, transforms_bone_names):
-  stretch_bone_names.clear()
-  phy_bone_names.clear()
-  transforms_bone_names.clear()
-
-def add_constraints (wiggle_prop, wiggle_influence, stretch_bone_names, phy_bone_names, transforms_bone_names):
-  set_mode('POSE')
-  last_index = len(phy_bone_names) - 1
- 
-  for index, phy_bone_name in enumerate(phy_bone_names):
-    if index != last_index:
-      add_damped_track_constraints(
-        phy_bone_name, 
-        phy_bone_names[index + 1], 
-        influence = wiggle_influence
-      )
-      add_driver(phy_bone_name, wiggle_prop)
-      add_limit_rotation_constraints(
-        phy_bone_name, 
-        owner_space = 'LOCAL', 
-        use_limit_z = True,
-        min_z = -180,
-        max_z = 0
-      )
-    
-    mch_int_bone_name = phy_bone_name.replace('phy_', 'mch_int_')
-    add_copy_transforms_constraints(
-      mch_int_bone_name, 
-      phy_bone_name, 
-      target_space = 'LOCAL', 
-      owner_space = 'LOCAL'
-    )
-    
-    # org_bone_name = phy_bone_name.replace('phy_', 'org_')
-    # tweak_bone_name = phy_bone_name.replace('phy_', 'mch_')
-  for item in stretch_bone_names:
-    add_stretch_to_constraint(item[0], item[1])
-
-  for item in transforms_bone_names:
-    add_copy_transforms_constraints(
-      item[0], 
-      item[1], 
-      target_space = 'LOCAL', 
-      owner_space = 'LOCAL'
-    )
-
-  clear_list(stretch_bone_names, phy_bone_names, transforms_bone_names)
+  return passing
 
 def check_wiggle_prop (self, wiggle_prop):
   passing = True
@@ -234,14 +82,17 @@ def check_selected_bones (self):
 
 def run_checker (
   self,
-  wiggle_prop
+  wiggle_prop,
+  armature
 ):
   passing = True
   checkers = [
+    check_armature,
     check_wiggle_prop, 
     check_selected_bones
   ]
   params = [
+    [self, armature],
     [self, wiggle_prop],
     [self]
   ]
@@ -263,12 +114,13 @@ def create_bone_collections (names, bone_collections):
     if not bone_collections.get(name):
       get_armature().collection_create_and_assign(name = name)
 
-def assign_collection (new_bone_names, armature):
+def assign_collection (bone_config, armature):
   set_mode('EDIT')
   bone_collections = get_bone_collections(armature)
   # create_bone_collections(['phy', 'mch', 'def', 'org'], bone_collections)
 
-  for bone_name in new_bone_names:
+  for item in bone_config:
+    bone_name = item['name']
     bone = get_edit_bone(bone_name)
     select_bone(bone)
 
@@ -287,27 +139,146 @@ def assign_collection (new_bone_names, armature):
 
     deselect()
 
-def add_wiggle (wiggle_prop, wiggle_influence, armature):
-  mode = get_mode()
-  new_bone_names = []
-  # 最后需要添加约束，所以保存名称
-  bone_names = get_bone_names()
-  stretch_bone_names = []
-  phy_bone_names = []
-  transforms_bone_names = []
+def init_wiggle (scene):
+  bone_config = []
+  parent_config = []
+  constraint_config = []
+  driver_config = []
+  selected_bone_names = get_bone_names()
+  wiggle_prop = scene.wiggle_prop
+  wiggle_influence = scene.wiggle_influence
+  set_mode('EDIT')
 
-  for bone_name in bone_names:
-    # fk bone 的父级是 mch bone，mch bone 的父级是 mch int bone,
-    # 每一个 mch int bone 复制对应的 phy bone 的变换，
-    # 当 phy bone 变换时，所有骨骼都会有相同的变换
-    # mch int bone 的父级是上一个 fk bone，mch bone 复制上一个 fk_bone 的变换，
-    # 当 fk bone 变换时，其他 fk bone 也会变换并且带有过渡效果
-    auto_fk(bone_name, None, None, stretch_bone_names, phy_bone_names, transforms_bone_names, new_bone_names)
-    add_constraints(wiggle_prop, wiggle_influence, stretch_bone_names, phy_bone_names, transforms_bone_names)
+  for selected_bone_name in selected_bone_names:
+    bone_names = get_bone_chain_names(get_edit_bone(selected_bone_name))
 
-  assign_collection(new_bone_names, armature)
-  # 还原回最开始时的模式
-  set_mode(mode)
+    if len(bone_names) == 1:
+      continue
+
+    for index, bone_name in enumerate(bone_names):
+      tweak_bone_name = bone_name.replace('org_', 'tweak_')
+      fk_bone_name = bone_name.replace('org_', 'fk_')
+      mch_bone_name = bone_name.replace('org_', 'mch_')
+      mch_int_bone_name = bone_name.replace('org_', 'mch_int_')
+      phy_bone_name = bone_name.replace('org_', 'phy_')
+      prev_bone_name = bone_names[index - 1]
+      prev_fk_bone = prev_bone_name.replace('org_', 'fk_') if index else None
+      prev_phy_bone = prev_bone_name.replace('org_', 'phy_') if index else None
+
+      if prev_phy_bone:
+        parent_config.append([phy_bone_name, prev_phy_bone, False])
+        constraint_config.append({
+          'name': prev_phy_bone,
+          'target': phy_bone_name,
+          'type': 'DAMPED_TRACK',
+          'config': {
+            'influence': wiggle_influence
+          }
+        })
+        driver_config.append({
+          'name': prev_phy_bone,
+          'index': -1,
+          'config': {
+            'name': 'influence',
+            'type': 'AVERAGE',
+            'vars': [
+              {
+                'name': wiggle_prop,
+                'targets': [
+                  {
+                    'id_type': 'OBJECT',
+                    'data_path': f'pose.bones["props"]["{ wiggle_prop }"]'
+                  }
+                ]
+              }
+            ]
+          }
+        })
+
+      if prev_fk_bone:
+        parent_config.append([mch_int_bone_name, prev_fk_bone, False])
+        constraint_config.extend([
+          {
+            'name': mch_int_bone_name,
+            'target': phy_bone_name,
+            'type': 'COPY_TRANSFORMS',
+            'config': {
+              'target_space': 'LOCAL', 
+              'owner_space': 'LOCAL'
+            }
+          },
+          {
+            'name': mch_bone_name,
+            'target': prev_fk_bone,
+            'type': 'COPY_TRANSFORMS',
+            'config': {
+              'target_space': 'LOCAL', 
+              'owner_space': 'LOCAL'
+            }
+          },
+           {
+            'name': bone_names[index - 1],
+            'target': tweak_bone_name,
+            'type': 'STRETCH_TO',
+          }
+        ])
+
+      parent_config.extend([
+        [bone_name, tweak_bone_name, False],
+        [tweak_bone_name, fk_bone_name, False],
+        [fk_bone_name, mch_bone_name, False],
+        [mch_bone_name, mch_int_bone_name, False],
+      ])
+
+      bone_config.extend([
+        {
+          'name': tweak_bone_name,
+          'source': bone_name,
+          'operator': 'copy',
+          'operator_config': {
+            'scale_factor': 0.5
+          }
+        },
+        {
+          'name': fk_bone_name,
+          'source': bone_name,
+          'operator': 'copy',
+          'operator_config': {
+            'scale_factor': 1
+          }
+        },
+        {
+          'name': mch_bone_name,
+          'source': bone_name,
+          'operator': 'copy',
+          'operator_config': {
+            'scale_factor': 0.25
+          }
+        },
+        {
+          'name': mch_int_bone_name,
+          'source': bone_name,
+          'operator': 'copy',
+          'operator_config': {
+            'scale_factor': 0.1
+          }
+        },
+        {
+          'name': phy_bone_name,
+          'source': bone_name,
+          'operator': 'copy',
+          'operator_config': {
+            'scale_factor': 1
+          }
+        },
+      ])
+
+  _init_bones(bone_config)
+  _init_parent(parent_config)
+  _init_constraints(constraint_config)
+  _init_drivers(driver_config)
+
+  return bone_config
 
 class OBJECT_OT_add_wiggle (get_operator()):
   bl_idname = "object.add_wiggle"
@@ -315,16 +286,17 @@ class OBJECT_OT_add_wiggle (get_operator()):
 
   def execute(self, context):
     scene = context.scene
+    armature = scene.armature
     wiggle_prop = scene.wiggle_prop
     passing = run_checker(
       self, 
-      wiggle_prop
+      wiggle_prop,
+      armature
     )
 
     if passing:
       wiggle_influence = scene.wiggle_influence
-      armature = scene.armature
-      add_custom_props([{
+      _add_custom_props([{
         'prop_name': wiggle_prop,
         'config': {
           'min': 0,
@@ -332,6 +304,7 @@ class OBJECT_OT_add_wiggle (get_operator()):
           'default': wiggle_influence
         }
       }])
-      add_wiggle(wiggle_prop, wiggle_influence, armature)
+      bone_config = init_wiggle(scene)
+      # assign_collection(bone_config, armature)
 
     return {'FINISHED'}

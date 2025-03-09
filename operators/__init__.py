@@ -10,6 +10,7 @@ from .rig_weapon import OBJECT_OT_rig_weapon
 from .add_target import OBJECT_OT_add_target
 from .remove_target import OBJECT_OT_remove_target
 from .add_wiggle import OBJECT_OT_add_wiggle
+from .init_def_bones import OBJECT_OT_init_def_bones
 
 classes = (
   OBJECT_OT_init_rig,
@@ -22,7 +23,8 @@ classes = (
   OBJECT_OT_rig_weapon,
   OBJECT_OT_add_target,
   OBJECT_OT_remove_target,
-  OBJECT_OT_add_wiggle
+  OBJECT_OT_add_wiggle,
+  OBJECT_OT_init_def_bones
 )
 
 def register():
