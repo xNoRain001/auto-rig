@@ -6,16 +6,8 @@ from ..libs.blender_utils import (
 
 class OBJECT_OT_init_location (get_operator()):
   bl_idname = "object.init_location"
-  bl_label = "Reload Addon"
-  type: get_props().EnumProperty(
-    default = 'side_01', 
-    items = [
-      ('side_01', "side_01", ""),
-      ('side_02', "side_02", ""),
-      ('heel', "heel", ""),
-      ('foot_tip', "foot_tip", "")
-    ]
-  )
+  bl_label = "Init Location"
+  type: get_props().StringProperty()
 
   def execute(self, context):
     scene = context.scene

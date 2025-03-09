@@ -10,12 +10,12 @@ def add_pole_target_normal ():
   add_scene_custom_prop(
     'arm_pole_normal', 
     'Enum', 
-    'X', 
+    '-X', 
     items = items
   )
   add_scene_custom_prop(
     'leg_pole_normal', 
     'Enum', 
-    '-Z', 
+    'X', 
     items = items
   )

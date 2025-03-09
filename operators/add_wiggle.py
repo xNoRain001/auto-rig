@@ -21,7 +21,9 @@ from ..libs.blender_utils import (
   get_bone_collection,
   get_bone_collections
 )
-from .init_rig import add_custom_props, gen_org_bones, def_bone_add_copy_transforms
+from ..patch.add_custom_props import add_custom_props
+from ..bones.init_org_bones import init_org_bones
+from ..constraints import def_bone_add_copy_transforms
 
 def gen_tweak_bone (org_bone):
   tweak_bone_name = org_bone.name.replace('org_', 'tweak_')
@@ -68,7 +70,7 @@ def get_bone_names ():
 
   for bone_name in bone_names:
     if bone_name.startswith('def_'):
-      gen_org_bones()
+      init_org_bones()
       def_bone_add_copy_transforms()
 
       break

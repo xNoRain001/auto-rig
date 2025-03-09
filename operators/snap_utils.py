@@ -17,7 +17,7 @@ def snap (source, target):
 def snap_func (fk_or_ik, leg_or_arm, side):
   props = get_pose_bone('props')
   leg = leg_or_arm == 'leg'
-  prop = f"{ 'leg' if leg else 'arm' }_fk_to_ik.{ side }"
+  prop = f"{ 'leg' if leg else 'arm' }_fk_to_ik_{ side }"
   value = props[prop]
   is_fk = fk_or_ik == 'fk'
   is_ik = fk_or_ik == 'ik'
@@ -37,9 +37,9 @@ def snap_func (fk_or_ik, leg_or_arm, side):
     fk_arm = get_pose_bone(f"fk_{ 'leg' if leg else 'arm'}.{ side }")
     fk_forearm = get_pose_bone(f"fk_{ 'shin' if leg else 'forearm'}.{ side }")
     fk_hand = get_pose_bone(f"fk_{ 'foot' if leg else 'hand'}.{ side }")
-    ik_arm =  get_pose_bone(f"mch_ik_{ 'leg' if leg else 'arm'}.{ side }")
-    ik_forearm =  get_pose_bone(f"mch_ik_{ 'shin' if leg else 'forearm'}.{ side }")
-    ik_hand =  get_pose_bone(f"ik_{ 'foot' if leg else 'hand'}.{ side }")
+    ik_arm = get_pose_bone(f"mch_ik_{ 'leg' if leg else 'arm'}.{ side }")
+    ik_forearm = get_pose_bone(f"mch_ik_{ 'shin' if leg else 'forearm'}.{ side }")
+    ik_hand = get_pose_bone(f"ik_{ 'foot' if leg else 'hand'}.{ side }")
     snap(ik_arm, fk_arm)
     context.view_layer.update()
     snap(ik_forearm, fk_forearm)
@@ -54,7 +54,6 @@ def snap_func (fk_or_ik, leg_or_arm, side):
     mch_ik_fk_arm_pole = get_pose_bone(f"mch_ik_fk_{ 'leg' if leg else 'arm'}_pole.{ side }")
     ik_hand = get_pose_bone(f"ik_{ 'foot' if leg else 'hand'}.{ side }")
     ik_pole = get_pose_bone(f"{ 'leg' if leg else 'arm'}_pole.{ side }")
-    print('aa')
     snap(fk_hand, ik_hand)
     context.view_layer.update()
     snap(mch_ik_fk_arm_pole, ik_pole)

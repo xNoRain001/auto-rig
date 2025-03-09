@@ -9,7 +9,7 @@ from ..libs.blender_utils import (
 # 选中所有 def 骨骼，包括隐藏的
 def select_def_bones ():
   edit_bones = get_edit_bones()
-  hide_bones = []
+  hide_def_bones = []
   selected_bones = []
 
   for edit_bone in edit_bones:
@@ -22,15 +22,13 @@ def select_def_bones ():
       # 复制完成后再隐藏回去
       if not org_bone:
         if edit_bone.hide == True:
-          hide_bones.append(edit_bone)
+          hide_def_bones.append(edit_bone)
           edit_bone.hide = False
 
         select_bone(edit_bone)
         selected_bones.append(edit_bone)
-      else:
-        print(org_bone.name)
 
-  return hide_bones, selected_bones
+  return hide_def_bones, selected_bones
 
 # def_hand.l -> org_hand.l
 def rename_org_bones (selected_bones):
@@ -40,15 +38,15 @@ def rename_org_bones (selected_bones):
     org_bone.name = \
       org_bone_name.replace('def_', 'org_').replace('.001', '')
 
-def restore_bone_visibility (hide_bones):
-  for hide_bone in hide_bones:
-    hide_bone.hide = True
+def restore_bone_visibility (hide_def_bones):
+  for hide_def_bone in hide_def_bones:
+    hide_def_bone.hide = True
       
-def gen_org_bones ():
-  hide_bones, selected_bones = select_def_bones()
+def init_org_bones ():
+  hide_def_bones, selected_bones = select_def_bones()
   duplicate_bones()
   # 复制完成后，def bones 不再被选中，复制后的骨骼，即 org bones 被选中
   rename_org_bones(selected_bones)
-  restore_bone_visibility(hide_bones)
+  restore_bone_visibility(hide_def_bones)
   deselect_bones()
   

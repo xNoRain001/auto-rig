@@ -3,7 +3,7 @@ from ..libs.blender_utils import (
   set_mode, get_pose_bone, add_armature_constraints, add_copy_transforms_constraints,
   get_active_object
 )
-from .init_rig import add_custom_props
+from ..patch.add_custom_props import add_custom_props
 
 def gen_custom_props_config (weapon_name):
   custom_props_config =[
