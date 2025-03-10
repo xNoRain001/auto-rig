@@ -104,14 +104,13 @@ def check_armature (self, armature):
 
   return passing
 
-def run_checker (
-  self,
-  side_01_head_location,
-  side_02_head_location,
-  heel_location,
-  foot_tip_location,
-  armature
-):
+def run_checker (self, context):
+  scene = context.scene
+  armature = scene.armature
+  side_01_head_location = scene.side_01_head_location_
+  side_02_head_location = scene.side_02_head_location
+  heel_location = scene.heel_location
+  foot_tip_location = scene.foot_tip_location
   passing = True
   checkers = [
     check_armature, 
@@ -161,30 +160,21 @@ class OBJECT_OT_init_rig (get_operator()):
   bl_idname = 'object.init_rig'
   bl_label = 'Init Rig'
 
+  def invoke(self, context, event):
+    passing = run_checker(self, context)
+  
+    if passing:
+      return self.execute(context)
+    else:
+      return {'CANCELLED'}
+
   def execute(self, context):
     scene = context.scene
-    armature = scene.armature
-    rotation_mode = scene.rotation_mode
-    side_01_head_location = scene.side_01_head_location_
-    side_02_head_location = scene.side_02_head_location
-    heel_location = scene.heel_location
-    foot_tip_location = scene.foot_tip_location
-    
-    passing = run_checker(
-      self,
-      side_01_head_location,
-      side_02_head_location,
-      heel_location,
-      foot_tip_location,
-      armature
-    )
-
-    if passing:
-      # TODO: 相关骨骼全部显示
-      # set_rotation_mode(armature, rotation_mode)
-      init_bones(scene)
-      init_constraints()
-      symmetrize_bones()
-      init_drivers()
+    # TODO: 相关骨骼全部显示
+    # set_rotation_mode(armature, rotation_mode)
+    init_bones(scene)
+    init_constraints()
+    symmetrize_bones()
+    init_drivers()
 
     return {'FINISHED'}

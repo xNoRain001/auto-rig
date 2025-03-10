@@ -57,6 +57,8 @@ def add_driver (name, index, config):
         _target.data_path = data_path
 
 def _init_drivers (config):
+  set_mode('POSE')
+
   for item in config:
     name = item['name']
     index = item['index']
@@ -71,7 +73,6 @@ def init_drivers ():
   leg_config = init_leg()
   configs = [torso_config, arm_config, leg_config]
   # 可能会导致未知的问题，比如另一边的驱动器必须打开再关闭才生效
-  set_mode('POSE')
 
   for config in configs:
     _init_drivers(config)

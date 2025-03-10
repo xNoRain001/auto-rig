@@ -13,6 +13,8 @@ class VIEW3D_PT_snap_utils (get_panel()):
     armature = context.scene.armature
 
     if armature:
+      return
+    
       bone = armature.pose.bones.get('props')
 
       if not bone or not bone.get('initialized'):

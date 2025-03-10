@@ -12,7 +12,8 @@ from ..libs.blender_utils import (
   deselect,
   get_bone_collections,
   get_bone_chain_names,
-  deselect_bones
+  deselect_bones,
+  report_error
 )
 from ..patch.add_custom_props import _add_custom_props
 from ..bones.init_org_bones import init_org_bones
@@ -80,11 +81,10 @@ def check_selected_bones (self):
 
   return passing
 
-def run_checker (
-  self,
-  wiggle_prop,
-  armature
-):
+def run_checker (self, context):
+  scene = context.scene
+  armature = scene.armature
+  wiggle_prop = scene.wiggle_prop
   passing = True
   checkers = [
     check_armature,
@@ -273,6 +273,7 @@ def init_wiggle (scene):
         },
       ])
 
+  # TODO: fix performance
   _init_bones(bone_config)
   _init_parent(parent_config)
   _init_constraints(constraint_config)
@@ -284,27 +285,27 @@ class OBJECT_OT_add_wiggle (get_operator()):
   bl_idname = "object.add_wiggle"
   bl_label = "Add Wiggle"
 
+  def invoke(self, context, event):
+    passing = run_checker(self, context)
+  
+    if passing:
+      return self.execute(context)
+    else:
+      return {'CANCELLED'}
+      
   def execute(self, context):
     scene = context.scene
-    armature = scene.armature
     wiggle_prop = scene.wiggle_prop
-    passing = run_checker(
-      self, 
-      wiggle_prop,
-      armature
-    )
-
-    if passing:
-      wiggle_influence = scene.wiggle_influence
-      _add_custom_props([{
-        'prop_name': wiggle_prop,
-        'config': {
-          'min': 0,
-          'max': 1,
-          'default': wiggle_influence
-        }
-      }])
-      bone_config = init_wiggle(scene)
-      # assign_collection(bone_config, armature)
+    wiggle_influence = scene.wiggle_influence
+    _add_custom_props([{
+      'prop_name': wiggle_prop,
+      'config': {
+        'min': 0,
+        'max': 1,
+        'default': wiggle_influence
+      }
+    }])
+    bone_config = init_wiggle(scene)
+    # assign_collection(bone_config, armature)
 
     return {'FINISHED'}

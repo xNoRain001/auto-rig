@@ -85,7 +85,6 @@ def _add_custom_props (custom_props_config):
     prop_name = item['prop_name']
     config = item['config']
     # 创建属性
-    print(prop_name)
     pose_bone[prop_name] = config['default']
     _config = { k: v for k, v in config.items() if k != 'default' }
 
