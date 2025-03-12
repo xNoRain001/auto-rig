@@ -1,7 +1,12 @@
 from ..libs.blender_utils import get_panel, add_row_with_operator
 from ..operators.reload_addon import OBJECT_OT_reload_addon
 from ..const import bl_category
-from ..operators import OBJECT_OT_init_bone_collection, OBJECT_OT_rig_weapon, OBJECT_OT_init_def_bones
+from ..operators import (
+  OBJECT_OT_init_bone_collection, 
+  OBJECT_OT_rig_weapon, 
+  OBJECT_OT_init_def_bones,
+  OBJECT_OT_refresh_weapon
+)
 
 class VIEW3D_PT_helper (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -31,3 +36,5 @@ class VIEW3D_PT_helper (get_panel()):
     row.operator(OBJECT_OT_rig_weapon.bl_idname, text = 'Rig Weapon')
     row = layout.row()
     row.operator(OBJECT_OT_init_def_bones.bl_idname, text = 'Init Def Bones')
+    row = layout.row()
+    row.operator(OBJECT_OT_refresh_weapon.bl_idname, text = 'Refresh Weapon')

@@ -2,6 +2,12 @@ from ..libs.blender_utils import get_pose_bone, set_mode, update_view, get_pose_
 
 custom_props_config = [
   {
+    'prop_name': 'weapons',
+    'config': {
+      'default': ''
+    }
+  },
+  {
     'prop_name': 'head_follow',
     'config': {
       'default': True
@@ -94,7 +100,6 @@ def _add_custom_props (custom_props_config):
       # 更新默认配置
       ui.update(**_config)
 
-  pose_bone['initialized'] = True
   set_mode('EDIT')
 
 def add_custom_props (scene, config):

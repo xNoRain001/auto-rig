@@ -9,6 +9,7 @@ from .add_soft_body_config import add_soft_body_config
 from .add_dynamic_parent import add_dynamic_parent
 from .add_wiggle_config import add_wiggle_config
 from .add_line_width import add_line_width
+from .add_weapon_props import add_weapon_props
 
 classes = ()
 
@@ -24,6 +25,7 @@ def register():
   add_dynamic_parent()
   add_wiggle_config()
   add_line_width()
+  # add_weapon_props()
   
 def unregister():
   # unregister_classes(classes)

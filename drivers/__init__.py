@@ -9,10 +9,10 @@ def add_driver (name, index, config):
   prop = config['name']
   type = config['type']
   vars = config['vars']
+  expression = config.get('expression')
 
   if constraint.type == 'ARMATURE':
     targets = pose_bone.constraints[0].targets
-    expression = config.get('expression')
 
     for index, target in enumerate(targets):
       target.driver_remove(prop)
@@ -41,6 +41,9 @@ def add_driver (name, index, config):
     constraint.driver_remove(prop)
     driver = constraint.driver_add(prop).driver
     driver.type = type
+
+    if expression:
+      driver.expression = expression
     
     for var in vars:
       name = var['name']

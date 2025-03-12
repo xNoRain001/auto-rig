@@ -22,6 +22,7 @@ classes = (
   VIEW3D_PT_helper,
 )
 
+import bpy
 def register():
   register_classes(classes)
 

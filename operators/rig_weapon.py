@@ -1,58 +1,65 @@
 from ..libs.blender_utils import (
   get_operator, 
   get_selected_bone, 
-  get_edit_bone, 
-  copy_bone, 
-  set_parent,
-  set_mode, 
   get_pose_bone, 
-  add_armature_constraint, 
-  add_copy_transforms_constraint,
-  get_active_object
+  get_mode,
+  set_mode
 )
-from ..patch.add_custom_props import add_custom_props
 from ..bones import _init_bones
 from ..bones.init_parent import _init_parent
 from ..constraints import _init_constraints
 from ..drivers import _init_drivers
 from ..patch.add_custom_props import _add_custom_props
+from ..scene.add_weapon_props import add_weapon_props
+import json
+from ..const import weapon_custom_prop_prefix
+
+def update_weapons (weapon_name):
+  props_bone = get_pose_bone('props')
+
+  if 'weapons' not in props_bone:
+    props_bone['weapons'] = '[]'
+
+  weapons = json.loads(props_bone['weapons'])
+  weapons.append(weapon_name)
+  props_bone['weapons'] = json.dumps(weapons)
 
 def gen_custom_props_config (weapon_name):
   custom_props_config =[
     {
-      'prop_name': f'{ weapon_name }_parent',
+      'prop_name': f'{ weapon_custom_prop_prefix }{ weapon_name }_parent',
       'config': {
         'min': 0,
         'max': 2,
-        'description': '0-root | 1-hand.l | 2-hand.r',
+        'description': json.dumps(['root', 'ik_hand.l', 'ik_hand.r']),
         'default': 0
-      },
-      'is_visible': True
+      }
     },
     {
-      'prop_name': f'{ weapon_name }_to_master',
+      'prop_name': f'{ weapon_custom_prop_prefix }{ weapon_name }_to_master',
       'config': {
         'default': False
-      },
-      'is_visible': True
+      }
     },
     {
-      'prop_name': f'{ weapon_name }_master_parent',
+      'prop_name': f'{ weapon_custom_prop_prefix }{ weapon_name }_master_parent',
       'config': {
         'min': 0,
         'max': 1,
-        'description': '0-root | 1-torso',
-        'default': 0
-      },
-      'is_visible': True
+        'description': json.dumps(['root', 'torso']),
+        'default': 0,
+      }
     }
   ]
 
   return custom_props_config
 
-def rig_weapon (weapon):
-  _add_custom_props(gen_custom_props_config(weapon))
-
+def rig_weapon (weapon_bone, armature):
+  weapon = weapon_bone.name
+  update_weapons(weapon)
+  custom_prop_config = gen_custom_props_config(weapon)
+  _add_custom_props(custom_prop_config)
+  add_weapon_props([weapon])
   mch_parent_weapon = f'mch_parent_{ weapon }'
   mch_parent_weapon_to_master = f'mch_parent_{ weapon }_to_master'
   weapon_master = f'{ weapon }_master'
@@ -127,7 +134,7 @@ def rig_weapon (weapon):
       'target': ['root', 'torso'],
       'type': 'ARMATURE',
     },
-        {
+    {
       'name': mch_parent_weapon,
       'target': ['root', 'org_hand.l', 'org_hand.r'],
       'type': 'ARMATURE',
@@ -157,11 +164,11 @@ def rig_weapon (weapon):
         'type': 'AVERAGE',
         'vars': [
           {
-            'name': f'{ weapon }_to_master',
+            'name': f'{ weapon_custom_prop_prefix + weapon }_to_master',
             'targets': [
               {
                 'id_type': 'OBJECT',
-                'data_path': f'pose.bones["props"]["{ weapon }_to_master"]'
+                'data_path': f'pose.bones["props"]["{ weapon_custom_prop_prefix + weapon }_to_master"]'
               }
             ]
           }
@@ -176,11 +183,11 @@ def rig_weapon (weapon):
         'type': 'AVERAGE',
         'vars': [
           {
-            'name': f'{ weapon }_to_master',
+            'name': f'{ weapon_custom_prop_prefix + weapon }_to_master',
             'targets': [
               {
                 'id_type': 'OBJECT',
-                'data_path': f'pose.bones["props"]["{ weapon }_to_master"]'
+                'data_path': f'pose.bones["props"]["{ weapon_custom_prop_prefix + weapon }_to_master"]'
               }
             ]
           }
@@ -199,7 +206,7 @@ def rig_weapon (weapon):
             'targets': [
               {
                 'id_type': 'OBJECT',
-                'data_path': f'pose.bones["props"]["{ weapon }_master_parent"]'
+                'data_path': f'pose.bones["props"]["{ weapon_custom_prop_prefix + weapon }_master_parent"]'
               }
             ]
           }
@@ -214,11 +221,11 @@ def rig_weapon (weapon):
         'type': 'SCRIPTED',
         'vars': [
           {
-            'name': f'{ weapon }_parent',
+            'name': f'{ weapon_custom_prop_prefix + weapon }_parent',
             'targets': [
               {
                 'id_type': 'OBJECT',
-                'data_path': f'pose.bones["props"]["{ weapon }_parent"]'
+                'data_path': f'pose.bones["props"]["{ weapon_custom_prop_prefix + weapon }_parent"]'
               }
             ]
           }
@@ -233,11 +240,11 @@ def rig_weapon (weapon):
         'type': 'AVERAGE',
         'vars': [
           {
-            'name': f'{ weapon }_to_master',
+            'name': f'{ weapon_custom_prop_prefix + weapon }_to_master',
             'targets': [
               {
                 'id_type': 'OBJECT',
-                'data_path': f'pose.bones["props"]["{ weapon }_to_master"]'
+                'data_path': f'pose.bones["props"]["{ weapon_custom_prop_prefix + weapon }_to_master"]'
               }
             ]
           }
@@ -264,7 +271,12 @@ class OBJECT_OT_rig_weapon (get_operator()):
   #     return {'CANCELLED'}
 
   def execute(self, context):
+    # 编辑模式下
+    mode = get_mode()
+    if mode == 'POSE':
+      set_mode('EDIT')
+
     weapon_bone = get_selected_bone()
-    rig_weapon(weapon_bone.name)
+    rig_weapon(weapon_bone, context.scene.armature)
 
     return {'FINISHED'}

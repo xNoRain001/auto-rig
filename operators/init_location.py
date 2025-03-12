@@ -29,7 +29,7 @@ class OBJECT_OT_init_location (get_operator()):
     location = snap_cursor_to_selected()
 
     if type == 'side_01':
-      scene.side_01_head_location = location
+      scene.side_01_head_location_ = location
     elif type == 'side_02':
       scene.side_02_head_location = location
     elif type == 'heel':

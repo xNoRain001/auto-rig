@@ -1,4 +1,5 @@
 bl_category = 'Auto Rig'
+weapon_custom_prop_prefix = 'auto_rig_weapon_'
 bone_names = [
   'root',
   'def_hips', 'def_spine_01', 'def_spine_02', 'def_chest', 'def_neck',
