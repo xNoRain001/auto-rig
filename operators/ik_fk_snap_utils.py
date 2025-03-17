@@ -95,9 +95,9 @@ def snap_func (fk_or_ik, leg_or_arm, side):
 
   props_collection.is_visible = False
 
-class OBJECT_OT_snap_utils (get_operator()):
-    bl_idname = 'object.snap_utils'
-    bl_label = 'Snap Utils'
+class OBJECT_OT_ik_fk_snap_utils (get_operator()):
+    bl_idname = 'object.ik_fk_snap_utils'
+    bl_label = 'IK FK Snap Utils'
     param: get_props().StringProperty()
 
     def execute(self, context):

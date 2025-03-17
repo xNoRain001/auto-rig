@@ -12,6 +12,7 @@ from .add_line_width import add_line_width
 from .add_weapon_props import add_weapon_props
 from .add_def_bones import add_def_bones
 from .add_tweak_bone_number import add_tweak_bone_number
+from .add_weapon import add_weapon
 
 classes = ()
 
@@ -30,6 +31,7 @@ def register():
   # add_weapon_props()
   add_def_bones()
   add_tweak_bone_number()
+  add_weapon()
   
 def unregister():
   # unregister_classes(classes)

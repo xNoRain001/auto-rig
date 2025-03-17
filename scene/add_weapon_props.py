@@ -9,7 +9,7 @@ from ..libs.blender_utils import (
 )
 
 from ..const import weapon_custom_prop_prefix
-from ..operators.snap_utils import auto_insert_keyframe
+from ..operators.ik_fk_snap_utils import auto_insert_keyframe
 
 def get_world_matrix (armature, pose_bone):
   world_matrix = armature.matrix_world @ pose_bone.matrix

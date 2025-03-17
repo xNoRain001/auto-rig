@@ -107,7 +107,7 @@ def check_armature (self, armature):
 def run_checker (self, context):
   scene = context.scene
   armature = scene.armature
-  side_01_head_location = scene.side_01_head_location_
+  side_01_head_location = scene.side_01_head_location
   side_02_head_location = scene.side_02_head_location
   heel_location = scene.heel_location
   foot_tip_location = scene.foot_tip_location
@@ -156,9 +156,9 @@ def symmetrize_bones ():
 
   symmetrize_bones_()
   
-class OBJECT_OT_init_rig (get_operator()):
-  bl_idname = 'object.init_rig'
-  bl_label = 'Init Rig'
+class OBJECT_OT_auto_rig (get_operator()):
+  bl_idname = 'object.auto_rig'
+  bl_label = 'Auto Rig'
 
   def invoke(self, context, event):
     passing = run_checker(self, context)

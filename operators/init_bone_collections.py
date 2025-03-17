@@ -11,7 +11,7 @@ from ..libs.blender_utils import (
   active_object_,
   get_bone_collections
 )
-from .add_wiggle import check_armature
+from .bone_wiggle import check_armature
 
 def add_org_bone (bones, map):
   for bone in bones:
@@ -277,7 +277,10 @@ def gen_color_map (map, scene):
 
 def assign_collection (map, color_map, armature):
   pose_bones = get_pose_bones()
-  visible = ['root', 'torso', 'arm_ik.l', 'arm_ik.r', 'hand.l', 'hand.r', 'leg_ik.l', 'leg_ik.r']
+  visible = [
+    'root', 'torso', 'arm_ik.l', 'arm_ik.r', 'hand.l', 'hand.r', 'leg_ik.l', 
+    'leg_ik.r'
+  ]
   # not_visible = ['def', 'org', 'mch', 'props']
   bone_collections = get_bone_collections(armature)
 

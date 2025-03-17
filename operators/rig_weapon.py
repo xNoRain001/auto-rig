@@ -1,9 +1,9 @@
 from ..libs.blender_utils import (
   get_operator, 
-  get_selected_bone, 
   get_pose_bone, 
-  get_mode,
-  set_mode
+  set_mode,
+  report_error,
+  get_edit_bone
 )
 from ..bones import _init_bones
 from ..bones.init_parent import _init_parent
@@ -13,6 +13,7 @@ from ..patch.add_custom_props import _add_custom_props
 from ..scene.add_weapon_props import add_weapon_props
 import json
 from ..const import weapon_custom_prop_prefix
+from .bone_wiggle import check_armature
 
 def update_weapons (weapon_name):
   props_bone = get_pose_bone('props')
@@ -258,25 +259,52 @@ def rig_weapon (weapon_bone, armature):
   _init_drivers(driver_config)
   add_weapon_props([weapon])
 
+def check_weapon (self, weapon):
+  passing = True
+
+  if not weapon:
+    passing = False
+    report_error(self, 'weapon 不存在')
+    
+  return passing
+  
+def run_checker (self, context):
+  scene = context.scene
+  armature = scene.armature
+  weapon = scene.weapon
+  passing = True
+  checkers = [check_weapon, check_armature]
+  params = [[self, weapon], [self, armature]]
+
+  for index, checker in enumerate(checkers):
+    passing = checker(*params[index])
+
+    if not passing:
+      passing = False
+
+      break
+
+  return passing
+
 class OBJECT_OT_rig_weapon (get_operator()):
   bl_idname = "object.rig_weapon"
   bl_label = "Rig Weapon"
 
-  # def invoke(self, context, event):
-  #   passing = run_checker(self, context)
+  def invoke(self, context, event):
+    passing = run_checker(self, context)
   
-  #   if passing:
-  #     return self.execute(context)
-  #   else:
-  #     return {'CANCELLED'}
+    if passing:
+      return self.execute(context)
+    else:
+      return {'CANCELLED'}
 
   def execute(self, context):
-    # 编辑模式下
-    mode = get_mode()
-    if mode == 'POSE':
-      set_mode('EDIT')
+    set_mode('EDIT')
+    scene = context.scene
+    weapon = scene.weapon
+    armature = scene.armature
 
-    weapon_bone = get_selected_bone()
-    rig_weapon(weapon_bone, context.scene.armature)
+    weapon_bone = get_edit_bone(weapon)
+    rig_weapon(weapon_bone, armature)
 
     return {'FINISHED'}

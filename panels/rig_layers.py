@@ -1,5 +1,6 @@
 from ..libs.blender_utils import get_bone_collections, get_panel, get_pose_bone
 from ..const import bl_category
+from .custom_props import show_panel
 
 rig_layer_map = {
   'visible': [
@@ -29,21 +30,25 @@ class VIEW3D_PT_rig_layers (get_panel()):
   bl_label = "Rig Layers"
   bl_idname = "VIEW3D_PT_rig_layers"
 
+  @classmethod
+  def poll(cls, context):
+    return show_panel(context)
+
   def draw(self, context):
     armature = context.scene.armature
+    layout = self.layout
+    box = layout.box()
 
-    if armature:
-      layout = self.layout
-      bone_collections = get_bone_collections(armature)
+    bone_collections = get_bone_collections(armature)
 
-      for visible_collection in rig_layer_map['visible']:
-        row = layout.row()
+    for visible_collection in rig_layer_map['visible']:
+      row = box.row()
 
-        for visible_collection_name in visible_collection:
-          if visible_collection_name in bone_collections:
-            row.prop(
-              bone_collections[visible_collection_name], 
-              'is_visible', 
-              toggle = True, 
-              text = visible_collection_name
-            )
+      for visible_collection_name in visible_collection:
+        if visible_collection_name in bone_collections:
+          row.prop(
+            bone_collections[visible_collection_name], 
+            'is_visible', 
+            toggle = True, 
+            text = visible_collection_name
+          )

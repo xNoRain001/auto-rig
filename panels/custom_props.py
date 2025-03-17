@@ -11,24 +11,27 @@ not_visible = set([
   'weapons'
 ])
 
+def show_panel (context):
+  armature = context.scene.armature
+
+  if armature:
+    bone = get_pose_bone('props', armature)
+
+    if bone:
+      return True
+    
+  return False
+
 class VIEW3D_PT_custom_props (get_panel()):
   bl_space_type = 'VIEW_3D'
   bl_region_type = 'UI'
   bl_category = bl_category
-  bl_label = "Custom Props"
+  bl_label = "Custom Properties "
   bl_idname = "VIEW3D_PT_custom_props"
 
   @classmethod
   def poll(cls, context):
-    armature = context.scene.armature
-
-    if armature:
-      bone = get_pose_bone('props', armature)
-
-      if bone:
-        return True
- 
-    return False
+    return show_panel(context)
 
   def draw(self, context):
     scene = context.scene

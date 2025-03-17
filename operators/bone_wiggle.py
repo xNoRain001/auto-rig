@@ -281,9 +281,9 @@ def init_wiggle (scene):
 
   return bone_config
 
-class OBJECT_OT_add_wiggle (get_operator()):
-  bl_idname = "object.add_wiggle"
-  bl_label = "Add Wiggle"
+class OBJECT_OT_bone_wiggle (get_operator()):
+  bl_idname = "object.bone_wiggle"
+  bl_label = "Bone Wiggle"
 
   def invoke(self, context, event):
     passing = run_checker(self, context)
