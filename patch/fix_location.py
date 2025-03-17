@@ -11,7 +11,7 @@ v_map = {
   'mch_foot_roll.l': [['tail', 'heel_location']],
   'ik_foot.l': [['head', 'foot_tip_location']],
   'mch_roll_side_01.l': [
-    ['head', 'side_01_head_location_'],
+    ['head', 'side_01_head_location'],
     ['tail', 'side_02_head_location'],
   ]
 }

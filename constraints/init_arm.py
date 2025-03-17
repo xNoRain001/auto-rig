@@ -1,22 +1,14 @@
 from ..libs.blender_utils import get_edit_bone
 from .init_torso import common_stretch_config
+from ..bones.init_arm import arm_tweak_bone_names
 
 def init_arm ():
   config = []
   org_bone_names = ['org_arm.l', 'org_forearm.l', 'org_hand.l']
-  sub_bone_names = [
-    'org_arm_01.l', 'org_arm_02.l', 'org_arm_03.l', 'org_arm_04.l',
-    'org_forearm_01.l', 'org_forearm_02.l', 'org_forearm_03.l', 'org_forearm_04.l'
-  ]
-  _org_bone_names = []
-
-  for sub_bone_name in sub_bone_names:
-    if get_edit_bone(sub_bone_name):
-      _org_bone_names.append(sub_bone_name)
 
   # COPY_ROTATION 要在 STRETCH_TO 之前
   influence_list = [0.1, 0.3, 0.7, 1, 0.1, 0.3, 0.7, 1]
-  for index, org_bone_name in enumerate(_org_bone_names):
+  for index, org_bone_name in enumerate(arm_tweak_bone_names):
     if org_bone_name.startswith('org_arm_'):
       prefix = 'mch_switch_arm.l'
     else:
@@ -32,7 +24,7 @@ def init_arm ():
     })
 
   common_stretch_config(org_bone_names, config)
-  common_stretch_config(_org_bone_names, config)
+  common_stretch_config(arm_tweak_bone_names, config)
   config[-1]['target'] = 'tweak_hand.l'
 
   config.extend([

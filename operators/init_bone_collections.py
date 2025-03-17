@@ -4,14 +4,11 @@ from ..libs.blender_utils import (
   get_edit_bone, 
   select_bone, 
   deselect, 
-  get_active_object, 
-  get_context, 
   get_armature, 
   get_operator,
   get_edit_bones,
   get_pose_bones,
   active_object_,
-  get_object_,
   get_bone_collections
 )
 from .add_wiggle import check_armature
@@ -338,18 +335,13 @@ def init_collection (scene):
   color_map = gen_color_map(map, scene)
   assign_collection(map, color_map, armature)
 
-
 def run_checker (
   self,
   armature
 ):
   passing = True
-  checkers = [
-    check_armature
-  ]
-  params = [
-    [self, armature],
-  ]
+  checkers = [check_armature]
+  params = [[self, armature]]
 
   for index, checker in enumerate(checkers):
     passing = checker(*params[index])
@@ -365,12 +357,16 @@ class OBJECT_OT_init_bone_collection (get_operator()):
   bl_idname = 'object.init_bone_collection'
   bl_label = 'Init Bone Collection'
 
-  def execute(self, context):
-    scene = context.scene
-    armature = scene.armature
+  def invoke(self, context, event):
+    armature = context.scene.armature
     passing = run_checker(self, armature)
-
+  
     if passing:
-      init_collection(scene)
+      return self.execute(context)
+    else:
+      return {'CANCELLED'}
+
+  def execute(self, context):
+    init_collection(context.scene)
 
     return {'FINISHED'}

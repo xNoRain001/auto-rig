@@ -47,10 +47,10 @@ def _init_bones (config, scene = None):
 def init_bones (scene):
   init_org_bones()
   hand_config = init_hand()
-  arm_config = init_arm()
+  arm_config = init_arm(scene)
   torso_config = init_torso()
   props_config = init_props()
-  leg_config = init_leg()
+  leg_config = init_leg(scene)
   configs = [props_config, torso_config, hand_config, arm_config, leg_config]
 
   for config in configs:

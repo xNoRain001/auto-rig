@@ -12,3 +12,4 @@ bone_names = [
   'def_finger_d_01', 'def_finger_d_02', 'def_finger_d_03', 
   'def_leg', 'def_shin', 'def_foot', 'def_toes'
 ]
+debug = True

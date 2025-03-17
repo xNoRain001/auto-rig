@@ -1,6 +1,10 @@
 from ..libs.blender_utils import get_edit_bone
+from .init_arm import init_tweak_bones
 
-def init_leg ():
+leg_tweak_bone_names = []
+
+def init_leg (scene):
+  leg_tweak_bone_names.clear()
   config = []
   org_bone_names = ['org_leg.l', 'org_shin.l', 'org_foot.l']
   org_toes_bone_name = 'org_toes.l'
@@ -187,15 +191,11 @@ def init_leg ():
       },
     })
 
-  org_tweak_bone_names = [
-    # 'org_leg_01.l', 'org_leg_02.l', 'org_leg_03.l', 'org_leg_04.l',
-    # 'org_shin_01.l', 'org_shin_02.l', 'org_shin_03.l', 'org_shin_04.l'
-  ]
-
-  for org_tweak_bone_name in org_tweak_bone_names:
+  init_tweak_bones(scene, 'leg', leg_tweak_bone_names)
+  for tweak_bone_name in leg_tweak_bone_names:
     config.append({
-      'name': org_tweak_bone_name.replace('org_', 'tweak_'),
-      'source': org_tweak_bone_name,
+      'name': tweak_bone_name.replace('org_', 'tweak_'),
+      'source': tweak_bone_name,
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 0.5

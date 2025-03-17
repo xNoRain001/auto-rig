@@ -1,7 +1,5 @@
 from ..const import bl_category, weapon_custom_prop_prefix
-from ..libs.blender_utils import get_panel, get_pose_bone, get_types
-import json
-from ..scene.add_weapon_props import add_weapon_props
+from ..libs.blender_utils import get_panel, get_pose_bone
 
 i = len(weapon_custom_prop_prefix)
 not_visible = set([
@@ -9,9 +7,9 @@ not_visible = set([
   'leg_fk_to_ik_l',
   'leg_fk_to_ik_r',
   'arm_fk_to_ik_l',
-  'arm_fk_to_ik_r'
+  'arm_fk_to_ik_r',
+  'weapons'
 ])
-init = False
 
 class VIEW3D_PT_custom_props (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -42,12 +40,13 @@ class VIEW3D_PT_custom_props (get_panel()):
     for prop_name in bone.keys():
       if prop_name in not_visible:
         continue
- 
-      row = box.row()
       
       if prop_name.startswith(weapon_custom_prop_prefix):
-        row.label(text = prop_name[i:])
-        row.prop(bone, prop_name, text = '')
+        if hasattr(scene, prop_name):
+          row = box.row()
+          row.label(text = prop_name[i:])
+          row.prop(scene, prop_name, text = '')
       else:
+        row = box.row()
         row.label(text = prop_name)
         row.prop(bone, f'["{ prop_name }"]', text = '')

@@ -1,4 +1,19 @@
-def init_arm ():
+def _init_tweak_bones (v, type, container):
+  if v:
+    for i in range(1, v + 1):
+      container.append(f'org_{ type }_0{ i }.l')
+
+def init_tweak_bones (scene, type, container):
+  is_arm = type == 'arm'
+  v = 'arm' if is_arm else 'leg'
+  v2 = 'forearm' if is_arm else 'shin'
+  _init_tweak_bones(getattr(scene, f'{ v }_tweak_bone_number'), v, container)
+  _init_tweak_bones(getattr(scene, f'{ v2 }_tweak_bone_number'), v2, container)
+
+arm_tweak_bone_names = []
+
+def init_arm (scene):
+  arm_tweak_bone_names.clear()
   config = []
   org_bone_names = ['org_arm.l', 'org_forearm.l', 'org_hand.l']
   no_mch_prefix_set = set(['org_hand.l'])
@@ -132,15 +147,11 @@ def init_arm ():
     },
   ])
 
-  org_tweak_bone_names = [
-    'org_arm_01.l', 'org_arm_02.l', 'org_arm_03.l', 'org_arm_04.l',
-    'org_forearm_01.l', 'org_forearm_02.l', 'org_forearm_03.l', 'org_forearm_04.l'
-  ]
-
-  for org_tweak_bone_name in org_tweak_bone_names:
+  init_tweak_bones(scene, 'arm', arm_tweak_bone_names)
+  for tweak_bone_name in arm_tweak_bone_names:
     config.append({
-      'name': org_tweak_bone_name.replace('org_', 'tweak_'),
-      'source': org_tweak_bone_name,
+      'name': tweak_bone_name.replace('org_', 'tweak_'),
+      'source': tweak_bone_name,
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 0.5

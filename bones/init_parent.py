@@ -1,10 +1,17 @@
 from ..libs.blender_utils import get_edit_bone
+from .init_arm import arm_tweak_bone_names
+from .init_leg import leg_tweak_bone_names
 
 def set_parent (bone, target, use_connect = False):
   bone.use_connect = use_connect
   bone.parent = target
 
 def _init_parent (config):
+  # TODO:
+  # for tweak_bone_name in arm_tweak_bone_names:
+  #   # org_arm_01.l
+  #   org_bone = get_edit_bone(tweak_bone_name)
+
   for item in config:
     bone_name, parent_bone_name, use_connect = item
     bone = get_edit_bone(bone_name)

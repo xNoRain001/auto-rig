@@ -4,8 +4,23 @@ from ..libs.blender_utils import (
   get_active_object, 
   get_ops, 
   get_props, 
-  get_operator
+  get_operator,
+  select_bone,
+  deselect_bone
 )
+
+def auto_insert_keyframe (pose_bones):
+  if get_context().scene.tool_settings.use_keyframe_insert_auto:
+    if not isinstance(pose_bones, list):
+      pose_bones = [pose_bones]
+      
+    for pose_bone in pose_bones:
+      bones = get_active_object().data.bones
+      old = bones.active
+      bones.active = pose_bone.bone
+      get_ops().anim.keyframe_insert_menu(type = 'Available')
+      deselect_bone(pose_bone.bone)
+      bones.active = old
 
 def snap (source, target):
   source_bone_matrix = source.bone.matrix_local

@@ -7,3 +7,4 @@ def add_armature ():
     type = get_types('Object'),
     poll = lambda self, o: o.type == 'ARMATURE'
   )
+  

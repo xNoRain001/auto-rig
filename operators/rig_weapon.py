@@ -59,7 +59,6 @@ def rig_weapon (weapon_bone, armature):
   update_weapons(weapon)
   custom_prop_config = gen_custom_props_config(weapon)
   _add_custom_props(custom_prop_config)
-  add_weapon_props([weapon])
   mch_parent_weapon = f'mch_parent_{ weapon }'
   mch_parent_weapon_to_master = f'mch_parent_{ weapon }_to_master'
   weapon_master = f'{ weapon }_master'
@@ -257,6 +256,7 @@ def rig_weapon (weapon_bone, armature):
   _init_parent(parent_config)
   _init_constraints(constraint_config)
   _init_drivers(driver_config)
+  add_weapon_props([weapon])
 
 class OBJECT_OT_rig_weapon (get_operator()):
   bl_idname = "object.rig_weapon"

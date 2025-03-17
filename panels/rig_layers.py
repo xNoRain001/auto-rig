@@ -33,23 +33,17 @@ class VIEW3D_PT_rig_layers (get_panel()):
     armature = context.scene.armature
 
     if armature:
-      pass
-      # props_bone = get_pose_bone('props', armature)
+      layout = self.layout
+      bone_collections = get_bone_collections(armature)
 
-      # if not props_bone or not props_bone['initialized']:
-      #   return
-      
-      # layout = self.layout
-      # bone_collections = get_bone_collections(armature)
+      for visible_collection in rig_layer_map['visible']:
+        row = layout.row()
 
-      # for visible_collection in rig_layer_map['visible']:
-      #   row = layout.row()
-
-      #   for visible_collection_name in visible_collection:
-      #     if visible_collection_name in bone_collections:
-      #       row.prop(
-      #         bone_collections[visible_collection_name], 
-      #         'is_visible', 
-      #         toggle = True, 
-      #         text = visible_collection_name
-      #       )
+        for visible_collection_name in visible_collection:
+          if visible_collection_name in bone_collections:
+            row.prop(
+              bone_collections[visible_collection_name], 
+              'is_visible', 
+              toggle = True, 
+              text = visible_collection_name
+            )
