@@ -112,9 +112,4 @@ def init_arm ():
       }
     ])
 
-  # TODO:
-  # def set_ik_stretch (ik_bones) :
-  #  get_pose_bone(ik_bones[0]).ik_stretch = 0.01
-  #  get_pose_bone(ik_bones[1]).ik_stretch = 0.01
-
   return config

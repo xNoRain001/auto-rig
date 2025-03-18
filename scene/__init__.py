@@ -13,6 +13,12 @@ from .add_weapon_props import add_weapon_props
 from .add_def_bones import add_def_bones
 from .add_tweak_bone_number import add_tweak_bone_number
 from .add_weapon import add_weapon
+from .add_rotation import add_rotation
+from .add_scale import add_scale
+from .add_shape import add_shape
+from .add_show_wire import add_show_wire
+from .add_translation import add_translation
+from .add_wire_width import add_wire_width
 
 classes = ()
 
@@ -32,6 +38,12 @@ def register():
   add_def_bones()
   add_tweak_bone_number()
   add_weapon()
+  add_rotation()
+  add_scale()
+  add_shape()
+  add_show_wire()
+  add_translation()
+  add_wire_width()
   
 def unregister():
   # unregister_classes(classes)

@@ -53,3 +53,7 @@ class VIEW3D_PT_custom_props (get_panel()):
         row = box.row()
         row.label(text = prop_name)
         row.prop(bone, f'["{ prop_name }"]', text = '')
+
+    # row = box.row()
+    # row.label(text = 'arm ik stretch')
+    # row.prop(get_pose_bone('mch_ik_arm.l'), 'ik_stretch', text = '')

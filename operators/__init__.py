@@ -12,6 +12,9 @@ from .remove_target import OBJECT_OT_remove_target
 from .bone_wiggle import OBJECT_OT_bone_wiggle
 from .init_def_bones import OBJECT_OT_init_def_bones
 from .refresh_weapon import OBJECT_OT_refresh_weapon
+from .clear_bone_widget import OBJECT_OT_clear_bone_widget
+from .clear_unused_widget import OBJECT_OT_clear_unused_bone_widget
+from .reset_transform import OBJECT_OT_reset_transform
 
 classes = (
   OBJECT_OT_auto_rig,
@@ -26,7 +29,10 @@ classes = (
   OBJECT_OT_remove_target,
   OBJECT_OT_bone_wiggle,
   OBJECT_OT_init_def_bones,
-  OBJECT_OT_refresh_weapon
+  OBJECT_OT_refresh_weapon,
+  OBJECT_OT_clear_bone_widget,
+  OBJECT_OT_clear_unused_bone_widget,
+  OBJECT_OT_reset_transform
 )
 
 def register():

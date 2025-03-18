@@ -12,17 +12,17 @@ def add_bone_widget (
   shape = kwargs[prop]
   del kwargs[prop]
   pose_bone.bone.select = True
-  name = pose_bone.name
-  mirror_name = None
-  mirror_bone = None
-  if name.endswith('.l'):
-    mirror_name = name[:-2] + '.r'
-    mirror_bone = get_pose_bone(mirror_name)
-    mirror_bone.bone.select = True
+  # name = pose_bone.name
+  # mirror_name = None
+  # mirror_bone = None
+  # if name.endswith('.l'):
+  #   mirror_name = name[:-2] + '.r'
+  #   mirror_bone = get_pose_bone(mirror_name)
+  #   mirror_bone.bone.select = True
   get_context().scene.shape = shape
   pose_bone.bone.select = False
-  if name.endswith('.l'):
-    mirror_bone.bone.select = False
+  # if name.endswith('.l'):
+  #   mirror_bone.bone.select = False
 
 def gen_shape_map ():
   shape_map = {
@@ -66,8 +66,7 @@ def gen_shape_map ():
 
   return shape_map
 
-def init_bone_widget (armature):
-  active_object_(get_object_(armature))
+def init_bone_widget (scene):
   set_mode('POSE')
   shape_map = gen_shape_map()
 
@@ -81,25 +80,11 @@ def init_bone_widget (armature):
     if pose_bone.name.startswith('tweak_'):
       add_bone_widget(pose_bone, **{ 'shape': 'Sphere' })
 
-def checker (self, scene):
-  passing = True
-
-  if not hasattr(scene, 'shape'):
-    passing = False
-    report_error(self, 'Cannot found bone widget addon')
-
-  return passing
-
 class OBJECT_OT_init_bone_widgets (get_operator()):
   bl_idname = 'object.init_bone_widget'
   bl_label = 'Init Bone Widget'
 
   def execute(self, context):
-    scene = context.scene
-    armature = context.scene.armature
-    passing = checker(self, scene)
-
-    if passing:
-      init_bone_widget(armature)
+    init_bone_widget(context.scene)
 
     return {'FINISHED'}

@@ -1,4 +1,3 @@
-from ..scene.add_rotation_mode import set_rotation_mode
 from ..libs.blender_utils import (
   set_mode,
   select_bone,
@@ -14,7 +13,8 @@ from ..libs.blender_utils import (
 from ..bones import init_bones
 from ..constraints import init_constraints
 from ..drivers import init_drivers
-# from ..operators import 
+from .init_bone_widgets import init_bone_widget
+from .init_bone_collections import init_collection
 
 def check_foot_ctrl (
   self,
@@ -170,11 +170,11 @@ class OBJECT_OT_auto_rig (get_operator()):
 
   def execute(self, context):
     scene = context.scene
-    # TODO: 相关骨骼全部显示
-    # set_rotation_mode(armature, rotation_mode)
     init_bones(scene)
     init_constraints()
+    init_bone_widget(scene)
     symmetrize_bones()
     init_drivers()
+    init_collection(scene)
 
     return {'FINISHED'}

@@ -1,4 +1,4 @@
-from ..libs.blender_utils import select_bone, get_edit_bone, get_ops, deselect_bones
+from ..libs.blender_utils import select_bone, get_edit_bone, get_ops, deselect_bones, update_view
 
 def pole_target (scene, config):
   deselect_bones()
