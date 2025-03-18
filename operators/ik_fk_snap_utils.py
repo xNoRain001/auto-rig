@@ -1,99 +1,131 @@
 from ..libs.blender_utils import (
-  get_pose_bone, 
-  get_context, 
-  get_active_object, 
   get_ops, 
   get_props, 
+  update_view,
   get_operator,
-  select_bone,
-  deselect_bone
+  get_pose_bone, 
+  select_pose_bone,
+  get_active_object,
+  deselect_pose_bones,
+  get_selected_pose_bone,
+  use_keyframe_insert_auto
 )
 
-def auto_insert_keyframe (pose_bones):
-  if get_context().scene.tool_settings.use_keyframe_insert_auto:
-    if not isinstance(pose_bones, list):
-      pose_bones = [pose_bones]
-      
-    for pose_bone in pose_bones:
-      bones = get_active_object().data.bones
-      old = bones.active
-      bones.active = pose_bone.bone
-      get_ops().anim.keyframe_insert_menu(type = 'Available')
-      deselect_bone(pose_bone.bone)
-      bones.active = old
+from ..scene.add_weapon_props import get_world_matrix
 
-def snap (source, target):
-  source_bone_matrix = source.bone.matrix_local
-  target_bone_matrix = target.bone.matrix_local
-  offset_matrix = source_bone_matrix.inverted() @ target_bone_matrix
-  source_world_matrix = source.matrix
-  target.matrix = source_world_matrix @ offset_matrix
+def show_collection (ik_collection, fk_collection, props_collection):
+  # 骨骼必须可见才能插帧，这其中就要求集合也可见
+  props_collection.is_visible = True
+  ik_collection.is_visible = True
+  fk_collection.is_visible = True
 
-def snap_func (fk_or_ik, leg_or_arm, side):
+def insert_keyframe (bones):
+  selected_pose_bone = get_selected_pose_bone()
+  deselect_pose_bones()
+
+  for bone in bones:
+    select_pose_bone(bone.bone)
+    get_ops().anim.keyframe_insert_menu(type='Available')
+  
+  # 还原回之前选中的骨骼
+  select_pose_bone(selected_pose_bone)
+
+def update_collection_visible (
+  is_fk, 
+  old_value, 
+  ik_collection, 
+  fk_collection, 
+  props_collection
+):
+  setattr(fk_collection if is_fk else ik_collection, 'is_visible', True)
+  setattr(ik_collection if is_fk else fk_collection, 'is_visible', False)
+
+  if old_value is not None:
+    props_collection.is_visible = old_value
+
+def update_matrix (source, target):
+  target.matrix = get_world_matrix(get_active_object(), source)
+
+  # source_bone_matrix = source.bone.matrix_local
+  # target_bone_matrix = target.bone.matrix_local
+  # offset_matrix = source_bone_matrix.inverted() @ target_bone_matrix
+  # source_world_matrix = source.matrix
+  # target.matrix = source_world_matrix @ offset_matrix
+
+def ik_to_fk (is_leg, side):
+  fk_arm = get_pose_bone(f"fk_{ 'leg' if is_leg else 'arm'}.{ side }")
+  fk_forearm = get_pose_bone(f"fk_{ 'shin' if is_leg else 'forearm'}.{ side }")
+  fk_hand = get_pose_bone(f"fk_{ 'foot' if is_leg else 'hand'}.{ side }")
+  mch_ik_fk_arm_pole = \
+    get_pose_bone(f"mch_ik_fk_{ 'leg' if is_leg else 'arm'}_pole.{ side }")
+  ik_arm = get_pose_bone(f"mch_ik_{ 'leg' if is_leg else 'arm'}.{ side }")
+  ik_forearm = \
+    get_pose_bone(f"mch_ik_{ 'shin' if is_leg else 'forearm'}.{ side }")
+  ik_hand = get_pose_bone(f"ik_{ 'foot' if is_leg else 'hand'}.{ side }")
+  ik_pole = get_pose_bone(f"{ 'leg' if is_leg else 'arm'}_pole.{ side }")
+  update_matrix(ik_arm, fk_arm)
+  update_view()
+  # fk_arm 移动到 ik_arm 的位置时，pole 之间可能有微小的偏移，需要修复它
+  update_matrix(ik_pole, mch_ik_fk_arm_pole)
+  update_view()
+  update_matrix(ik_forearm, fk_forearm)
+  update_view()
+  update_matrix(ik_hand, fk_hand)
+  update_view()
+  
+  return [
+    [fk_arm, fk_forearm, fk_hand],
+    ik_hand.bone.collections[0],
+    fk_arm.bone.collections[0]
+  ]
+
+def fk_to_ik (is_leg, side):
+  fk_hand = get_pose_bone(f"fk_{ 'foot' if is_leg else 'hand'}.{ side }")
+  mch_ik_fk_arm_pole = \
+    get_pose_bone(f"mch_ik_fk_{ 'leg' if is_leg else 'arm'}_pole.{ side }")
+  ik_hand = get_pose_bone(f"ik_{ 'foot' if is_leg else 'hand'}.{ side }")
+  ik_pole = get_pose_bone(f"{ 'leg' if is_leg else 'arm'}_pole.{ side }")
+  update_matrix(fk_hand, ik_hand)
+  update_view()
+  update_matrix(mch_ik_fk_arm_pole, ik_pole)
+  update_view()
+
+  return [
+    [ik_hand, ik_pole],
+    ik_hand.bone.collections[0],
+    fk_hand.bone.collections[0]
+  ]
+
+def on_snap (fk_or_ik, leg_or_arm, side):
   props = get_pose_bone('props')
-  leg = leg_or_arm == 'leg'
-  prop = f"{ 'leg' if leg else 'arm' }_fk_to_ik_{ side }"
+  is_leg = leg_or_arm == 'leg'
+  prop = f"{ 'leg' if is_leg else 'arm' }_fk_to_ik_{ side }"
   value = props[prop]
   is_fk = fk_or_ik == 'fk'
-  is_ik = fk_or_ik == 'ik'
+  is_ik = not is_fk
 
   # 处理 ik 切换到 ik 或者 fk 切换到 fk
   if (is_fk and not value) or (is_ik and value):
     return
   
-  context = get_context()
   props[prop] = False if is_fk else True
-  bones = [props]
-  ik_collection = None
-  fk_collection = None
+  bones, ik_collection, fk_collection = \
+    ik_to_fk(is_leg, side) if is_fk else fk_to_ik(is_leg, side)
   props_collection = props.bone.collections[0]
-
-  if is_fk:
-    fk_arm = get_pose_bone(f"fk_{ 'leg' if leg else 'arm'}.{ side }")
-    fk_forearm = get_pose_bone(f"fk_{ 'shin' if leg else 'forearm'}.{ side }")
-    fk_hand = get_pose_bone(f"fk_{ 'foot' if leg else 'hand'}.{ side }")
-    ik_arm = get_pose_bone(f"mch_ik_{ 'leg' if leg else 'arm'}.{ side }")
-    ik_forearm = get_pose_bone(f"mch_ik_{ 'shin' if leg else 'forearm'}.{ side }")
-    ik_hand = get_pose_bone(f"ik_{ 'foot' if leg else 'hand'}.{ side }")
-    snap(ik_arm, fk_arm)
-    context.view_layer.update()
-    snap(ik_forearm, fk_forearm)
-    context.view_layer.update()
-    snap(ik_hand, fk_hand)
-    context.view_layer.update()
-    bones.extend([fk_arm, fk_forearm, fk_hand])
-    ik_collection = ik_hand.bone.collections[0]
-    fk_collection = fk_arm.bone.collections[0]
-  else:
-    fk_hand = get_pose_bone(f"fk_{ 'foot' if leg else 'hand'}.{ side }")
-    mch_ik_fk_arm_pole = get_pose_bone(f"mch_ik_fk_{ 'leg' if leg else 'arm'}_pole.{ side }")
-    ik_hand = get_pose_bone(f"ik_{ 'foot' if leg else 'hand'}.{ side }")
-    ik_pole = get_pose_bone(f"{ 'leg' if leg else 'arm'}_pole.{ side }")
-    snap(fk_hand, ik_hand)
-    context.view_layer.update()
-    snap(mch_ik_fk_arm_pole, ik_pole)
-    context.view_layer.update()
-    bones.extend([ik_hand, ik_pole])
-    ik_collection = ik_hand.bone.collections[0]
-    fk_collection = fk_hand.bone.collections[0]
-
-  get_ops().pose.select_all(action='DESELECT')
-  # 骨骼必须可见才能插帧
-  props_collection.is_visible = True
-  ik_collection.is_visible = True
-  fk_collection.is_visible = True
-
-  if get_context().scene.tool_settings.use_keyframe_insert_auto:
-    for pbone in bones:
-      get_active_object().data.bones.active = pbone.bone
-      get_ops().anim.keyframe_insert_menu(type='Available')
-
-  if is_fk:
-    ik_collection.is_visible = False
-  else:
-    fk_collection.is_visible = False
-
-  props_collection.is_visible = False
+  old_value = None
+  
+  if use_keyframe_insert_auto():
+    old_value = props_collection.is_visible
+    show_collection(ik_collection, fk_collection, props_collection)
+    insert_keyframe(bones)
+  
+  update_collection_visible(
+    is_fk, 
+    old_value, 
+    ik_collection, 
+    fk_collection, 
+    props_collection
+  )
 
 class OBJECT_OT_ik_fk_snap_utils (get_operator()):
     bl_idname = 'object.ik_fk_snap_utils'
@@ -102,6 +134,6 @@ class OBJECT_OT_ik_fk_snap_utils (get_operator()):
 
     def execute(self, context):
       fk_or_ik, leg_or_arm, side = self.param.split('-')
-      snap_func(fk_or_ik, leg_or_arm, side)
+      on_snap(fk_or_ik, leg_or_arm, side)
 
       return {'FINISHED'}

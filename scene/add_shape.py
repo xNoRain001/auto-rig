@@ -55,7 +55,6 @@ def update_translation (pose_bone, custom_shape):
   _z = w * z * 0.01
   pose_bone.custom_shape_translation = (_x, _y, _z)
 
-import bpy
 def on_update (self, context):
   set_mode('POSE')
   pose_bones = get_selected_pose_bones() or []

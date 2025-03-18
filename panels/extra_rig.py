@@ -17,7 +17,6 @@ class VIEW3D_PT_extra_rig (get_panel()):
 
   def draw(self, context):
     scene = context.scene
-    armature = scene.armature
     layout = self.layout
 
     box = layout.box()
@@ -32,8 +31,14 @@ class VIEW3D_PT_extra_rig (get_panel()):
 
     box = layout.box()
     row = box.row()
-    data = armature.data
-    row.label(text = 'Weapon')
-    row.prop_search(scene, 'weapon', data, 'bones', text = '')
-    row = box.row()
-    row.operator(OBJECT_OT_rig_weapon.bl_idname, text = 'Rig Weapon')
+    row.label(text = 'Armature ')
+    row.prop(scene, 'armature', text = '')
+
+    armature = scene.armature
+    if armature:
+      row = box.row()
+      row.label(text = 'Weapon')
+      data = armature.data
+      row.prop_search(scene, 'weapon', data, 'bones', text = '')
+      row = box.row()
+      row.operator(OBJECT_OT_rig_weapon.bl_idname, text = 'Rig Weapon')

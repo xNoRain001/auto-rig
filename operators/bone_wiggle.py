@@ -13,7 +13,8 @@ from ..libs.blender_utils import (
   get_bone_collections,
   get_bone_chain_names,
   deselect_bones,
-  report_error
+  report_error,
+  get_active_object
 )
 from ..patch.add_custom_props import _add_custom_props
 from ..bones.init_org_bones import init_org_bones
@@ -297,7 +298,7 @@ class OBJECT_OT_bone_wiggle (get_operator()):
     scene = context.scene
     wiggle_prop = scene.wiggle_prop
     wiggle_influence = scene.wiggle_influence
-    _add_custom_props([{
+    _add_custom_props(get_active_object(), [{
       'prop_name': wiggle_prop,
       'config': {
         'min': 0,

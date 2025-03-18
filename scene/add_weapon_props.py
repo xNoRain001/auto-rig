@@ -5,11 +5,28 @@ from ..libs.blender_utils import (
   update_view,
   add_scene_custom_prop,
   get_current_frame,
-  set_current_frame
+  set_current_frame,
+  get_active_object,
+  get_ops,
+  deselect_bone,
+  use_keyframe_insert_auto,
 )
 
 from ..const import weapon_custom_prop_prefix
-from ..operators.ik_fk_snap_utils import auto_insert_keyframe
+
+def auto_insert_keyframe (pose_bones):
+  if use_keyframe_insert_auto():
+    if not isinstance(pose_bones, list):
+      pose_bones = [pose_bones]
+
+    bones = get_active_object().data.bones
+
+    for pose_bone in pose_bones:
+      old = bones.active
+      bones.active = pose_bone.bone
+      get_ops().anim.keyframe_insert_menu(type = 'Available')
+      deselect_bone(pose_bone.bone)
+      bones.active = old
 
 def get_world_matrix (armature, pose_bone):
   world_matrix = armature.matrix_world @ pose_bone.matrix
@@ -17,7 +34,7 @@ def get_world_matrix (armature, pose_bone):
   return arm_eval.matrix_world.inverted() @ world_matrix
 
 def get_offset_matrix (armature, pose_bone):
-  m1 = armature.matrix_world @pose_bone.bone.matrix_local
+  m1 = armature.matrix_world @ pose_bone.bone.matrix_local
   m2 = armature.matrix_world @ pose_bone.matrix
   return m2 - m1
 
@@ -47,7 +64,7 @@ def update_weapon_parent (prop, weapon_name, parents, default):
       return
    
     insert_keyframe([props_bone, mch_parent_weapon])
-    armature = get_context().scene.armature
+    armature = get_active_object()
     world_matrix = get_world_matrix(armature, weapon)
     world_matrix2 = get_world_matrix(armature, mch_parent_weapon)
     self[prop] = props_bone[prop] = value
@@ -73,7 +90,7 @@ def update_weapon_to_master (prop, weapon_name, default):
     if old_value == value:
       return
     
-    armature = get_context().scene.armature
+    armature = get_active_object()
     weapon = get_pose_bone(weapon_name)
     weapon_master = get_pose_bone(weapon_name + '_master')
     ik_hand_l = get_pose_bone('ik_hand.l')
@@ -113,7 +130,7 @@ def update_weapon_master_parent (prop, weapon_name, default):
     weapon_master = get_pose_bone(weapon_name + '_master')
     mch_parent_weapon_master = get_pose_bone('mch_parent_' + weapon_name + '_master')
     mch_parent_weapon = get_pose_bone('mch_parent_' + weapon_name)
-    armature = get_context().scene.armature
+    armature = get_active_object()
     world_matrix = get_world_matrix(armature, weapon_master)
     props_bone = get_pose_bone('props')
     bones = [props_bone, mch_parent_weapon_master, weapon_master, mch_parent_weapon, weapon]

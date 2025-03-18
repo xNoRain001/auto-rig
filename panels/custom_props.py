@@ -1,5 +1,5 @@
-from ..const import bl_category, weapon_custom_prop_prefix
-from ..libs.blender_utils import get_panel, get_pose_bone
+from ..const import bl_category, weapon_custom_prop_prefix, identifier
+from ..libs.blender_utils import get_panel, get_pose_bone, get_active_object
 
 i = len(weapon_custom_prop_prefix)
 not_visible = set([
@@ -12,13 +12,10 @@ not_visible = set([
 ])
 
 def show_panel (context):
-  armature = context.scene.armature
+  active_object = get_active_object()
 
-  if armature:
-    bone = get_pose_bone('props', armature)
-
-    if bone:
-      return True
+  if active_object.type == 'ARMATURE' and identifier in active_object:
+    return True
     
   return False
 
@@ -35,8 +32,7 @@ class VIEW3D_PT_custom_props (get_panel()):
 
   def draw(self, context):
     scene = context.scene
-    armature = scene.armature
-    bone = get_pose_bone('props', armature)
+    bone = get_pose_bone('props')
     # 黑色的背景
     box = self.layout.box()
 

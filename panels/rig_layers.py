@@ -1,4 +1,4 @@
-from ..libs.blender_utils import get_bone_collections, get_panel, get_pose_bone
+from ..libs.blender_utils import get_bone_collections, get_panel, get_active_object
 from ..const import bl_category
 from .custom_props import show_panel
 
@@ -35,7 +35,7 @@ class VIEW3D_PT_rig_layers (get_panel()):
     return show_panel(context)
 
   def draw(self, context):
-    armature = context.scene.armature
+    armature = get_active_object()
     layout = self.layout
     box = layout.box()
 

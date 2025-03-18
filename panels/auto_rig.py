@@ -16,7 +16,8 @@ class VIEW3D_PT_auto_rig (get_panel()):
 
     box = layout.box()
     row = box.row()
-    row.prop(scene, 'armature', text = 'Armature ')
+    row.label(text = 'Armature ')
+    row.prop(scene, 'armature', text = '')
 
     if not scene.armature:
       return
