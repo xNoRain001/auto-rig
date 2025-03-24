@@ -52,9 +52,6 @@ def insert_keyframe (bones):
 
 def update_weapon_parent (prop, weapon_name, parents, default):
   old_value = default
-  props_bone = get_pose_bone('props')
-  weapon = get_pose_bone(weapon_name)
-  mch_parent_weapon = get_pose_bone('mch_parent_' + weapon_name)
 
   def update (self, context):
     nonlocal old_value
@@ -62,7 +59,10 @@ def update_weapon_parent (prop, weapon_name, parents, default):
 
     if old_value == value:
       return
-   
+
+    props_bone = get_pose_bone('props')
+    weapon = get_pose_bone(weapon_name)
+    mch_parent_weapon = get_pose_bone('mch_parent_' + weapon_name)
     insert_keyframe([props_bone, mch_parent_weapon])
     armature = get_active_object()
     world_matrix = get_world_matrix(armature, weapon)

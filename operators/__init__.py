@@ -2,7 +2,7 @@ from ..libs.blender_utils import register_classes, unregister_classes
 from .auto_rig import OBJECT_OT_auto_rig
 from .init_bone_widgets import OBJECT_OT_init_bone_widgets
 from .reload_addon import OBJECT_OT_reload_addon
-from .init_bone_collections import OBJECT_OT_init_bone_collection
+from .init_bone_collections import OBJECT_OT_init_bone_collections
 from .ik_fk_snap_utils import OBJECT_OT_ik_fk_snap_utils
 from .soft_body import OBJECT_OT_soft_body
 from .init_location import OBJECT_OT_init_location
@@ -20,7 +20,7 @@ classes = (
   OBJECT_OT_auto_rig,
   OBJECT_OT_init_bone_widgets,
   OBJECT_OT_reload_addon,
-  OBJECT_OT_init_bone_collection,
+  OBJECT_OT_init_bone_collections,
   OBJECT_OT_ik_fk_snap_utils,
   OBJECT_OT_soft_body,
   OBJECT_OT_init_location,

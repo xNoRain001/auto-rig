@@ -1,7 +1,7 @@
 from ..libs.blender_utils import get_panel
 from ..const import bl_category
 from ..operators import (
-  OBJECT_OT_init_bone_collection, 
+  OBJECT_OT_init_bone_collections, 
   OBJECT_OT_init_def_bones,
   OBJECT_OT_refresh_weapon
 )
@@ -41,7 +41,7 @@ class VIEW3D_PT_helper (get_panel()):
     row.label(text = 'Rotation mode')
     row.prop(scene, 'rotation_mode', text = '')
     row = box.row()
-    row.operator(OBJECT_OT_init_bone_collection.bl_idname, text = 'Assign Collection')
+    row.operator(OBJECT_OT_init_bone_collections.bl_idname, text = 'Assign Collection')
     row = box.row()
     row.operator(OBJECT_OT_init_def_bones.bl_idname, text = 'Init Def Bones')
     row = box.row()

@@ -14,7 +14,11 @@ not_visible = set([
 def show_panel (context):
   active_object = get_active_object()
 
-  if active_object.type == 'ARMATURE' and identifier in active_object:
+  if (
+    active_object and 
+    active_object.type == 'ARMATURE' and 
+    identifier in active_object
+  ):
     return True
     
   return False

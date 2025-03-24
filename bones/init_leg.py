@@ -90,7 +90,7 @@ def init_leg (scene):
       'operator': 'extrude',
       'operator_config': {
         'head_or_tail': 'tail',
-        'scale_factor': (0, 0.1, 0)
+        'scale_factor': (0, 0.3, 0)
       }
     },
     {
@@ -136,6 +136,14 @@ def init_leg (scene):
       'operator_config': {
         'scale_factor': 1
       },
+    },
+    {
+      'name': 'mch_ik_fk_foot.l',
+      'source': 'ik_foot.l',
+      'operator': 'copy',
+      'operator_config': {
+        'scale_factor': 0.5
+      }
     },
     {
       'name': 'mch_parent_ik_foot.l',

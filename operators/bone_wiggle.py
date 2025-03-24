@@ -67,6 +67,7 @@ def check_wiggle_prop (self, wiggle_prop):
 def check_selected_bones (self):
   passing = True
   selected_bones = get_selected_pose_bones() if is_pose_mode() else get_selected_bones()
+  print(selected_bones)
 
   # OBJECT 模式下 selected_bones 为 None
   if not selected_bones or not len(selected_bones):
@@ -151,12 +152,19 @@ def init_wiggle (scene):
   set_mode('EDIT')
 
   for selected_bone_name in selected_bone_names:
-    bone_names = get_bone_chain_names(get_edit_bone(selected_bone_name))
+    bone = get_edit_bone(selected_bone_name)
+    root = bone.parent.name
+    bone_names = get_bone_chain_names(bone)
 
     if len(bone_names) == 1:
       continue
 
     for index, bone_name in enumerate(bone_names):
+      # fk bone 的父级是 mch bone，mch bone 的父级是 mch int bone,
+      # 每一个 mch int bone 复制对应的 phy bone 的变换，
+      # 当 phy bone 变换时，所有骨骼都会有相同的变换
+      # mch int bone 的父级是上一个 fk bone，mch bone 复制上一个 fk_bone 的变换，
+      # 当 fk bone 变换时，其他 fk bone 也会变换并且带有过渡效果
       tweak_bone_name = bone_name.replace('org_', 'tweak_')
       fk_bone_name = bone_name.replace('org_', 'fk_')
       mch_bone_name = bone_name.replace('org_', 'mch_')
@@ -195,6 +203,8 @@ def init_wiggle (scene):
             ]
           }
         })
+      else:
+        parent_config.append([phy_bone_name, root, False])
 
       if prev_fk_bone:
         parent_config.append([mch_int_bone_name, prev_fk_bone, False])
@@ -217,18 +227,21 @@ def init_wiggle (scene):
               'owner_space': 'LOCAL'
             }
           },
-           {
+          {
             'name': bone_names[index - 1],
             'target': tweak_bone_name,
             'type': 'STRETCH_TO',
           }
         ])
+      else:
+        # mch_int_bone_name 父级设置为 phy_bone_name 会比设置为 root 效果更好
+        parent_config.append([mch_int_bone_name, phy_bone_name, False])
 
       parent_config.extend([
         [bone_name, tweak_bone_name, False],
         [tweak_bone_name, fk_bone_name, False],
         [fk_bone_name, mch_bone_name, False],
-        [mch_bone_name, mch_int_bone_name, False],
+        [mch_bone_name, mch_int_bone_name, False]
       ])
 
       bone_config.extend([

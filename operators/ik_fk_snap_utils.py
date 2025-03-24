@@ -61,7 +61,7 @@ def ik_to_fk (is_leg, side):
   ik_arm = get_pose_bone(f"mch_ik_{ 'leg' if is_leg else 'arm'}.{ side }")
   ik_forearm = \
     get_pose_bone(f"mch_ik_{ 'shin' if is_leg else 'forearm'}.{ side }")
-  ik_hand = get_pose_bone(f"ik_{ 'foot' if is_leg else 'hand'}.{ side }")
+  ik_hand = get_pose_bone(f"{ 'mch_' if is_leg else '' }ik_{ 'foot' if is_leg else 'hand'}.{ side }")
   ik_pole = get_pose_bone(f"{ 'leg' if is_leg else 'arm'}_pole.{ side }")
   update_matrix(ik_arm, fk_arm)
   update_view()
@@ -72,10 +72,25 @@ def ik_to_fk (is_leg, side):
   update_view()
   update_matrix(ik_hand, fk_hand)
   update_view()
+
+  if is_leg:
+    # fk_foot 更新后，mch_ik_fk_foot 也会随着更新，fk 切换回 ik 时，ik_foot 更新
+    # 到 mch_ik_fk_foot 位置，如果不修正 mch_ik_fk_foot 位置，就会发生偏移
+    mch_ik_fk_foot = get_pose_bone(f'mch_ik_fk_foot.{ side }')
+    ik_foot = get_pose_bone(f'ik_foot.{ side }')
+    update_matrix(ik_foot, mch_ik_fk_foot)
+    update_view()
+
+    fk_toes = get_pose_bone(f'fk_toes.{ side }')
+
+    if fk_toes:
+      ik_toes = get_pose_bone(f'ik_toes.{ side }')
+      update_matrix(ik_toes, fk_toes)
+      update_view()
   
   return [
     [fk_arm, fk_forearm, fk_hand],
-    ik_hand.bone.collections[0],
+    ik_pole.bone.collections[0],
     fk_arm.bone.collections[0]
   ]
 
@@ -85,14 +100,28 @@ def fk_to_ik (is_leg, side):
     get_pose_bone(f"mch_ik_fk_{ 'leg' if is_leg else 'arm'}_pole.{ side }")
   ik_hand = get_pose_bone(f"ik_{ 'foot' if is_leg else 'hand'}.{ side }")
   ik_pole = get_pose_bone(f"{ 'leg' if is_leg else 'arm'}_pole.{ side }")
-  update_matrix(fk_hand, ik_hand)
+
+  if is_leg:
+    mch_ik_fk_foot = get_pose_bone(f'mch_ik_fk_foot.{ side }')
+    update_matrix(mch_ik_fk_foot, ik_hand)
+  else:
+    update_matrix(fk_hand, ik_hand)
+
   update_view()
   update_matrix(mch_ik_fk_arm_pole, ik_pole)
   update_view()
 
+  if is_leg:
+    fk_toes = get_pose_bone(f'fk_toes.{ side }')
+    
+    if fk_toes:
+      ik_toes = get_pose_bone(f'ik_toes.{ side }')
+      update_matrix(fk_toes, ik_toes)
+      update_view()
+
   return [
     [ik_hand, ik_pole],
-    ik_hand.bone.collections[0],
+    ik_pole.bone.collections[0],
     fk_hand.bone.collections[0]
   ]
 

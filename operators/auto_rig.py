@@ -8,14 +8,15 @@ from ..libs.blender_utils import (
   active_object_,
   report_warning,
   symmetrize_bones_,
-  get_active_object
+  deselect_bones
 )
 
 from ..bones import init_bones
 from ..constraints import init_constraints
 from ..drivers import init_drivers
 from .init_bone_widgets import init_bone_widget
-from .init_bone_collections import init_collection
+from .init_bone_collections import init_bone_collections
+from ..rolls import init_rolls
 from ..const import identifier
 
 def check_foot_ctrl (
@@ -157,6 +158,7 @@ def symmetrize_bones ():
       select_bone(bone)
 
   symmetrize_bones_()
+  deselect_bones()
   
 class OBJECT_OT_auto_rig (get_operator()):
   bl_idname = 'object.auto_rig'
@@ -173,12 +175,13 @@ class OBJECT_OT_auto_rig (get_operator()):
   def execute(self, context):
     scene = context.scene
     armature = scene.armature
+    init_rolls()
     init_bones(scene)
     init_constraints()
     init_bone_widget(scene)
     symmetrize_bones()
     init_drivers()
-    init_collection(scene)
+    init_bone_collections(scene)
     armature[identifier] = True
 
     return {'FINISHED'}

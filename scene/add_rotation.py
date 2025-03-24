@@ -3,13 +3,14 @@ from ..const import default_rotation
 
 def on_update (self, context):
   pose_bones = get_selected_pose_bones() or []
+  rotation = self.rotation
   
   for pose_bone in pose_bones:
     custom_shape = pose_bone.custom_shape
 
     if custom_shape:
-      pass
-
+      pose_bone.custom_shape_rotation_euler = rotation
+      
 def add_rotation ():
   add_scene_custom_prop(
     'rotation', 

@@ -3,7 +3,8 @@ from ..libs.blender_utils import (
   get_pose_bone, 
   set_mode,
   report_error,
-  get_edit_bone
+  get_edit_bone,
+  get_active_object
 )
 from ..bones import _init_bones
 from ..bones.init_parent import _init_parent
@@ -59,7 +60,7 @@ def rig_weapon (weapon_bone, armature):
   weapon = weapon_bone.name
   update_weapons(weapon)
   custom_prop_config = gen_custom_props_config(weapon)
-  _add_custom_props(custom_prop_config)
+  _add_custom_props(get_active_object(), custom_prop_config)
   mch_parent_weapon = f'mch_parent_{ weapon }'
   mch_parent_weapon_to_master = f'mch_parent_{ weapon }_to_master'
   weapon_master = f'{ weapon }_master'

@@ -5,6 +5,7 @@ from ..libs.blender_utils import (
 from math import radians
 
 def add_bone_widget (
+  scene,
   pose_bone,
   **kwargs
 ):
@@ -19,7 +20,20 @@ def add_bone_widget (
   #   mirror_name = name[:-2] + '.r'
   #   mirror_bone = get_pose_bone(mirror_name)
   #   mirror_bone.bone.select = True
-  get_context().scene.shape = shape
+  scene.shape = shape
+  translation = kwargs.get('translation')
+  rotation = kwargs.get('rotation')
+  scale = kwargs.get('scale')
+
+  if translation:
+    scene.translation = translation
+
+  if rotation:
+    scene.rotation = rotation
+
+  if scale:
+    scene.scale = scale
+
   pose_bone.bone.select = False
   # if name.endswith('.l'):
   #   mirror_bone.bone.select = False
@@ -31,9 +45,9 @@ def gen_shape_map ():
     'head': { 'shape': 'Circle' },
     'neck': { 'shape': 'Circle' },
     'shoulder.l': { 'shape': 'Chest' },
-    'torso': { 'shape': 'Cube' },
-    'chest': { 'shape': 'Chest' },
-    'hips': { 'shape': 'Chest' },
+    'torso': { 'shape': 'Cube', 'translation': (0, 0, 0) },
+    'chest': { 'shape': 'Chest', 'translation': (0, 0, 0), 'rotation': (0, 0, 0) },
+    'hips': { 'shape': 'Chest', 'translation': (0, 0, 0), 'rotation': (0, 0, 0) },
     'fk_arm.l': { 'shape': 'FK Limb 2' },
     'ik_hand.l': { 'shape': 'Cube' },
     'arm_pole.l': { 'shape': 'Sphere' },
@@ -74,11 +88,19 @@ def init_bone_widget (scene):
     pose_bone = get_pose_bone(bone_name)
 
     if pose_bone:
-      add_bone_widget(pose_bone, **config)
+      add_bone_widget(scene, pose_bone, **config)
 
   for pose_bone in get_pose_bones():
     if pose_bone.name.startswith('tweak_'):
-      add_bone_widget(pose_bone, **{ 'shape': 'Sphere' })
+      # TODO: 以手指长度为参考
+      if pose_bone.name.startswith((
+        'tweak_thumb', 'tweak_finger', 'tweak_tip_thumb', 'tweak_tip_finger'
+      )):
+        scale = (0.01, 0.01, 0.01)
+      else:
+        scale = (0.037, 0.037, 0.037)
+
+      add_bone_widget(scene, pose_bone, **{ 'shape': 'Sphere', 'scale': scale })
 
 class OBJECT_OT_init_bone_widgets (get_operator()):
   bl_idname = 'object.init_bone_widget'

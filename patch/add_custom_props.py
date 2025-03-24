@@ -4,7 +4,7 @@ custom_props_config = [
   {
     'prop_name': 'weapons',
     'config': {
-      'default': ''
+      'default': '[]'
     }
   },
   {

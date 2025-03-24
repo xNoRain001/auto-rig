@@ -1,4 +1,4 @@
-from ..libs.blender_utils import get_panel
+from ..libs.blender_utils import get_panel, get_active_object
 from ..operators.bone_wiggle import OBJECT_OT_bone_wiggle
 from ..const import bl_category
 from ..operators import OBJECT_OT_rig_weapon
@@ -34,11 +34,10 @@ class VIEW3D_PT_extra_rig (get_panel()):
     row.label(text = 'Armature ')
     row.prop(scene, 'armature', text = '')
 
-    armature = scene.armature
-    if armature:
-      row = box.row()
-      row.label(text = 'Weapon')
-      data = armature.data
-      row.prop_search(scene, 'weapon', data, 'bones', text = '')
-      row = box.row()
-      row.operator(OBJECT_OT_rig_weapon.bl_idname, text = 'Rig Weapon')
+    row = box.row()
+    row.label(text = 'Weapon')
+    armature = get_active_object()
+    data = armature.data
+    row.prop_search(scene, 'weapon', data, 'bones', text = '')
+    row = box.row()
+    row.operator(OBJECT_OT_rig_weapon.bl_idname, text = 'Rig Weapon')

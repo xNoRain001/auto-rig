@@ -70,7 +70,6 @@ def _init_drivers (config):
     add_driver(name, index, config)
 
 def init_drivers ():
-
   torso_config = init_torso()
   arm_config = init_arm()
   leg_config = init_leg()

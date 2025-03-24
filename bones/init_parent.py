@@ -242,7 +242,8 @@ def init_parent ():
     ['mch_parent_arm_pole.l', None, False],
     ['arm_pole.l', 'mch_parent_arm_pole.l', False],
     ['mch_parent_ik_hand.l', None, False],
-    ['ik_hand.l', 'mch_parent_ik_hand.l', False]
+    ['ik_hand.l', 'mch_parent_ik_hand.l', False],
+    ['mch_ik_fk_foot.l', 'fk_foot.l', False]
   ]
 
   _init_parent(config)

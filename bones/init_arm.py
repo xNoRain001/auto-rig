@@ -104,7 +104,7 @@ def init_arm (scene):
       'operator': 'extrude',
       'operator_config': {
         'head_or_tail': 'tail',
-        'scale_factor': (0, -0.1, 0)
+        'scale_factor': (0, -0.3, 0)
       }
     },
     # ik 动态父级时，arm_pole.l 将复制 mch_parent_arm_pole.l 的变换
