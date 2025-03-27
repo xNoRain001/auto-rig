@@ -24,7 +24,7 @@ def insert_keyframe (bones):
   deselect_pose_bones()
 
   for bone in bones:
-    select_pose_bone(bone.bone)
+    select_pose_bone(bone)
     get_ops().anim.keyframe_insert_menu(type='Available')
   
   # 还原回之前选中的骨骼

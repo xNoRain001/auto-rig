@@ -149,6 +149,8 @@ def init_wiggle (scene):
   selected_bone_names = get_bone_names()
   wiggle_prop = scene.wiggle_prop
   wiggle_influence = scene.wiggle_influence
+  # TODO: 分配集合
+
   set_mode('EDIT')
 
   for selected_bone_name in selected_bone_names:

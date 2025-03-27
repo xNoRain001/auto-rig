@@ -8,7 +8,8 @@ from ..libs.blender_utils import (
   active_object_,
   report_warning,
   symmetrize_bones_,
-  deselect_bones
+  deselect_bones,
+  get_pose_bone
 )
 
 from ..bones import init_bones
@@ -183,5 +184,8 @@ class OBJECT_OT_auto_rig (get_operator()):
     init_drivers()
     init_bone_collections(scene)
     armature[identifier] = True
+    # for test
+    get_pose_bone('mch_ik_shin.l').constraints["IK"].pole_angle = -1.5708
+    get_pose_bone('mch_ik_shin.r').constraints["IK"].pole_angle = -1.5708
 
     return {'FINISHED'}

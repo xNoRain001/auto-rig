@@ -10,8 +10,6 @@ from ..libs.blender_utils import (
   copy_bone_,
   delete_bones,
   get_edit_bone,
-  get_edit_bones,
-  select_bone
 )
 from ..patch import patch_strategies
 

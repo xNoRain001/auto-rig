@@ -12,7 +12,10 @@ from ..libs.blender_utils import (
   get_bone_collections,
   get_active_object,
   update_view,
-  get_pose_bone
+  get_pose_bone,
+  deselect_pose_bones,
+  select_pose_bone,
+  is_pose_mode
 )
 from .bone_wiggle import check_armature
 
@@ -173,33 +176,45 @@ def gen_color_map (scene, bone_collections):
   fk_ik_l_color = scene.fk_ik_l_color
   fk_ik_r_color = scene.fk_ik_r_color
   tweak_color = scene.tweak_color
-  color_map = {}
+  color_map = defaultdict(list)
 
   for bone_collection in bone_collections:
     collection_name = bone_collection.name
 
     if collection_name.startswith('tweak_'):
-      color_map[collection_name] = tweak_color
+      color_map[tweak_color].append(bone_collection)
     elif collection_name.endswith(('ik.l', 'fk.l', 'hand.l')):
-      color_map[collection_name] = fk_ik_l_color
+      color_map[fk_ik_l_color].append(bone_collection)
     elif collection_name.endswith(('ik.r', 'fk.r', 'hand.r')):
-      color_map[collection_name] = fk_ik_r_color
+      color_map[fk_ik_r_color].append(bone_collection)
     elif (
       collection_name == 'torso' or 
       collection_name == 'torso_fk' or
       collection_name == 'root'
     ):
-      color_map[collection_name] = torso_color
+      color_map[torso_color].append(bone_collection)
 
   return color_map
 
-def assign_bone_to_collection (collection_name, bone_collections):
-  if collection_name not in bone_collections:
-    get_armature().collection_create_and_assign(name = collection_name)
-  else:
-    get_armature().collection_assign(name = collection_name)
+def move_bone_to_collection (collection_name, bone_names):
+  _is_pose_mode = is_pose_mode()
+  deselect_pose_bones() if _is_pose_mode else deselect_bones()
+  bone_collections = get_bone_collections()
 
-  deselect_bones()
+  for bone_name in bone_names:
+    bone = get_pose_bone(bone_name) if _is_pose_mode else get_edit_bone(bone_name)
+
+    if bone:
+      select_pose_bone(bone) if _is_pose_mode else select_bone(bone)
+
+  if collection_name not in bone_collections:
+    get_armature().move_to_collection(new_collection_name = collection_name)
+  else:
+    get_armature().move_to_collection(
+      collection_index = bone_collections[collection_name].index
+    )
+
+  deselect_pose_bones() if _is_pose_mode else deselect_bones()
 
 def assign_collection (map, bone_collections):
   visible = [
@@ -209,27 +224,17 @@ def assign_collection (map, bone_collections):
   # not_visible = ['def', 'org', 'mch', 'props']
 
   for collection_name, bone_names in map.items():
-    for bone_name in bone_names:
-      bone = get_edit_bone(bone_name)
-
-      if bone:
-        select_bone(bone)
-
-    assign_bone_to_collection(collection_name, bone_collections)
+    move_bone_to_collection(collection_name, bone_names)
 
     if collection_name.endswith('.l'):
       mirror_collection_name = collection_name.replace('.l', '.r')
+      mirror_bone_names = []
 
       for bone_name in bone_names:
         if bone_name.endswith('.l'):
-          mirror_bone = get_edit_bone(bone_name.replace('.l', '.r'))
+          mirror_bone_names.append(bone_name.replace('.l', '.r'))
 
-          if mirror_bone:
-            select_bone(mirror_bone)
-
-      assign_bone_to_collection(mirror_collection_name, bone_collections)
-
-  get_armature().collection_show_all()
+      move_bone_to_collection(mirror_collection_name, mirror_bone_names)
 
   for collection in bone_collections:
     collection_name = collection.name
@@ -237,7 +242,7 @@ def assign_collection (map, bone_collections):
     if collection_name not in visible:
       bone_collections[collection_name].is_visible = False
 
-def init_map ():
+def init_bone_collection_map ():
   bones = get_edit_bones()
   # 使用 set，而不使用 list，为了在寻找没有被分配的骨骼时节省时间
   map = defaultdict(set)
@@ -257,57 +262,23 @@ def init_bone_colors (scene, bone_collections):
   pose_bones = get_pose_bones()
   color_map = gen_color_map(scene, bone_collections)
 
-  for pose_bone in pose_bones:
-    collections = pose_bone.bone.collections
-
-    if not len(collections):
-      continue
-
-    collection_name = collections[0].name
-    color = color_map.get(collection_name)
-
-    if color:
-      pose_bone.color.palette = color
+  for color, collections in color_map.items():
+    for collection in collections:
+      for bone in collection.bones:
+        pose_bones[bone.name].color.palette = color
 
 def init_bone_collections (scene):
   armature = scene.armature
   set_mode('EDIT')
   active_object_(armature)
-  map = init_map()
+  map = init_bone_collection_map()
   bone_collections = get_bone_collections(armature)
   assign_collection(map, bone_collections)
   init_bone_colors(scene, bone_collections)
 
-def run_checker (
-  self,
-  armature
-):
-  passing = True
-  checkers = [check_armature]
-  params = [[self, armature]]
-
-  for index, checker in enumerate(checkers):
-    passing = checker(*params[index])
-
-    if not passing:
-      passing = False
-
-      break
-
-  return passing
-
 class OBJECT_OT_init_bone_collections (get_operator()):
   bl_idname = 'object.init_bone_collections'
   bl_label = 'Init Bone Collections'
-
-  # def invoke(self, context, event):
-  #   armature = context.scene.armature
-  #   passing = run_checker(self, armature)
-  
-  #   if passing:
-  #     return self.execute(context)
-  #   else:
-  #     return {'CANCELLED'}
 
   def execute(self, context):
     init_bone_collections(context.scene)

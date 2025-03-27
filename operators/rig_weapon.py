@@ -4,7 +4,9 @@ from ..libs.blender_utils import (
   set_mode,
   report_error,
   get_edit_bone,
-  get_active_object
+  get_active_object,
+  get_bone_collections,
+  select_bone
 )
 from ..bones import _init_bones
 from ..bones.init_parent import _init_parent
@@ -14,7 +16,7 @@ from ..patch.add_custom_props import _add_custom_props
 from ..scene.add_weapon_props import add_weapon_props
 import json
 from ..const import weapon_custom_prop_prefix
-from .bone_wiggle import check_armature
+from .init_bone_collections import move_bone_to_collection
 
 def update_weapons (weapon_name):
   props_bone = get_pose_bone('props')
@@ -60,14 +62,14 @@ def rig_weapon (weapon_bone, armature):
   weapon = weapon_bone.name
   update_weapons(weapon)
   custom_prop_config = gen_custom_props_config(weapon)
-  _add_custom_props(get_active_object(), custom_prop_config)
+  _add_custom_props(armature, custom_prop_config)
   mch_parent_weapon = f'mch_parent_{ weapon }'
   mch_parent_weapon_to_master = f'mch_parent_{ weapon }_to_master'
   weapon_master = f'{ weapon }_master'
   mch_parent_weapon_master = f'mch_parent_{ weapon }_master'
   # 新创建的
-  mch_parent_ik_to_master_l = 'mch_parent_ik_to_master.l'
-  mch_parent_ik_to_master_r = 'mch_parent_ik_to_master.r'
+  mch_parent_ik_to_master_l = f'mch_parent_ik_to_{ weapon }_master.l'
+  mch_parent_ik_to_master_r = f'mch_parent_ik_to_{ weapon }_master.r'
   # 原本就存在的
   mch_parent_ik_hand_l = 'mch_parent_ik_hand.l'
   mch_parent_ik_hand_r = 'mch_parent_ik_hand.r'
@@ -260,6 +262,21 @@ def rig_weapon (weapon_bone, armature):
   _init_drivers(driver_config)
   add_weapon_props([weapon])
 
+  weapon_names = [weapon, weapon_master]
+  mch_bone_names = [
+    mch_parent_weapon,
+    mch_parent_weapon_to_master, 
+    mch_parent_weapon_master,
+    mch_parent_ik_to_master_l,
+    mch_parent_ik_to_master_r
+  ]
+
+  return weapon_names, mch_bone_names
+
+def assign_collection (armature, weapon_names, mch_bone_names):
+  move_bone_to_collection('weapon', weapon_names)
+  move_bone_to_collection('mch', mch_bone_names)
+
 def check_weapon (self, weapon):
   passing = True
 
@@ -271,11 +288,10 @@ def check_weapon (self, weapon):
   
 def run_checker (self, context):
   scene = context.scene
-  armature = scene.armature
   weapon = scene.weapon
   passing = True
-  checkers = [check_weapon, check_armature]
-  params = [[self, weapon], [self, armature]]
+  checkers = [check_weapon]
+  params = [[self, weapon]]
 
   for index, checker in enumerate(checkers):
     passing = checker(*params[index])
@@ -303,9 +319,10 @@ class OBJECT_OT_rig_weapon (get_operator()):
     set_mode('EDIT')
     scene = context.scene
     weapon = scene.weapon
-    armature = scene.armature
+    armature = get_active_object()
 
     weapon_bone = get_edit_bone(weapon)
-    rig_weapon(weapon_bone, armature)
+    weapon_names, mch_bone_names = rig_weapon(weapon_bone, armature)
+    assign_collection(armature, weapon_names, mch_bone_names)
 
     return {'FINISHED'}

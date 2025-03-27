@@ -31,10 +31,6 @@ class VIEW3D_PT_extra_rig (get_panel()):
 
     box = layout.box()
     row = box.row()
-    row.label(text = 'Armature ')
-    row.prop(scene, 'armature', text = '')
-
-    row = box.row()
     row.label(text = 'Weapon')
     armature = get_active_object()
     data = armature.data
