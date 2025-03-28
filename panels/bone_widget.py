@@ -1,4 +1,4 @@
-from ..libs.blender_utils import get_panel
+from ..libs.blender_utils import get_panel, is_pose_mode
 from ..operators.clear_bone_widget import OBJECT_OT_clear_bone_widget
 from ..operators.clear_unused_widget import OBJECT_OT_clear_unused_bone_widget
 from ..operators.reset_transform import OBJECT_OT_reset_transform
@@ -10,6 +10,10 @@ class VIEW3D_PT_bone_widget (get_panel()):
   bl_category = bl_category
   bl_label = "Bone Widget"
   bl_idname = "VIEW3D_PT_bone_widget"
+
+  @classmethod
+  def poll(cls, context):
+    return is_pose_mode()
 
   def draw(self, context):
     layout = self.layout

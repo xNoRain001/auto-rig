@@ -1,6 +1,5 @@
-def init_arm ():
+def init_arm_config (config):
   sides = ['l', 'r']
-  config = []
 
   for side in sides:
     common = {

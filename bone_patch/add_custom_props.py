@@ -81,7 +81,7 @@ custom_props_config = [
   }
 ]
 
-def _add_custom_props (armature, custom_props_config):
+def _add_custom_props (custom_props_config, armature = None):
   # 获取 pose bones，如果之前没有切换到 POSE模式，必须先切换一次，之后获取不用切换
   # 到 POSE 也能获取到
   set_mode('POSE')
@@ -103,5 +103,5 @@ def _add_custom_props (armature, custom_props_config):
   set_mode('EDIT')
 
 def add_custom_props (scene, config):
-  _add_custom_props(scene.armature, custom_props_config)
+  _add_custom_props(custom_props_config, scene.armature)
   

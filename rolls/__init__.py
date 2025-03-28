@@ -1,7 +1,9 @@
 from ..libs.blender_utils import (
+  set_mode,
   get_edit_bone, 
   calculate_roll, 
   symmetrize_bones, 
+  get_active_object
 )
 
 def init_roll_config ():
@@ -32,7 +34,8 @@ def init_roll_config ():
 
   return config
 
-def init_rolls ():
+def init_rolls (armature):
+  set_mode('EDIT')
   roll_config = init_roll_config()
   bone_names = []
 

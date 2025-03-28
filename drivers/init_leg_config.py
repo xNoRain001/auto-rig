@@ -1,8 +1,7 @@
 from ..libs.blender_utils import get_edit_bone
 
-def init_leg ():
+def init_leg_config (config):
   sides = ['l', 'r']
-  config = []
 
   for side in sides:
     common = {

@@ -1,27 +1,43 @@
 from ..libs.blender_utils import get_bone_collections, get_panel, get_active_object
-from ..const import bl_category
-from .custom_props import show_panel
 
-rig_layer_map = {
-  'visible': [
-    ['root'],
-    ['torso', 'torso_fk', 'tweak_torso'],
-    ['arm_fk.l', 'arm_fk.r'],
-    ['arm_ik.l', 'arm_ik.r'],
-    ['tweak_arm.l', 'tweak_arm.r'],
-    ['hand.l', 'hand.r'],
-    ['tweak_hand.l', 'tweak_hand.r'],
-    ['leg_fk.l', 'leg_fk.r'],
-    ['leg_ik.l', 'leg_ik.r'],
-    ['tweak_leg.l', 'tweak_leg.r']
-  ],
-  'not_visible': [
-    ['def'],
-    ['org'],
-    ['mch'],
-    ['props']
-  ]
-}
+from .custom_props import show_panel
+from ..const import (
+  bl_category,
+  root_collection,
+  fk_arm_l_collection,
+  ik_arm_l_collection,
+  tweak_arm_l_collection,
+  fk_arm_r_collection,
+  ik_arm_r_collection,
+  tweak_arm_r_collection,
+  torso_collection,
+  tweak_hand_l_collection,
+  tweak_hand_r_collection,
+  fk_leg_l_collection,
+  ik_leg_l_collection,
+  tweak_leg_l_collection,
+  fk_leg_r_collection,
+  ik_leg_r_collection,
+  tweak_leg_r_collection,
+  torso_collection,
+  fk_torso_collection,
+  tweak_torso_collection,
+  hand_l_collection,
+  hand_r_collection
+)
+
+rig_layer_rows = [
+  [root_collection],
+  [torso_collection, fk_torso_collection, tweak_torso_collection],
+  [fk_arm_l_collection, fk_arm_r_collection],
+  [ik_arm_l_collection, ik_arm_r_collection],
+  [tweak_arm_l_collection, tweak_arm_r_collection],
+  [hand_l_collection, hand_r_collection],
+  [tweak_hand_l_collection, tweak_hand_r_collection],
+  [fk_leg_l_collection, fk_leg_r_collection],
+  [ik_leg_l_collection, ik_leg_r_collection],
+  [tweak_leg_l_collection, tweak_leg_r_collection]
+]
 
 class VIEW3D_PT_rig_layers (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -41,14 +57,14 @@ class VIEW3D_PT_rig_layers (get_panel()):
 
     bone_collections = get_bone_collections(armature)
 
-    for visible_collection in rig_layer_map['visible']:
+    for collections in rig_layer_rows:
       row = box.row()
 
-      for visible_collection_name in visible_collection:
-        if visible_collection_name in bone_collections:
+      for collection in collections:
+        if collection in bone_collections:
           row.prop(
-            bone_collections[visible_collection_name], 
+            bone_collections[collection], 
             'is_visible', 
             toggle = True, 
-            text = visible_collection_name
+            text = collection
           )

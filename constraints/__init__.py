@@ -1,23 +1,25 @@
-from .init_torso import init_torso
-from .init_hand import init_hand
-from .init_arm import init_arm
-from .init_leg import init_leg
 from ..libs.blender_utils import (
   set_mode,
-  add_copy_transforms_constraint,
-  add_copy_location_constraint,
-  add_copy_scale_constraint,
-  add_copy_rotation_constraint,
-  add_stretch_to_constraint,
-  add_armature_constraint,
-  add_damped_track_constraint,
+  get_pose_bone,
+  get_pose_bones,
   add_ik_constraint,
+  add_armature_constraint,
+  add_copy_scale_constraint,
+  add_stretch_to_constraint,
+  add_damped_track_constraint,
+  add_copy_rotation_constraint,
+  add_copy_location_constraint,
   add_limit_rotation_constraint,
-  get_pose_bones
+  add_copy_transforms_constraint,
 )
+
+from .init_torso_config import init_torso_config
+from .init_hand_config import init_hand_config
+from .init_arm_config import init_arm_config
+from .init_leg_config import init_leg_config
 from ..constraint_patch import constraint_patchs
 
-strategies = {
+constraint_map = {
   'IK': add_ik_constraint,
   'ARMATURE': add_armature_constraint,
   'STRETCH_TO': add_stretch_to_constraint,
@@ -29,7 +31,7 @@ strategies = {
   'COPY_TRANSFORMS': add_copy_transforms_constraint
 }
 
-def def_bone_add_copy_transforms (armature = None):
+def def_bone_add_copy_transforms ():
   set_mode('POSE')
   pose_bones = get_pose_bones()
   
@@ -47,39 +49,36 @@ def def_bone_add_copy_transforms (armature = None):
       # 如果里面才进入 POSE，每一次循环都会切换模式，性能非常差，推测相同模式之间切换
       # 也会造成性能影响
       # tip: transforms 约束不进入 POSE 也能添加
-      add_copy_transforms_constraint(name, org_name, target = armature)
+      add_copy_transforms_constraint(name, org_name)
 
 def _init_constraints (config):
   set_mode('POSE')
 
-  for item in config:
-    name = item['name']
-    target = item['target']
-    type = item['type']
-    config = item.get('config') or {}
-
-    if type == 'LIMIT_ROTATION':
-      strategies[type](name, **config)
-    else:
-      strategies[type](name, target, **config)
+  for constraint_config in config:
+    name = constraint_config['name']
+    type = constraint_config['type']
+    config = constraint_config.get('config')
+    constraint_map[type](name, **config)
 
     if name in constraint_patchs:
       cbs = constraint_patchs[name]
 
       if isinstance(cbs, list):
         for cb in cbs:
-          cb(item)
+          cb(constraint_config)
       else:
-        cbs(item)
+        cbs(constraint_config)
+
+def rename_org_shoulder ():
+  get_pose_bone('org_shoulder.l').name = 'shoulder.l'
+  get_pose_bone('org_shoulder.r').name = 'shoulder.r'
 
 def init_constraints ():
-  torso_config = init_torso()
-  hand_config = init_hand()
-  arm_config = init_arm()
-  leg_config = init_leg()
+  config = init_torso_config()
+  config = init_hand_config(config)
+  config = init_arm_config(config)
+  config = init_leg_config(config)
   def_bone_add_copy_transforms()
-  configs = [torso_config, hand_config, arm_config, leg_config]
-
-  for config in configs:
-    _init_constraints(config)
+  rename_org_shoulder()
+  _init_constraints(config)
     

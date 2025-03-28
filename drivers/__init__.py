@@ -1,7 +1,7 @@
 from ..libs.blender_utils import get_pose_bone, get_active_object, set_mode
-from .init_torso import init_torso
-from .init_arm import init_arm
-from .init_leg import init_leg
+from .init_torso_config import init_torso_config
+from .init_arm_config import init_arm_config
+from .init_leg_config import init_leg_config
 
 def add_driver (name, index, config):
   pose_bone = get_pose_bone(name)
@@ -62,19 +62,14 @@ def add_driver (name, index, config):
 def _init_drivers (config):
   set_mode('POSE')
 
-  for item in config:
-    name = item['name']
-    index = item['index']
-    config = item['config']
-
+  for driver_config in config:
+    name = driver_config['name']
+    index = driver_config['index']
+    config = driver_config['config']
     add_driver(name, index, config)
 
 def init_drivers ():
-  torso_config = init_torso()
-  arm_config = init_arm()
-  leg_config = init_leg()
-  configs = [torso_config, arm_config, leg_config]
-  # 可能会导致未知的问题，比如另一边的驱动器必须打开再关闭才生效
-
-  for config in configs:
-    _init_drivers(config)
+  config = init_torso_config()
+  config = init_arm_config(config)
+  config = init_leg_config(config)
+  _init_drivers(config)

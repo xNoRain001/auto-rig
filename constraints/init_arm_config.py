@@ -1,9 +1,8 @@
 from ..libs.blender_utils import get_edit_bone
-from .init_torso import common_stretch_config
-from ..bones.init_arm import arm_tweak_bone_names
+from .init_torso_config import common_stretch_config
+from ..bones.init_arm_config import arm_tweak_bone_names
 
-def init_arm ():
-  config = []
+def init_arm_config (config):
   org_bone_names = ['org_arm.l', 'org_forearm.l', 'org_hand.l']
 
   # COPY_ROTATION 要在 STRETCH_TO 之前
@@ -16,78 +15,91 @@ def init_arm ():
 
     config.append({
       'name': org_bone_name,
-      'target': prefix,
       'type': 'COPY_ROTATION',
       'config': {
+        'subtarget': prefix,
         'influence': influence_list[index]
       }
     })
 
   common_stretch_config(org_bone_names, config)
   common_stretch_config(arm_tweak_bone_names, config)
-  config[-1]['target'] = 'tweak_hand.l'
+  config[-1]['config']['subtarget'] = 'tweak_hand.l'
 
   config.extend([
     {
       'name': 'vis_arm_pole.l',
-      'target': 'arm_pole.l',
       'type': 'STRETCH_TO',
       'config': {
+        'subtarget': 'arm_pole.l',
         'head_tail': 1
       }
     },
     {
       'name': 'mch_parent_arm_pole.l',
-      # 这个约束的 target 是一个列表
-      'target': ['root', 'torso', 'org_spine_01', 'chest', 'head'],
       'type': 'ARMATURE',
+      'config': {
+        'subtarget': ['root', 'torso', 'org_spine_01', 'chest', 'head'],
+      }
     },
     {
       'name': 'mch_parent_ik_hand.l',
-      'target': ['root', 'torso', 'org_spine_01', 'chest', 'head'],
       'type': 'ARMATURE',
+      'config': {
+        'subtarget': ['root', 'torso', 'org_spine_01', 'chest', 'head'],
+      }
     },
     # 解决拉伸缩放问题
     {
       'name': 'mch_tweak_forearm.l',
-      'target': 'root',
       'type': 'COPY_SCALE',
+      'config': {
+        'subtarget': 'root',
+      }
     },
     {
       'name': 'mch_tweak_hand.l',
-      'target': 'root',
       'type': 'COPY_SCALE',
+      'config': {
+        'subtarget': 'root',
+      }
     },
     # twist
     {
       'name': 'mch_int_arm.l',
-      'target': 'mch_arm.l',
       'type': 'COPY_LOCATION',
+      'config': {
+        'subtarget': 'mch_arm.l',
+      }
     },
     {
       'name': 'mch_int_arm.l',
-      'target': 'mch_arm.l',
       'type': 'COPY_ROTATION',
+      'config': {
+        'subtarget': 'mch_arm.l',
+      }
     },
     {
       'name': 'mch_twist_arm.l',
-      'target': 'mch_switch_arm.l',
       'type': 'COPY_LOCATION',
+      'config': {
+        'subtarget': 'mch_switch_arm.l',
+      }
     },
     {
       'name': 'mch_twist_arm.l',
-      'target': 'mch_switch_arm.l',
       'type': 'DAMPED_TRACK',
       'config': {
+        'subtarget': 'mch_switch_arm.l',
         'head_tail': 1
       }
     },
     # ik
     {
       'name': 'mch_ik_forearm.l',
-      'target': 'ik_hand.l',
       'type': 'IK',
       'config': {
+        'subtarget': 'ik_hand.l',
         'chain_count': 2,
         'pole_subtarget': 'arm_pole.l'
       }
@@ -102,13 +114,17 @@ def init_arm ():
     config.extend([
       {
         'name': item,
-        'target': list2[index],
         'type': 'COPY_TRANSFORMS',
+        'config': {
+          'subtarget': list2[index],
+        }
       },
       {
         'name': item,
-        'target': list3[index],
         'type': 'COPY_TRANSFORMS',
+        'config': {
+          'subtarget': list3[index],
+        }
       }
     ])
 

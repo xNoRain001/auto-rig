@@ -1,28 +1,27 @@
 from ..libs.blender_utils import (
-  get_operator, 
-  get_selected_bones,
   set_mode,
-  get_edit_bone,
-  get_mode,
-  report_warning,
+  get_operator, 
   is_pose_mode,
-  get_selected_pose_bones,
-  get_armature,
-  select_bone,
-  deselect,
-  get_bone_collections,
+  get_edit_bone,
+  report_warning,
+  get_selected_bones,
   get_bone_chain_names,
-  deselect_bones,
-  report_error,
-  get_active_object
+  get_selected_pose_bones
 )
-from ..bone_patch.add_custom_props import _add_custom_props
+from ..bones import _init_bones
+from ..drivers import _init_drivers
+from ..constraints import _init_constraints
+from ..bones.init_parent import _init_parent
 from ..bones.init_org_bones import init_org_bones
 from ..constraints import def_bone_add_copy_transforms
-from ..bones import _init_bones
-from ..bones.init_parent import _init_parent
-from ..constraints import _init_constraints
-from ..drivers import _init_drivers
+from .rig_weapon import common_move_bones_to_collection
+from ..bone_patch.add_custom_props import _add_custom_props
+from ..const import (
+  mch_collection,
+  tweak_wiggle_collection,
+  fk_wiggle_collection,
+  phy_wiggle_collection,
+)
 
 def get_bone_names ():
   # 可能在 POSE 模式下选中骨骼
@@ -46,15 +45,6 @@ def get_bone_names ():
 
   return bone_names
 
-def check_armature (self, armature):
-  passing = True
-
-  if not armature:
-    passing = False
-    report_warning(self, 'Armature 不能为空')
-
-  return passing
-
 def check_wiggle_prop (self, wiggle_prop):
   passing = True
 
@@ -67,7 +57,6 @@ def check_wiggle_prop (self, wiggle_prop):
 def check_selected_bones (self):
   passing = True
   selected_bones = get_selected_pose_bones() if is_pose_mode() else get_selected_bones()
-  print(selected_bones)
 
   # OBJECT 模式下 selected_bones 为 None
   if not selected_bones or not len(selected_bones):
@@ -85,16 +74,13 @@ def check_selected_bones (self):
 
 def run_checker (self, context):
   scene = context.scene
-  armature = scene.armature
   wiggle_prop = scene.wiggle_prop
   passing = True
   checkers = [
-    check_armature,
     check_wiggle_prop, 
     check_selected_bones
   ]
   params = [
-    [self, armature],
     [self, wiggle_prop],
     [self]
   ]
@@ -109,38 +95,6 @@ def run_checker (self, context):
 
   return passing
 
-def create_bone_collections (names, bone_collections):
-  deselect()
-
-  for name in names:
-    if not bone_collections.get(name):
-      get_armature().collection_create_and_assign(name = name)
-
-def assign_collection (bone_config, armature):
-  set_mode('EDIT')
-  bone_collections = get_bone_collections(armature)
-  # create_bone_collections(['phy', 'mch', 'def', 'org'], bone_collections)
-
-  for item in bone_config:
-    bone_name = item['name']
-    bone = get_edit_bone(bone_name)
-    select_bone(bone)
-
-    if bone_name.startswith('phy_'):
-      get_armature().collection_unassign_named(name = 'other', bone_name = bone_name)
-      get_armature().collection_assign(name = 'phy')
-    elif bone_name.startswith('mch_'):
-      get_armature().collection_unassign_named(name = 'other', bone_name = bone_name)
-      get_armature().collection_assign(name = 'mch')
-    elif bone_name.startswith('def_'):
-      get_armature().collection_unassign_named(name = 'other', bone_name = bone_name)
-      get_armature().collection_assign(name = 'def')
-    elif bone_name.startswith('org_'):
-      get_armature().collection_unassign_named(name = 'other', bone_name = bone_name)
-      get_armature().collection_assign(name = 'org')
-
-    deselect()
-
 def init_wiggle (scene):
   bone_config = []
   parent_config = []
@@ -149,7 +103,6 @@ def init_wiggle (scene):
   selected_bone_names = get_bone_names()
   wiggle_prop = scene.wiggle_prop
   wiggle_influence = scene.wiggle_influence
-  # TODO: 分配集合
 
   set_mode('EDIT')
 
@@ -180,9 +133,9 @@ def init_wiggle (scene):
         parent_config.append([phy_bone_name, prev_phy_bone, False])
         constraint_config.append({
           'name': prev_phy_bone,
-          'target': phy_bone_name,
           'type': 'DAMPED_TRACK',
           'config': {
+            'subtarget': phy_bone_name,
             'influence': wiggle_influence
           }
         })
@@ -213,26 +166,28 @@ def init_wiggle (scene):
         constraint_config.extend([
           {
             'name': mch_int_bone_name,
-            'target': phy_bone_name,
             'type': 'COPY_TRANSFORMS',
             'config': {
+              'subtarget': phy_bone_name,
               'target_space': 'LOCAL', 
               'owner_space': 'LOCAL'
             }
           },
           {
             'name': mch_bone_name,
-            'target': prev_fk_bone,
             'type': 'COPY_TRANSFORMS',
             'config': {
+              'subtarget': prev_fk_bone,
               'target_space': 'LOCAL', 
               'owner_space': 'LOCAL'
             }
           },
           {
             'name': bone_names[index - 1],
-            'target': tweak_bone_name,
             'type': 'STRETCH_TO',
+            'config': {
+              'subtarget': tweak_bone_name,
+            }
           }
         ])
       else:
@@ -250,6 +205,7 @@ def init_wiggle (scene):
         {
           'name': tweak_bone_name,
           'source': bone_name,
+          'collection': tweak_wiggle_collection,
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 0.5
@@ -258,6 +214,7 @@ def init_wiggle (scene):
         {
           'name': fk_bone_name,
           'source': bone_name,
+          'collection': fk_wiggle_collection,
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 1
@@ -266,6 +223,7 @@ def init_wiggle (scene):
         {
           'name': mch_bone_name,
           'source': bone_name,
+          'collection': mch_collection,
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 0.25
@@ -274,6 +232,7 @@ def init_wiggle (scene):
         {
           'name': mch_int_bone_name,
           'source': bone_name,
+          'collection': mch_collection,
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 0.1
@@ -282,6 +241,7 @@ def init_wiggle (scene):
         {
           'name': phy_bone_name,
           'source': bone_name,
+          'collection': phy_wiggle_collection,
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 1
@@ -313,7 +273,7 @@ class OBJECT_OT_bone_wiggle (get_operator()):
     scene = context.scene
     wiggle_prop = scene.wiggle_prop
     wiggle_influence = scene.wiggle_influence
-    _add_custom_props(get_active_object(), [{
+    _add_custom_props([{
       'prop_name': wiggle_prop,
       'config': {
         'min': 0,
@@ -322,6 +282,6 @@ class OBJECT_OT_bone_wiggle (get_operator()):
       }
     }])
     bone_config = init_wiggle(scene)
-    # assign_collection(bone_config, armature)
+    common_move_bones_to_collection(bone_config)
 
     return {'FINISHED'}

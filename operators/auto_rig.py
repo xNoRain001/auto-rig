@@ -15,7 +15,7 @@ from ..libs.blender_utils import (
 from ..bones import init_bones
 from ..constraints import init_constraints
 from ..drivers import init_drivers
-from .init_bone_widgets import init_bone_widget
+from .init_bone_widgets import init_bone_widgets
 from .init_bone_collections import init_bone_collections
 from ..rolls import init_rolls
 from ..const import identifier
@@ -82,19 +82,6 @@ def check_bone_name (self):
   passing = _check_bone_name(bone_names)
   return passing
 
-def check_parent_setting (self):
-  passing = True
-  parent_list = [['def_leg.l', 'def_hips'], ['def_leg.r', 'def_hips']]
-
-  for item, parent in parent_list:
-    if get_edit_bone(item).parent != get_edit_bone(parent):
-      passing = False
-      report_warning(self, f'{ item } parent is not { parent }')
-
-      break
-
-  return passing
-
 def check_armature (self, armature):
   passing = True
 
@@ -119,8 +106,7 @@ def run_checker (self, context):
   checkers = [
     check_armature, 
     check_foot_ctrl, 
-    check_bone_name, 
-    check_parent_setting
+    check_bone_name
   ]
   params = [
     [self, armature],
@@ -131,7 +117,6 @@ def run_checker (self, context):
       heel_location,
       foot_tip_location
     ],
-    [self],
     [self]
   ]
 
@@ -171,13 +156,13 @@ class OBJECT_OT_auto_rig (get_operator()):
   def execute(self, context):
     scene = context.scene
     armature = scene.armature
-    init_rolls()
-    init_bones(scene)
+    init_rolls(armature)
+    bone_config = init_bones(scene)
     init_constraints()
-    init_bone_widget(scene)
+    init_bone_widgets(scene)
     symmetrize_bones()
     init_drivers()
-    init_bone_collections(scene)
+    init_bone_collections(scene, bone_config)
     armature[identifier] = True
 
     return {'FINISHED'}

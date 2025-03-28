@@ -18,7 +18,6 @@ from .add_shape import add_shape
 from .add_show_wire import add_show_wire
 from .add_translation import add_translation
 from .add_wire_width import add_wire_width
-from .add_wiggle_root import add_wiggle_root
 
 classes = ()
 
@@ -43,7 +42,6 @@ def register():
   add_show_wire()
   add_translation()
   add_wire_width()
-  # add_wiggle_root()
   
 def unregister():
   # unregister_classes(classes)

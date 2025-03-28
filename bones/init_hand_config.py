@@ -1,4 +1,14 @@
-from ..libs.blender_utils import get_bone_chain, get_edit_bone, get_bone_chain_names
+from ..libs.blender_utils import (
+  get_edit_bone, 
+  get_bone_chain, 
+  get_bone_chain_names
+)
+
+from ..const import (
+  mch_collection,
+  hand_l_collection,
+  tweak_hand_l_collection
+)
 
 # 每根手指上的第一根骨骼
 org_master_bone_names = [
@@ -10,8 +20,7 @@ org_master_bone_names = [
 ]
 org_bone_names = []
 
-def init_hand ():
-  hand_collection = 'hand'
+def init_hand_config ():
   config = []
 
   for org_master_bone_name in org_master_bone_names:
@@ -26,6 +35,7 @@ def init_hand ():
         {
           'name': org_bone_name.replace('org_', 'mch_'),
           'source': org_bone_name,
+          'collection': mch_collection,
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 0.25
@@ -34,6 +44,7 @@ def init_hand ():
         {
           'name': org_bone_name.replace('org_', ''),
           'source': org_bone_name,
+          'collection': hand_l_collection,
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 1
@@ -42,6 +53,7 @@ def init_hand ():
         {
           'name': org_bone_name.replace('org_', 'tweak_'),
           'source': org_bone_name,
+          'collection': tweak_hand_l_collection,
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 0.5
@@ -54,6 +66,7 @@ def init_hand ():
         config.append({
           'name': org_bone_name.replace('org_', 'tweak_tip_'),
           'source': org_bone_name,
+          'collection': tweak_hand_l_collection,
           'operator': 'extrude',
           'operator_config': {
             'head_or_tail': 'tail',

@@ -56,7 +56,6 @@ def update_translation (pose_bone, custom_shape):
   pose_bone.custom_shape_translation = (_x, _y, _z)
 
 def on_update (self, context):
-  set_mode('POSE')
   pose_bones = get_selected_pose_bones() or []
 
   if not len(pose_bones):

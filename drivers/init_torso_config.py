@@ -1,4 +1,4 @@
-def init_torso ():
+def init_torso_config ():
   config = [
     {
       'name': 'mch_int_neck',

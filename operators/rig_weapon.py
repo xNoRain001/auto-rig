@@ -1,3 +1,4 @@
+import json
 from ..libs.blender_utils import (
   get_operator, 
   get_pose_bone, 
@@ -8,15 +9,20 @@ from ..libs.blender_utils import (
   get_bone_collections,
   select_bone
 )
+
 from ..bones import _init_bones
 from ..bones.init_parent import _init_parent
 from ..constraints import _init_constraints
 from ..drivers import _init_drivers
 from ..bone_patch.add_custom_props import _add_custom_props
 from ..scene.add_weapon_props import add_weapon_props
-import json
-from ..const import weapon_custom_prop_prefix
-from .init_bone_collections import move_bone_to_collection
+from .init_bone_collections import move_bones_to_collection
+from ..const import (
+  mch_collection,
+  weapons_collection,
+  weapon_custom_prop_prefix,
+)
+
 
 def update_weapons (weapon_name):
   props_bone = get_pose_bone('props')
@@ -58,11 +64,10 @@ def gen_custom_props_config (weapon_name):
 
   return custom_props_config
 
-def rig_weapon (weapon_bone, armature):
-  weapon = weapon_bone.name
+def rig_weapon (weapon):
   update_weapons(weapon)
   custom_prop_config = gen_custom_props_config(weapon)
-  _add_custom_props(armature, custom_prop_config)
+  _add_custom_props(custom_prop_config)
   mch_parent_weapon = f'mch_parent_{ weapon }'
   mch_parent_weapon_to_master = f'mch_parent_{ weapon }_to_master'
   weapon_master = f'{ weapon }_master'
@@ -78,6 +83,7 @@ def rig_weapon (weapon_bone, armature):
     {
       'name': mch_parent_weapon,
       'source': weapon,
+      'collection': mch_collection,
       'operator': 'copy',
       'operator_config': {
         'scale': 0.5
@@ -86,6 +92,7 @@ def rig_weapon (weapon_bone, armature):
     {
       'name': mch_parent_weapon_to_master,
       'source': weapon,
+      'collection': mch_collection,
       'operator': 'copy',
       'operator_config': {
         'scale': 0.5
@@ -94,6 +101,7 @@ def rig_weapon (weapon_bone, armature):
     {
       'name': weapon_master,
       'source': weapon,
+      'collection': weapons_collection,
       'operator': 'copy',
       'operator_config': {
         'scale': 0.5
@@ -102,6 +110,7 @@ def rig_weapon (weapon_bone, armature):
     {
       'name': mch_parent_weapon_master,
       'source': weapon,
+      'collection': mch_collection,
       'operator': 'copy',
       'operator_config': {
         'scale': 0.5
@@ -110,6 +119,7 @@ def rig_weapon (weapon_bone, armature):
     {
       'name': mch_parent_ik_to_master_l,
       'source': weapon,
+      'collection': mch_collection,
       'operator': 'copy',
       'operator_config': {
         'scale': 0.5
@@ -118,6 +128,7 @@ def rig_weapon (weapon_bone, armature):
     {
       'name': mch_parent_ik_to_master_r,
       'source': weapon,
+      'collection': mch_collection,
       'operator': 'copy',
       'operator_config': {
         'scale': 0.5
@@ -134,28 +145,38 @@ def rig_weapon (weapon_bone, armature):
   constraint_config = [
     {
       'name': mch_parent_weapon_master,
-      'target': ['root', 'torso'],
       'type': 'ARMATURE',
+      'config': {
+        'subtarget': ['root', 'torso']
+      }
     },
     {
       'name': mch_parent_weapon,
-      'target': ['root', 'org_hand.l', 'org_hand.r'],
       'type': 'ARMATURE',
+      'config': {
+        'subtarget': ['root', 'org_hand.l', 'org_hand.r']
+      }
     },
     {
       'name': mch_parent_weapon,
-      'target': mch_parent_weapon_to_master,
       'type': 'COPY_TRANSFORMS',
+      'config': {
+        'subtarget': mch_parent_weapon_to_master
+      }
     },
     {
       'name': mch_parent_ik_hand_l,
-      'target': mch_parent_ik_to_master_l,
       'type': 'COPY_TRANSFORMS',
+      'config': {
+        'subtarget': mch_parent_ik_to_master_l
+      }
     },
     {
       'name': mch_parent_ik_hand_r,
-      'target': mch_parent_ik_to_master_r,
       'type': 'COPY_TRANSFORMS',
+      'config': {
+        'subtarget': mch_parent_ik_to_master_r
+      }
     }
   ]
   driver_config = [
@@ -262,20 +283,17 @@ def rig_weapon (weapon_bone, armature):
   _init_drivers(driver_config)
   add_weapon_props([weapon])
 
-  weapon_names = [weapon, weapon_master]
-  mch_bone_names = [
-    mch_parent_weapon,
-    mch_parent_weapon_to_master, 
-    mch_parent_weapon_master,
-    mch_parent_ik_to_master_l,
-    mch_parent_ik_to_master_r
-  ]
+  return bone_config
 
-  return weapon_names, mch_bone_names
+def common_move_bones_to_collection (bone_config):
+  for config in bone_config:
+    bone_name = config['name']
+    collection = config['collection']
+    move_bones_to_collection(collection, bone_name)
 
-def assign_collection (armature, weapon_names, mch_bone_names):
-  move_bone_to_collection('weapon', weapon_names)
-  move_bone_to_collection('mch', mch_bone_names)
+def assign_collection (bone_config, weapon):
+  move_bones_to_collection(weapons_collection, weapon)
+  common_move_bones_to_collection(bone_config)
 
 def check_weapon (self, weapon):
   passing = True
@@ -317,12 +335,8 @@ class OBJECT_OT_rig_weapon (get_operator()):
 
   def execute(self, context):
     set_mode('EDIT')
-    scene = context.scene
-    weapon = scene.weapon
-    armature = get_active_object()
-
-    weapon_bone = get_edit_bone(weapon)
-    weapon_names, mch_bone_names = rig_weapon(weapon_bone, armature)
-    assign_collection(armature, weapon_names, mch_bone_names)
+    weapon = context.scene.weapon
+    bone_config = rig_weapon(weapon)
+    assign_collection(bone_config, weapon)
 
     return {'FINISHED'}

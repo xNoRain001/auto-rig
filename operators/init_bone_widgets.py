@@ -10,12 +10,11 @@ from ..libs.blender_utils import (
 def add_bone_widget (
   scene,
   pose_bone,
-  **kwargs
+  shape,
+  translation = None,
+  rotation = None,
+  scale = None
 ):
-  shape = kwargs['shape']
-  translation = kwargs.get('translation')
-  rotation = kwargs.get('rotation')
-  scale = kwargs.get('scale')
   select_pose_bone(pose_bone)
   scene.shape = shape
 
@@ -30,12 +29,16 @@ def add_bone_widget (
 
   deselect_pose_bone(pose_bone)
 
-def gen_shape_map ():
+def init_shape_map ():
   shape_map = {
     'root': { 'shape': 'Root' },
     'props': { 'shape': 'Gear Complex' },
     'head': { 'shape': 'Circle' },
     'neck': { 'shape': 'Circle' },
+    'fk_hips': { 'shape': 'Circle' },
+    'fk_spine_01': { 'shape': 'Circle' },
+    'fk_spine_02': { 'shape': 'Circle' },
+    'fk_chest': { 'shape': 'Circle' },
     'shoulder.l': { 'shape': 'Chest' },
     'torso': { 'shape': 'Cube', 'translation': (0, 0, 0) },
     'chest': { 'shape': 'Chest', 'translation': (0, 0, 0), 'rotation': (0, 0, 0) },
@@ -73,9 +76,8 @@ def gen_shape_map ():
 
   return shape_map
 
-def init_bone_widget (scene):
-  set_mode('POSE')
-  shape_map = gen_shape_map()
+def init_bone_widgets (scene):
+  shape_map = init_shape_map()
 
   for bone_name, config in shape_map.items():
     pose_bone = get_pose_bone(bone_name)
@@ -83,23 +85,31 @@ def init_bone_widget (scene):
     if pose_bone:
       add_bone_widget(scene, pose_bone, **config)
 
+  # 以手指长度为参考
+  l = get_pose_bone('def_thumb_01.l').length
+  v = l / 4
+
   for pose_bone in get_pose_bones():
     if pose_bone.name.startswith('tweak_'):
-      # TODO: 以手指长度为参考
-      if pose_bone.name.startswith((
-        'tweak_thumb', 'tweak_finger', 'tweak_tip_thumb', 'tweak_tip_finger'
-      )):
-        scale = (0.01, 0.01, 0.01)
-      else:
-        scale = (0.037, 0.037, 0.037)
-
-      add_bone_widget(scene, pose_bone, **{ 'shape': 'Sphere', 'scale': scale })
+      is_finger_tweak_bone = pose_bone.name.startswith((
+        'tweak_thumb', 
+        'tweak_finger', 
+        'tweak_tip_thumb', 
+        'tweak_tip_finger'
+      ))
+      add_bone_widget(
+        scene, 
+        pose_bone, 
+        'Sphere', 
+        (0, 0, 0), 
+        scale = (v, v, v) if is_finger_tweak_bone else (l, l, l)
+      )
 
 class OBJECT_OT_init_bone_widgets (get_operator()):
-  bl_idname = 'object.init_bone_widget'
-  bl_label = 'Init Bone Widget'
+  bl_idname = 'object.init_bone_widgets'
+  bl_label = 'Init Bone Widgets'
 
   def execute(self, context):
-    init_bone_widget(context.scene)
+    init_bone_widgets(context.scene)
 
     return {'FINISHED'}

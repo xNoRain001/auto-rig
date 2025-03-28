@@ -9,11 +9,13 @@ def common_stretch_config (org_bone_names, config):
 
     config.append({
       'name': org_bone_name,
-      'target': target_bone_name,
-      'type': 'STRETCH_TO'
+      'type': 'STRETCH_TO',
+      'config': {
+        'subtarget': target_bone_name,
+      }
     })
 
-def init_torso ():
+def init_torso_config ():
   common = {
     'influence': 0.5,
     'target_space': 'LOCAL', 
@@ -23,65 +25,85 @@ def init_torso ():
   config = [
     {
       'name': 'mch_spine_02_pivot',
-      'target': 'fk_spine_01',
       'type': 'COPY_TRANSFORMS',
       'config': {
+        'subtarget': 'fk_spine_01',
         'influence': 0.5
       }
     },
     {
       'name': 'mch_fk_chest',
-      'target': 'chest',
       'type': 'COPY_TRANSFORMS',
-      'config': common
+      'config': {
+        'subtarget': 'chest',
+        **common
+      }
     },
     {
       'name': 'mch_fk_spine_02',
-      'target': 'chest',
       'type': 'COPY_TRANSFORMS',
-      'config': common
+      'config': {
+        'subtarget': 'chest',
+        **common
+      }
     },
     {
       'name': 'mch_fk_spine_01',
-      'target': 'hips',
       'type': 'COPY_TRANSFORMS',
-      'config': common
+      'config': {
+        'subtarget': 'hips',
+        **common
+      }
     },
     {
       'name': 'mch_fk_hips.',
-      'target': 'hips',
       'type': 'COPY_TRANSFORMS',
-      'config': common
+      'config': {
+        'subtarget': 'hips',
+        **common
+      }
     },
     {
       'name': 'mch_int_neck',
-      'target': 'mch_neck',
-      'type': 'COPY_LOCATION'
-    },
-    {
-      'name': 'mch_int_neck',
-      'target': 'mch_neck',
-      'type': 'COPY_SCALE'
-    },
-    {
-      'name': 'mch_int_neck',
-      'target': 'mch_neck',
-      'type': 'COPY_ROTATION',
-    },
-    {
-      'name': 'mch_int_head',
-      'target': 'mch_head',
       'type': 'COPY_LOCATION',
+      'config': {
+        'subtarget': 'mch_neck',
+      }
     },
     {
-      'name': 'mch_int_head',
-      'target': 'mch_head',
+      'name': 'mch_int_neck',
       'type': 'COPY_SCALE',
+      'config': {
+        'subtarget': 'mch_neck',
+      }
+    },
+    {
+      'name': 'mch_int_neck',
+      'type': 'COPY_ROTATION',
+      'config': {
+        'subtarget': 'mch_neck',
+      }
     },
     {
       'name': 'mch_int_head',
-      'target': 'mch_head',
+      'type': 'COPY_LOCATION',
+      'config': {
+        'subtarget': 'mch_head',
+      }
+    },
+    {
+      'name': 'mch_int_head',
+      'type': 'COPY_SCALE',
+      'config': {
+        'subtarget': 'mch_head',
+      }
+    },
+    {
+      'name': 'mch_int_head',
       'type': 'COPY_ROTATION',
+      'config': {
+        'subtarget': 'mch_head',
+      }
     },
   ]
   
@@ -95,6 +117,6 @@ def init_torso ():
   ]
 
   common_stretch_config(org_bone_names, config)
-  config[-1]['target'] = 'tweak_top_head'
+  config[-1]['config']['subtarget'] = 'tweak_top_head'
 
   return config

@@ -1,6 +1,6 @@
 from ..libs.blender_utils import get_edit_bone
-from .init_arm import arm_tweak_bone_names
-from .init_leg import leg_tweak_bone_names
+from .init_arm_config import arm_tweak_bone_names
+from .init_leg_config import leg_tweak_bone_names
 
 def set_parent (bone, target, use_connect = False):
   bone.use_connect = use_connect
@@ -188,8 +188,8 @@ def init_parent ():
     ['fk_chest', 'mch_fk_chest', False],
     ['tweak_chest', 'fk_chest', False],
     ['org_chest', 'tweak_chest', False],
-    ['shoulder.l', 'org_chest', False],
-    ['mch_arm.l', 'shoulder.l', False],
+    ['org_shoulder.l', 'org_chest', False],
+    ['mch_arm.l', 'org_shoulder.l', False],
     ['mch_twist_arm.l', 'mch_arm.l', False],
     ['tweak_arm.l', 'mch_twist_arm.l', False],
     ['org_arm.l', 'tweak_arm.l', False],

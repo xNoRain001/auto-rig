@@ -1,5 +1,5 @@
 from ..const import bl_category, weapon_custom_prop_prefix, identifier
-from ..libs.blender_utils import get_panel, get_pose_bone, get_active_object
+from ..libs.blender_utils import get_panel, get_pose_bone, get_active_object, is_pose_mode
 
 i = len(weapon_custom_prop_prefix)
 not_visible = set([
@@ -32,7 +32,7 @@ class VIEW3D_PT_custom_props (get_panel()):
 
   @classmethod
   def poll(cls, context):
-    return show_panel(context)
+    return is_pose_mode()
 
   def draw(self, context):
     scene = context.scene

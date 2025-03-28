@@ -1,9 +1,8 @@
 from ..libs.blender_utils import get_edit_bone
-from .init_torso import common_stretch_config
-from ..bones.init_leg import leg_tweak_bone_names
+from .init_torso_config import common_stretch_config
+from ..bones.init_leg_config import leg_tweak_bone_names
 
-def init_leg ():
-  config = []
+def init_leg_config (config):
   org_bone_names = ['org_leg.l', 'org_shin.l', 'org_foot.l']
   org_toes_bone_name = 'org_toes.l'
   has_toes_bone = get_edit_bone(org_toes_bone_name)
@@ -20,80 +19,94 @@ def init_leg ():
 
     config.append({
       'name': org_bone_name,
-      'target': prefix,
       'type': 'COPY_ROTATION',
       'config': {
+        'subtarget': prefix,
         'influence': influence_list[index]
       }
     })
 
   common_stretch_config(org_bone_names, config)
   if has_toes_bone:
-    config[-1]['target'] = 'tweak_tip_toes.l'
+    config[-1]['config']['subtarget'] = 'tweak_tip_toes.l'
   else:
-    config[-1]['target'] = 'tweak_tip_foot.l'
+    config[-1]['config']['subtarget'] = 'tweak_tip_foot.l'
   common_stretch_config(leg_tweak_bone_names, config)
 
   config.extend([
     {
       'name': 'vis_leg_pole.l',
-      'target': 'leg_pole.l',
       'type': 'STRETCH_TO',
       'config': {
+        'subtarget': 'leg_pole.l',
         'head_tail': 1
       }
     },
     {
       'name': 'mch_parent_leg_pole.l',
-      'target': ['root', 'ik_foot.l', 'torso'],
       'type': 'ARMATURE',
+      'config': {
+        'subtarget': ['root', 'ik_foot.l', 'torso'],
+      }
     },
     {
       'name': 'mch_parent_ik_foot.l',
-      'target': ['root', 'torso'],
       'type': 'ARMATURE',
+      'config': {
+        'subtarget': ['root', 'torso'],
+      }
     },
     # 解决拉伸缩放问题
     {
       'name': 'mch_tweak_shin.l',
-      'target': 'root',
       'type': 'COPY_SCALE',
+      'config': {
+        'subtarget': 'root',
+      }
     },
     {
       'name': 'mch_tweak_foot.l',
-      'target': 'root',
       'type': 'COPY_SCALE',
+      'config': {
+        'subtarget': 'root',
+      }
     },
     # twist
     {
       'name': 'mch_int_leg.l',
-      'target': 'mch_leg.l',
       'type': 'COPY_LOCATION',
+      'config': {
+        'subtarget': 'mch_leg.l',
+      }
     },
     {
       'name': 'mch_int_leg.l',
-      'target': 'mch_leg.l',
       'type': 'COPY_ROTATION',
+      'config': {
+        'subtarget': 'mch_leg.l',
+      }
     },
     {
       'name': 'mch_twist_leg.l',
-      'target': 'mch_switch_leg.l',
       'type': 'COPY_LOCATION',
+      'config': {
+        'subtarget': 'mch_switch_leg.l',
+      }
     },
     {
       'name': 'mch_twist_leg.l',
-      'target': 'mch_switch_leg.l',
       'type': 'DAMPED_TRACK',
       'config': {
+        'subtarget': 'mch_switch_leg.l',
         'head_tail': 1
       }
     },
     # ik
     {
       'name': 'mch_ik_shin.l',
-      'target': 'mch_ik_foot.l',
       'type': 'IK',
       'config': {
+        'subtarget': 'mch_ik_foot.l',
         'chain_count': 2,
         'pole_subtarget': 'leg_pole.l'
       }
@@ -113,13 +126,17 @@ def init_leg ():
     config.extend([
       {
         'name': item,
-        'target': list2[index],
         'type': 'COPY_TRANSFORMS',
+        'config': {
+          'subtarget': list2[index],
+        }
       },
       {
         'name': item,
-        'target': list3[index],
         'type': 'COPY_TRANSFORMS',
+        'config': {
+          'subtarget': list3[index],
+        }
       }
     ])
 
@@ -135,9 +152,9 @@ def init_leg ():
   config.extend([
     {
       'name': 'mch_foot_heel.l',
-      'target': 'foot_heel.l',
       'type': 'COPY_ROTATION',
       'config': {
+        'subtarget': 'foot_heel.l',
         'use_y': False, 
         'use_z': False, 
         **common
@@ -145,7 +162,6 @@ def init_leg ():
     },
     {
       'name': 'mch_foot_heel.l',
-      'target': '',
       'type': 'LIMIT_ROTATION',
       'config': {
         'use_limit_x': True, 
@@ -156,9 +172,9 @@ def init_leg ():
     },
     {
       'name': 'mch_foot_roll.l',
-      'target': 'foot_heel.l',
       'type': 'COPY_ROTATION',
       'config': {
+        'subtarget': 'foot_heel.l',
         'use_y': False, 
         'use_z': False, 
         **common
@@ -166,7 +182,6 @@ def init_leg ():
     },
     {
       'name': 'mch_foot_roll.l',
-      'target': '',
       'type': 'LIMIT_ROTATION',
       'config': {
         'use_limit_x': True, 
@@ -177,9 +192,9 @@ def init_leg ():
     },
     {
       'name': 'mch_roll_side_01.l',
-      'target': 'foot_heel.l',
       'type': 'COPY_ROTATION',
       'config': {
+        'subtarget': 'foot_heel.l',
         'use_x': False, 
         'use_y': False, 
         **common
@@ -187,7 +202,6 @@ def init_leg ():
     },
     {
       'name': 'mch_roll_side_01.l',
-      'target': '',
       'type': 'LIMIT_ROTATION',
       'config': {
         'use_limit_z': True, 
@@ -198,9 +212,9 @@ def init_leg ():
     },
     {
       'name': 'mch_roll_side_02.l',
-      'target': 'foot_heel.l',
       'type': 'COPY_ROTATION',
       'config': {
+        'subtarget': 'foot_heel.l',
         'use_x': False, 
         'use_y': False, 
         **common
@@ -208,7 +222,6 @@ def init_leg ():
     },
     {
       'name': 'mch_roll_side_02.l',
-      'target': '',
       'type': 'LIMIT_ROTATION',
       'config': {
         'use_limit_z': True, 
@@ -222,9 +235,9 @@ def init_leg ():
   if get_edit_bone('ik_toes.l'):
     config.append({
       'name': 'mch_ik_toes.l',
-      'target': 'mch_foot_roll.l',
       'type': 'COPY_ROTATION',
       'config': {
+        'subtarget': 'mch_foot_roll.l',
         'target_space': 'LOCAL', 
         'owner_space': 'LOCAL',
         'use_x': True,

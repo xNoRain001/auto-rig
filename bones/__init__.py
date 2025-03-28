@@ -1,27 +1,28 @@
-from .init_arm import init_arm
-from .init_hand import init_hand
-from .init_torso import init_torso
-from .init_leg import init_leg
-from .init_props import init_props
-from .init_org_bones import init_org_bones
-from .init_parent import init_parent
 from ..libs.blender_utils import (
   extrude_bone_, 
   copy_bone_,
   delete_bones,
   get_edit_bone,
 )
+
+from .init_parent import init_parent
 from ..bone_patch import bone_patchs
+from .init_org_bones import init_org_bones
+from .init_arm_config import init_arm_config
+from .init_leg_config import init_leg_config
+from .init_hand_config import init_hand_config
+from .init_torso_config import init_torso_config
+from .init_props_config import init_props_config
 
 def delete_tmp_bones ():
   delete_bones([get_edit_bone('mch_ik_arm.l.001'), get_edit_bone('mch_ik_leg.l.001')])
 
 def _init_bones (config, scene = None):
-  for item in config:
-    name = item['name']
-    source = item['source']
-    operator = item['operator']
-    operator_config = item['operator_config']
+  for bone_config in config:
+    name = bone_config['name']
+    source = bone_config['source']
+    operator = bone_config['operator']
+    operator_config = bone_config['operator_config']
     scale_factor = operator_config.get('scale_factor')
 
     if operator == 'extrude':
@@ -38,21 +39,19 @@ def _init_bones (config, scene = None):
 
       if isinstance(cbs, list):
         for cb in cbs:
-          cb(scene, item)
+          cb(scene, bone_config)
       else:
-        cbs(scene, item)
+        cbs(scene, bone_config)
 
 def init_bones (scene):
   init_org_bones()
-  hand_config = init_hand()
-  arm_config = init_arm(scene)
-  torso_config = init_torso()
-  props_config = init_props()
-  leg_config = init_leg(scene)
-  configs = [props_config, torso_config, hand_config, arm_config, leg_config]
-
-  for config in configs:
-    _init_bones(config, scene)
-    
+  config = init_hand_config()
+  config = init_arm_config(scene, config)
+  config = init_torso_config(config)
+  config = init_props_config(config)
+  config = init_leg_config(scene, config)
+  _init_bones(config, scene)
   init_parent()
   delete_tmp_bones()
+
+  return config

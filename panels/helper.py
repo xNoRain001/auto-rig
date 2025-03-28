@@ -1,4 +1,4 @@
-from ..libs.blender_utils import get_panel
+from ..libs.blender_utils import get_panel, is_pose_mode
 from ..const import bl_category
 from ..operators import (
   OBJECT_OT_init_bone_collections, 
@@ -16,7 +16,7 @@ class VIEW3D_PT_helper (get_panel()):
 
   @classmethod
   def poll(cls, context):
-    return show_panel(context)
+    return is_pose_mode()
 
   def draw(self, context):
     layout = self.layout
