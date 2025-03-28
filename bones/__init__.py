@@ -11,7 +11,7 @@ from ..libs.blender_utils import (
   delete_bones,
   get_edit_bone,
 )
-from ..patch import patch_strategies
+from ..bone_patch import bone_patchs
 
 def delete_tmp_bones ():
   delete_bones([get_edit_bone('mch_ik_arm.l.001'), get_edit_bone('mch_ik_leg.l.001')])
@@ -33,8 +33,8 @@ def _init_bones (config, scene = None):
     else:
       copy_bone_(name, source, scale_factor)
 
-    if name in patch_strategies:
-      cbs = patch_strategies[name]
+    if name in bone_patchs:
+      cbs = bone_patchs[name]
 
       if isinstance(cbs, list):
         for cb in cbs:

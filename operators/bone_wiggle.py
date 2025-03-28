@@ -16,7 +16,7 @@ from ..libs.blender_utils import (
   report_error,
   get_active_object
 )
-from ..patch.add_custom_props import _add_custom_props
+from ..bone_patch.add_custom_props import _add_custom_props
 from ..bones.init_org_bones import init_org_bones
 from ..constraints import def_bone_add_copy_transforms
 from ..bones import _init_bones

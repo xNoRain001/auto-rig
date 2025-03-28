@@ -44,6 +44,7 @@ def add_torso (map):
     'neck',
     'head',
     'shoulder.l',
+    'shoulder.r',
   ])
   map['torso_fk'].update([
     'fk_hips',

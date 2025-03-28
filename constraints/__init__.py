@@ -15,6 +15,7 @@ from ..libs.blender_utils import (
   add_limit_rotation_constraint,
   get_pose_bones
 )
+from ..constraint_patch import constraint_patchs
 
 strategies = {
   'IK': add_ik_constraint,
@@ -61,6 +62,15 @@ def _init_constraints (config):
       strategies[type](name, **config)
     else:
       strategies[type](name, target, **config)
+
+    if name in constraint_patchs:
+      cbs = constraint_patchs[name]
+
+      if isinstance(cbs, list):
+        for cb in cbs:
+          cb(item)
+      else:
+        cbs(item)
 
 def init_constraints ():
   torso_config = init_torso()

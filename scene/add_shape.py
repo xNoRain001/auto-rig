@@ -9,7 +9,7 @@ from ..libs.blender_utils import (
 )
 from os.path import dirname, abspath, join
 from ..const import wgt_collection_name
-from ..strategies import rotation_strategies, scale_strategies, translation_strategies
+from ..widget_strategies import rotation_strategies, scale_strategies, translation_strategies
 
 template_path = join(dirname(abspath(__file__)), '../assets/wgt/wgts.blend')
 wgt_prefix = 'bone_widget_'

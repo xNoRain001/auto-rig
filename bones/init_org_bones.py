@@ -45,6 +45,9 @@ def rename_org_bones (selected_bones):
       print(org_bone_name)
     org_bone.name = \
       org_bone_name.replace('def_', 'org_').replace('.001', '')
+    
+  get_edit_bone('org_shoulder.l').name = 'shoulder.l'
+  get_edit_bone('org_shoulder.r').name = 'shoulder.r'
 
 def restore_bone_visibility (hide_def_bones):
   for hide_def_bone in hide_def_bones:

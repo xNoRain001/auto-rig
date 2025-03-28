@@ -1,29 +1,23 @@
 from ..libs.blender_utils import (
-  get_pose_bone, get_pose_bones, get_context, get_bone_widget, get_operator,
-  active_object_, get_object_, set_mode, get_data, report_error
+  get_pose_bone, 
+  get_pose_bones, 
+  get_operator,
+  set_mode, 
+  select_pose_bone,
+  deselect_pose_bone
 )
-from math import radians
 
 def add_bone_widget (
   scene,
   pose_bone,
   **kwargs
 ):
-  prop = 'shape'
-  shape = kwargs[prop]
-  del kwargs[prop]
-  pose_bone.bone.select = True
-  # name = pose_bone.name
-  # mirror_name = None
-  # mirror_bone = None
-  # if name.endswith('.l'):
-  #   mirror_name = name[:-2] + '.r'
-  #   mirror_bone = get_pose_bone(mirror_name)
-  #   mirror_bone.bone.select = True
-  scene.shape = shape
+  shape = kwargs['shape']
   translation = kwargs.get('translation')
   rotation = kwargs.get('rotation')
   scale = kwargs.get('scale')
+  select_pose_bone(pose_bone)
+  scene.shape = shape
 
   if translation:
     scene.translation = translation
@@ -34,9 +28,7 @@ def add_bone_widget (
   if scale:
     scene.scale = scale
 
-  pose_bone.bone.select = False
-  # if name.endswith('.l'):
-  #   mirror_bone.bone.select = False
+  deselect_pose_bone(pose_bone)
 
 def gen_shape_map ():
   shape_map = {
@@ -47,6 +39,7 @@ def gen_shape_map ():
     'shoulder.l': { 'shape': 'Chest' },
     'torso': { 'shape': 'Cube', 'translation': (0, 0, 0) },
     'chest': { 'shape': 'Chest', 'translation': (0, 0, 0), 'rotation': (0, 0, 0) },
+    'shoulder.l': { 'shape': 'Chest', 'rotation': (0, 0, 0) },
     'hips': { 'shape': 'Chest', 'translation': (0, 0, 0), 'rotation': (0, 0, 0) },
     'fk_arm.l': { 'shape': 'FK Limb 2' },
     'ik_hand.l': { 'shape': 'Cube' },
@@ -54,8 +47,8 @@ def gen_shape_map ():
     'vis_arm_pole.l': { 'shape': 'Line' },
     'thumb_01.l': { 'shape': 'Cube_Mini' },
     'ik_foot.l': { 'shape': 'Cuboid' },
-    'foot_heel.l': { 'shape': 'Roll' },
-    'ik_toes.l': { 'shape': 'Roll' }
+    'foot_heel.l': { 'shape': 'Roll', 'rotation': (1.5708, 0, 1.5708) },
+    'ik_toes.l': { 'shape': 'Roll', 'rotation': (3.1415, 1.5708, 0) }
   }
   # 相同配置
   config = {

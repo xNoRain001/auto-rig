@@ -12,7 +12,7 @@ from ..bones import _init_bones
 from ..bones.init_parent import _init_parent
 from ..constraints import _init_constraints
 from ..drivers import _init_drivers
-from ..patch.add_custom_props import _add_custom_props
+from ..bone_patch.add_custom_props import _add_custom_props
 from ..scene.add_weapon_props import add_weapon_props
 import json
 from ..const import weapon_custom_prop_prefix

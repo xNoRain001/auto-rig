@@ -145,11 +145,6 @@ def run_checker (self, context):
 
   return passing
 
-def rename_shoulder ():
-  set_mode('EDIT')
-  get_edit_bone('org_shoulder.l').name = 'shoulder.l'
-  get_edit_bone('org_shoulder.r').name = 'shoulder.r'
-
 def symmetrize_bones ():
   set_mode('EDIT')
   bones = get_edit_bones()
@@ -160,7 +155,7 @@ def symmetrize_bones ():
 
   symmetrize_bones_()
   deselect_bones()
-  
+
 class OBJECT_OT_auto_rig (get_operator()):
   bl_idname = 'object.auto_rig'
   bl_label = 'Auto Rig'
@@ -184,8 +179,5 @@ class OBJECT_OT_auto_rig (get_operator()):
     init_drivers()
     init_bone_collections(scene)
     armature[identifier] = True
-    # for test
-    get_pose_bone('mch_ik_shin.l').constraints["IK"].pole_angle = -1.5708
-    get_pose_bone('mch_ik_shin.r').constraints["IK"].pole_angle = -1.5708
 
     return {'FINISHED'}

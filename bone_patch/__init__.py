@@ -6,7 +6,7 @@ from .roll import roll
 from .add_custom_props import add_custom_props
 from .cal_roll import cal_roll
 
-patch_strategies = {
+bone_patchs = {
   'mch_ik_arm.l.001': pole_target,
   'mch_ik_leg.l.001': pole_target,
   'mch_foot_roll.l': [cal_roll, fix_location],

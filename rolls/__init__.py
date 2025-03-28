@@ -1,10 +1,10 @@
 from ..libs.blender_utils import (
-  calculate_roll, 
   get_edit_bone, 
+  calculate_roll, 
   symmetrize_bones, 
 )
 
-def init_config ():
+def init_roll_config ():
   config = []
   roll_map = {
     'GLOBAL_NEG_Z': [
@@ -20,7 +20,7 @@ def init_config ():
       'def_finger_c_01.l', 'def_finger_c_02.l', 'def_finger_c_03.l',
       'def_finger_d_01.l', 'def_finger_d_02.l', 'def_finger_d_03.l',
     ],
-    'GLOBAL_NEG_Y': ['def_thumb_01.l']
+    'GLOBAL_NEG_Y': ['def_thumb_01.l', 'def_thumb_02.l', 'def_thumb_03.l']
   }
 
   for type, bone_names in roll_map.items():
@@ -33,12 +33,12 @@ def init_config ():
   return config
 
 def init_rolls ():
-  config = init_config()
+  roll_config = init_roll_config()
   bone_names = []
 
-  for item in config:
-    name = item['name']
-    type = item['type']
+  for config in roll_config:
+    name = config['name']
+    type = config['type']
     bone = get_edit_bone(name)
     bone_names.append(name)
     calculate_roll(bone, type)
