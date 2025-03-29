@@ -104,8 +104,6 @@ def init_wiggle (scene):
   wiggle_prop = scene.wiggle_prop
   wiggle_influence = scene.wiggle_influence
 
-  set_mode('EDIT')
-
   for selected_bone_name in selected_bone_names:
     bone = get_edit_bone(selected_bone_name)
     root = bone.parent.name

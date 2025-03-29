@@ -15,7 +15,7 @@ def init_torso_config (config):
       'operator': 'extrude',
       'operator_config': {
         'head_or_tail': 'head',
-        'scale_factor': (0, 2, 0)
+        'scale_factor': (0, 3, 0)
       },
     },
     {
@@ -24,7 +24,7 @@ def init_torso_config (config):
       'collection': torso_collection,
       'operator': 'copy',
       'operator_config': {
-        'scale_factor': 0.75,
+        'scale_factor': 0.9,
       },
     },
     {
@@ -33,7 +33,7 @@ def init_torso_config (config):
       'collection': torso_collection,
       'operator': 'copy',
       'operator_config': {
-        'scale_factor': 0.5,
+        'scale_factor': 0.8,
       },
     },
     {

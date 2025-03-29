@@ -1,15 +1,15 @@
 from ..libs.blender_utils import (
   add_scene_custom_prop, 
   get_types, 
+  get_pose_bones,
   get_bone_collections,
   get_active_object
 )
 
-from ..operators.init_bone_collections import init_bone_colors
+from ..hooks import init_bone_colors
 
 def update_color (self, context):
-  bone_collections = get_bone_collections(get_active_object())
-  init_bone_colors(context.scene, bone_collections)
+  init_bone_colors(context.scene)
 
 def add_bone_colors ():
   items = []

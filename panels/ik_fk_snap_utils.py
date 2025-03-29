@@ -1,7 +1,7 @@
 from ..libs.blender_utils import get_panel, get_pose_bone, is_pose_mode
 from ..operators.ik_fk_snap_utils import OBJECT_OT_ik_fk_snap_utils
 from ..const import bl_category
-from .custom_props import show_panel
+from .custom_props import show_panel_in_pose_mode
 
 class VIEW3D_PT_ik_fk_snap_utils (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -12,7 +12,7 @@ class VIEW3D_PT_ik_fk_snap_utils (get_panel()):
 
   @classmethod
   def poll(cls, context):
-    return is_pose_mode()
+    return show_panel_in_pose_mode()
 
   def draw(self, context):
     bone = get_pose_bone('props')

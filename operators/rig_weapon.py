@@ -1,13 +1,9 @@
 import json
 from ..libs.blender_utils import (
-  get_operator, 
-  get_pose_bone, 
   set_mode,
+  get_operator, 
   report_error,
-  get_edit_bone,
-  get_active_object,
-  get_bone_collections,
-  select_bone
+  get_pose_bone
 )
 
 from ..bones import _init_bones
@@ -16,13 +12,12 @@ from ..constraints import _init_constraints
 from ..drivers import _init_drivers
 from ..bone_patch.add_custom_props import _add_custom_props
 from ..scene.add_weapon_props import add_weapon_props
-from .init_bone_collections import move_bones_to_collection
+from ..hooks.init_bone_collections import move_bones_to_collection
 from ..const import (
   mch_collection,
   weapons_collection,
   weapon_custom_prop_prefix,
 )
-
 
 def update_weapons (weapon_name):
   props_bone = get_pose_bone('props')

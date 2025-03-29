@@ -1,8 +1,9 @@
 from ..libs.blender_utils import get_panel, get_active_object
+
 from ..operators.bone_wiggle import OBJECT_OT_bone_wiggle
 from ..const import bl_category
 from ..operators import OBJECT_OT_rig_weapon
-from .custom_props import show_panel
+from .custom_props import show_panel_in_edit_and_pose_mode
 
 class VIEW3D_PT_extra_rig (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -13,7 +14,7 @@ class VIEW3D_PT_extra_rig (get_panel()):
 
   @classmethod
   def poll(cls, context):
-    return show_panel(context)
+    return show_panel_in_edit_and_pose_mode()
 
   def draw(self, context):
     scene = context.scene

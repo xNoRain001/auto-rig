@@ -1,11 +1,11 @@
-from ..libs.blender_utils import get_panel, is_pose_mode
+from ..libs.blender_utils import get_panel
+
 from ..const import bl_category
+from .custom_props import show_panel_in_pose_mode
 from ..operators import (
-  OBJECT_OT_init_bone_collections, 
   OBJECT_OT_init_def_bones,
   OBJECT_OT_refresh_weapon
 )
-from .custom_props import show_panel
 
 class VIEW3D_PT_helper (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -16,7 +16,7 @@ class VIEW3D_PT_helper (get_panel()):
 
   @classmethod
   def poll(cls, context):
-    return is_pose_mode()
+    return show_panel_in_pose_mode()
 
   def draw(self, context):
     layout = self.layout
@@ -40,8 +40,6 @@ class VIEW3D_PT_helper (get_panel()):
     row = box.row()
     row.label(text = 'Rotation mode')
     row.prop(scene, 'rotation_mode', text = '')
-    # row = box.row()
-    # row.operator(OBJECT_OT_init_bone_collections.bl_idname, text = 'Assign Collection')
     # row = box.row()
     # row.operator(OBJECT_OT_init_def_bones.bl_idname, text = 'Init Def Bones')
     row = box.row()

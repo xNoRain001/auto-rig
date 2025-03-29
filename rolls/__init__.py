@@ -34,8 +34,7 @@ def init_roll_config ():
 
   return config
 
-def init_rolls (armature):
-  set_mode('EDIT')
+def init_rolls ():
   roll_config = init_roll_config()
   bone_names = []
 

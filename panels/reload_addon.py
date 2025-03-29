@@ -15,4 +15,5 @@ class VIEW3D_PT_reload_auto_rig_addon (get_panel()):
 
   def draw(self, context):
     layout = self.layout
-    add_row_with_operator(layout, OBJECT_OT_reload_addon.bl_idname, 'Reload Auto Rig Addon')
+    row = layout.row()
+    row.operator(OBJECT_OT_reload_addon.bl_idname, text = 'Reload Addon')

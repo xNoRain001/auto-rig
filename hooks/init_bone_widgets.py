@@ -1,11 +1,26 @@
 from ..libs.blender_utils import (
   get_pose_bone, 
   get_pose_bones, 
-  get_operator,
-  set_mode, 
   select_pose_bone,
   deselect_pose_bone
 )
+
+def chest_patch ():
+  get_pose_bone('chest').custom_shape_translation[2] = \
+    get_pose_bone('org_spine_02').length + get_pose_bone('chest').length / 2
+
+def hips_patch ():
+  get_pose_bone('hips').custom_shape_translation[2] = \
+    (get_pose_bone('org_spine_01').length + get_pose_bone('hips').length) * -1
+  
+def root_patch ():
+  get_pose_bone('root').custom_shape_scale_xyz = (1, 1, 1)
+
+bone_widget_patchs = {
+  'chest': chest_patch,
+  'hips': hips_patch,
+  'root': root_patch
+}
 
 def add_bone_widget (
   scene,
@@ -76,7 +91,7 @@ def init_shape_map ():
 
   return shape_map
 
-def init_bone_widgets (scene):
+def init_main_bone_widgets (scene):
   shape_map = init_shape_map()
 
   for bone_name, config in shape_map.items():
@@ -85,6 +100,10 @@ def init_bone_widgets (scene):
     if pose_bone:
       add_bone_widget(scene, pose_bone, **config)
 
+    if bone_name in bone_widget_patchs:
+      bone_widget_patchs[bone_name]()
+
+def init_tweak_bone_widgets (scene):
   # 以手指长度为参考
   l = get_pose_bone('def_thumb_01.l').length
   v = l / 4
@@ -105,11 +124,7 @@ def init_bone_widgets (scene):
         scale = (v, v, v) if is_finger_tweak_bone else (l, l, l)
       )
 
-class OBJECT_OT_init_bone_widgets (get_operator()):
-  bl_idname = 'object.init_bone_widgets'
-  bl_label = 'Init Bone Widgets'
-
-  def execute(self, context):
-    init_bone_widgets(context.scene)
-
-    return {'FINISHED'}
+def init_bone_widgets (scene):
+  init_main_bone_widgets(scene)
+  init_tweak_bone_widgets(scene)
+  

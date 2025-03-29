@@ -6,25 +6,6 @@ from ..libs.blender_utils import (
   deselect_bones
 )
 
-from ..const import (
-  def_collection,
-  org_collection,
-  mch_collection,
-  root_collection,
-  props_collection,
-  torso_collection,
-  fk_torso_collection,
-  tweak_torso_collection,
-  fk_arm_l_collection,
-  ik_arm_l_collection,
-  tweak_arm_l_collection,
-  fk_leg_l_collection,
-  ik_leg_l_collection,
-  tweak_leg_l_collection,
-  hand_l_collection,
-  tweak_hand_l_collection
-)
-
 # 选中所有 def 骨骼，包括隐藏的
 def select_def_bones ():
   edit_bones = get_edit_bones()

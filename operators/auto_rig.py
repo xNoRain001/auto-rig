@@ -8,17 +8,15 @@ from ..libs.blender_utils import (
   active_object_,
   report_warning,
   symmetrize_bones_,
-  deselect_bones,
-  get_pose_bone
+  deselect_bones
 )
 
 from ..bones import init_bones
-from ..constraints import init_constraints
-from ..drivers import init_drivers
-from .init_bone_widgets import init_bone_widgets
-from .init_bone_collections import init_bone_collections
 from ..rolls import init_rolls
 from ..const import identifier
+from ..drivers import init_drivers
+from ..constraints import init_constraints
+from ..hooks import init_bone_widgets, init_bone_collections, init_bone_colors
 
 def check_foot_ctrl (
   self,
@@ -156,13 +154,17 @@ class OBJECT_OT_auto_rig (get_operator()):
   def execute(self, context):
     scene = context.scene
     armature = scene.armature
-    init_rolls(armature)
+
+    active_object_(armature)
+    init_rolls()
     bone_config = init_bones(scene)
     init_constraints()
     init_bone_widgets(scene)
     symmetrize_bones()
     init_drivers()
-    init_bone_collections(scene, bone_config)
+    init_bone_collections(bone_config)
+    init_bone_colors(scene)
+
     armature[identifier] = True
 
     return {'FINISHED'}

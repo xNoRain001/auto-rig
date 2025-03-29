@@ -1,4 +1,4 @@
-from ..libs.blender_utils import get_pose_bone, set_mode, update_view, get_pose_bones
+from ..libs.blender_utils import get_pose_bone, set_mode
 
 custom_props_config = [
   {
@@ -81,27 +81,27 @@ custom_props_config = [
   }
 ]
 
-def _add_custom_props (custom_props_config, armature = None):
+def _add_custom_props (custom_props_config):
   # 获取 pose bones，如果之前没有切换到 POSE模式，必须先切换一次，之后获取不用切换
   # 到 POSE 也能获取到
   set_mode('POSE')
-  pose_bone = get_pose_bone('props', armature)
+  pose_bone = get_pose_bone('props')
 
   for item in custom_props_config:
     prop_name = item['prop_name']
     config = item['config']
     # 创建属性
     pose_bone[prop_name] = config['default']
-    _config = { k: v for k, v in config.items() if k != 'default' }
+    del config['default']
 
     # 创建属性后才有 ui
-    if len(_config.keys()):
+    if len(config.keys()):
       ui = pose_bone.id_properties_ui(prop_name)
       # 更新默认配置
-      ui.update(**_config)
+      ui.update(**config)
 
   set_mode('EDIT')
 
 def add_custom_props (scene, config):
-  _add_custom_props(custom_props_config, scene.armature)
+  _add_custom_props(custom_props_config)
   

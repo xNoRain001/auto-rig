@@ -1,6 +1,6 @@
 from ..libs.blender_utils import get_bone_collections, get_panel, get_active_object
 
-from .custom_props import show_panel
+from .custom_props import show_panel_in_edit_and_pose_mode
 from ..const import (
   bl_category,
   root_collection,
@@ -48,7 +48,7 @@ class VIEW3D_PT_rig_layers (get_panel()):
 
   @classmethod
   def poll(cls, context):
-    return show_panel(context)
+    return show_panel_in_edit_and_pose_mode()
 
   def draw(self, context):
     armature = get_active_object()

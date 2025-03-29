@@ -3,6 +3,7 @@ from ..operators.clear_bone_widget import OBJECT_OT_clear_bone_widget
 from ..operators.clear_unused_widget import OBJECT_OT_clear_unused_bone_widget
 from ..operators.reset_transform import OBJECT_OT_reset_transform
 from ..const import bl_category
+from .custom_props import show_panel_in_pose_mode
 
 class VIEW3D_PT_bone_widget (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -13,7 +14,7 @@ class VIEW3D_PT_bone_widget (get_panel()):
 
   @classmethod
   def poll(cls, context):
-    return is_pose_mode()
+    return show_panel_in_pose_mode()
 
   def draw(self, context):
     layout = self.layout
