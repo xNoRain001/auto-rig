@@ -61,9 +61,6 @@ def move_bones_to_collection (collection_name, bone_names):
   deselect_pose_bones() if _is_pose_mode else deselect_bones()
 
 def move_bone_to_collection (bone_config):
-  move_bones_to_collection(root_collection, 'root')
-  move_bones_to_collection(torso_collection, ['shoulder.l', 'shoulder.r'])
-
   for config in bone_config:
     bone_name = config['name']
     collection_name = config['collection']
@@ -76,6 +73,11 @@ def move_bone_to_collection (bone_config):
     elif collection_name.endswith('.l'):
       mirror_collection_name = collection_name.replace('.l', '.r')
       move_bones_to_collection(mirror_collection_name, mirror_bone_names)
+
+  move_bones_to_collection(root_collection, 'root')
+  move_bones_to_collection(torso_collection, ['org_shoulder.l', 'org_shoulder.r'])
+  move_bones_to_collection(hand_l_collection, 'mch_finger_d_01.l')
+  move_bones_to_collection(hand_r_collection, 'mch_finger_d_01.r')
 
 def update_collection_visibility ():
   bone_collections = get_bone_collections()

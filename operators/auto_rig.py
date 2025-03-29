@@ -16,7 +16,12 @@ from ..rolls import init_rolls
 from ..const import identifier
 from ..drivers import init_drivers
 from ..constraints import init_constraints
-from ..hooks import init_bone_widgets, init_bone_collections, init_bone_colors
+from ..hooks import (
+  rename_bones,
+  init_bone_colors,
+  init_bone_widgets, 
+  init_bone_collections
+)
 
 def check_foot_ctrl (
   self,
@@ -164,6 +169,7 @@ class OBJECT_OT_auto_rig (get_operator()):
     init_drivers()
     init_bone_collections(bone_config)
     init_bone_colors(scene)
+    rename_bones()
 
     armature[identifier] = True
 

@@ -16,10 +16,14 @@ def hips_patch ():
 def root_patch ():
   get_pose_bone('root').custom_shape_scale_xyz = (1, 1, 1)
 
+def palm_patch ():
+  get_pose_bone('mch_finger_d_01.l').custom_shape_scale_xyz[0] = get_pose_bone('mch_finger_d_01.l').custom_shape_scale_xyz[0] * 2
+
 bone_widget_patchs = {
   'chest': chest_patch,
   'hips': hips_patch,
-  'root': root_patch
+  'root': root_patch,
+  'mch_finger_d_01.l': palm_patch
 }
 
 def add_bone_widget (
@@ -54,10 +58,9 @@ def init_shape_map ():
     'fk_spine_01': { 'shape': 'Circle' },
     'fk_spine_02': { 'shape': 'Circle' },
     'fk_chest': { 'shape': 'Circle' },
-    'shoulder.l': { 'shape': 'Chest' },
+    'org_shoulder.l': { 'shape': 'Chest' },
     'torso': { 'shape': 'Cube', 'translation': (0, 0, 0) },
     'chest': { 'shape': 'Chest', 'translation': (0, 0, 0), 'rotation': (0, 0, 0) },
-    'shoulder.l': { 'shape': 'Chest', 'rotation': (0, 0, 0) },
     'hips': { 'shape': 'Chest', 'translation': (0, 0, 0), 'rotation': (0, 0, 0) },
     'fk_arm.l': { 'shape': 'FK Limb 2' },
     'ik_hand.l': { 'shape': 'Cube' },
@@ -66,7 +69,8 @@ def init_shape_map ():
     'thumb_01.l': { 'shape': 'Cube_Mini' },
     'ik_foot.l': { 'shape': 'Cuboid' },
     'foot_heel.l': { 'shape': 'Roll', 'rotation': (1.5708, 0, 1.5708) },
-    'ik_toes.l': { 'shape': 'Roll', 'rotation': (3.1415, 1.5708, 0) }
+    'ik_toes.l': { 'shape': 'Roll', 'rotation': (3.1415, 1.5708, 0) },
+    'mch_finger_d_01.l': { 'shape': 'Cuboid' },
   }
   # 相同配置
   config = {

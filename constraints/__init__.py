@@ -69,16 +69,11 @@ def _init_constraints (config):
       else:
         cbs(constraint_config)
 
-def rename_org_shoulder ():
-  get_pose_bone('org_shoulder.l').name = 'shoulder.l'
-  get_pose_bone('org_shoulder.r').name = 'shoulder.r'
-
 def init_constraints ():
   config = init_torso_config()
   config = init_hand_config(config)
   config = init_arm_config(config)
   config = init_leg_config(config)
   def_bone_add_copy_transforms()
-  rename_org_shoulder()
   _init_constraints(config)
     

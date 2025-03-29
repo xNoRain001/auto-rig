@@ -2,7 +2,7 @@ from ..libs.blender_utils import register_classes, unregister_classes
 from .auto_rig import OBJECT_OT_auto_rig
 from .reload_addon import OBJECT_OT_reload_addon
 from .ik_fk_snap_utils import OBJECT_OT_ik_fk_snap_utils
-from .soft_body import OBJECT_OT_soft_body
+from .add_soft_body import OBJECT_OT_add_soft_body
 from .init_location import OBJECT_OT_init_location
 from .rig_weapon import OBJECT_OT_rig_weapon
 from .add_target import OBJECT_OT_add_target
@@ -18,7 +18,7 @@ classes = (
   OBJECT_OT_auto_rig,
   OBJECT_OT_reload_addon,
   OBJECT_OT_ik_fk_snap_utils,
-  OBJECT_OT_soft_body,
+  OBJECT_OT_add_soft_body,
   OBJECT_OT_init_location,
   OBJECT_OT_rig_weapon,
   OBJECT_OT_add_target,

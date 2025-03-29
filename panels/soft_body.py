@@ -1,7 +1,7 @@
 from ..libs.blender_utils import get_panel
 
 from ..const import bl_category
-from ..operators.soft_body import OBJECT_OT_soft_body
+from ..operators.add_soft_body import OBJECT_OT_add_soft_body
 from .custom_props import show_panel_in_edit_and_pose_mode
 
 class VIEW3D_PT_soft_body (get_panel()):
@@ -11,9 +11,9 @@ class VIEW3D_PT_soft_body (get_panel()):
   bl_label = "Soft Body"
   bl_idname = "VIEW3D_PT_soft_body"
 
-  @classmethod
-  def poll(cls, context):
-    return show_panel_in_edit_and_pose_mode()
+  # @classmethod
+  # def poll(cls, context):
+  #   return show_panel_in_edit_and_pose_mode()
 
   def draw(self, context):
     layout = self.layout
@@ -30,4 +30,4 @@ class VIEW3D_PT_soft_body (get_panel()):
     row.label(text = '强度最小值')
     row.prop(scene, 'goal_min', text = '')
     row = box.row()
-    row.operator(OBJECT_OT_soft_body.bl_idname, text = '添加软体物理')
+    row.operator(OBJECT_OT_add_soft_body.bl_idname, text = '添加软体物理')
