@@ -20,7 +20,9 @@ from ..hooks import (
   rename_bones,
   init_bone_colors,
   init_bone_widgets, 
-  init_bone_collections
+  rename_bones_for_gi,
+  init_bone_collections,
+  rename_bones_for_mixamo
 )
 
 def check_foot_ctrl (
@@ -88,9 +90,11 @@ def check_bone_name (self):
 def check_armature (self, armature):
   passing = True
 
+  # TODO: delete
   if not armature:
     passing = False
     report_warning(self, '缺少骨架')
+    return passing
 
   # 如果此时处于网格编辑模式下，必须先激活骨骼再切换到编辑模式，这样才是骨骼编辑模式
   active_object_(armature)
@@ -160,7 +164,7 @@ class OBJECT_OT_auto_rig (get_operator()):
     scene = context.scene
     armature = scene.armature
 
-    active_object_(armature)
+    rename_bones_for_gi()
     init_rolls()
     bone_config = init_bones(scene)
     init_constraints()

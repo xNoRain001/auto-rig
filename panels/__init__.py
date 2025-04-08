@@ -10,6 +10,7 @@ from .custom_props import VIEW3D_PT_custom_props
 from .ik_fk_snap_utils import VIEW3D_PT_ik_fk_snap_utils
 from .reload_addon import VIEW3D_PT_reload_auto_rig_addon
 from .dynamic_parent import VIEW3D_PT_dynamic_parent, Armature_Targets
+from .retarget_to_mixamo import VIEW3D_PT_retarget_to_mixamo
 
 classes = (
   VIEW3D_PT_reload_auto_rig_addon,
@@ -22,7 +23,8 @@ classes = (
   # Armature_Targets,
   VIEW3D_PT_extra_rig,
   VIEW3D_PT_helper,
-  VIEW3D_PT_bone_widget
+  VIEW3D_PT_bone_widget,
+  VIEW3D_PT_retarget_to_mixamo
 )
 
 def register():

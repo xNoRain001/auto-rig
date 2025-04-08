@@ -1,13 +1,12 @@
 from ..libs.blender_utils import (
-  set_mode,
   get_edit_bone, 
   calculate_roll, 
   symmetrize_bones, 
-  get_active_object
 )
 
 def init_roll_config ():
   config = []
+
   roll_map = {
     'GLOBAL_NEG_Z': [
       'def_hips', 'def_spine_01', 'def_spine_02', 'def_chest', 'def_neck', 'def_head'
