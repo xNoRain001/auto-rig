@@ -1,33 +1,32 @@
 from ..libs.blender_utils import (
   set_mode,
-  get_pose_bone,
   get_pose_bones,
   add_ik_constraint,
   add_armature_constraint,
+  add_transform_constraint,
   add_copy_scale_constraint,
   add_stretch_to_constraint,
   add_damped_track_constraint,
   add_copy_rotation_constraint,
   add_copy_location_constraint,
   add_limit_rotation_constraint,
+  add_limit_location_constraint,
   add_copy_transforms_constraint,
 )
 
-from .init_torso_config import init_torso_config
-from .init_hand_config import init_hand_config
-from .init_arm_config import init_arm_config
-from .init_leg_config import init_leg_config
 from ..constraint_patch import constraint_patchs
 
 constraint_map = {
   'IK': add_ik_constraint,
   'ARMATURE': add_armature_constraint,
+  'TRANSFORM': add_transform_constraint,
   'STRETCH_TO': add_stretch_to_constraint,
   'COPY_SCALE': add_copy_scale_constraint,
   'DAMPED_TRACK': add_damped_track_constraint,
   'COPY_LOCATION': add_copy_location_constraint,
   'COPY_ROTATION': add_copy_rotation_constraint,
   'LIMIT_ROTATION': add_limit_rotation_constraint,
+  'LIMIT_LOCATION': add_limit_location_constraint,
   'COPY_TRANSFORMS': add_copy_transforms_constraint
 }
 
@@ -51,7 +50,7 @@ def def_bone_add_copy_transforms ():
       # tip: transforms 约束不进入 POSE 也能添加
       add_copy_transforms_constraint(name, org_name)
 
-def _init_constraints (config):
+def init_bone_constraints (config):
   set_mode('POSE')
 
   for constraint_config in config:
@@ -68,12 +67,3 @@ def _init_constraints (config):
           cb(constraint_config)
       else:
         cbs(constraint_config)
-
-def init_constraints ():
-  config = init_torso_config()
-  config = init_hand_config(config)
-  config = init_arm_config(config)
-  config = init_leg_config(config)
-  def_bone_add_copy_transforms()
-  _init_constraints(config)
-    

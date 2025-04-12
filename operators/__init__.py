@@ -14,6 +14,7 @@ from .clear_bone_widget import OBJECT_OT_clear_bone_widget
 from .clear_unused_widget import OBJECT_OT_clear_unused_bone_widget
 from .reset_transform import OBJECT_OT_reset_transform
 from .retarget_to_mixamo import OBJECT_OT_retarget_to_mixamo
+from .rig_bow import OBJECT_OT_rig_bow
 
 classes = (
   OBJECT_OT_auto_rig,
@@ -30,7 +31,8 @@ classes = (
   OBJECT_OT_clear_bone_widget,
   OBJECT_OT_clear_unused_bone_widget,
   OBJECT_OT_reset_transform,
-  OBJECT_OT_retarget_to_mixamo
+  OBJECT_OT_retarget_to_mixamo,
+  OBJECT_OT_rig_bow
 )
 
 def register():

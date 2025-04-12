@@ -8,10 +8,10 @@ from ..libs.blender_utils import (
   get_bone_chain_names,
   get_selected_pose_bones
 )
-from ..bones import _init_bones
+from ..bones import init_bones
 from ..drivers import _init_drivers
-from ..constraints import _init_constraints
-from ..bones.init_parent import _init_parent
+from ..parent import init_bones_parent
+from ..constraints import init_bone_constraints
 from ..bones.init_org_bones import init_org_bones
 from ..constraints import def_bone_add_copy_transforms
 from .rig_weapon import common_move_bones_to_collection
@@ -248,9 +248,9 @@ def init_wiggle (scene):
       ])
 
   # TODO: fix performance
-  _init_bones(bone_config)
-  _init_parent(parent_config)
-  _init_constraints(constraint_config)
+  init_bones(bone_config)
+  init_bones_parent(parent_config)
+  init_bone_constraints(constraint_config)
   _init_drivers(driver_config)
 
   return bone_config

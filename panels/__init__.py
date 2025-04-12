@@ -11,6 +11,7 @@ from .ik_fk_snap_utils import VIEW3D_PT_ik_fk_snap_utils
 from .reload_addon import VIEW3D_PT_reload_auto_rig_addon
 from .dynamic_parent import VIEW3D_PT_dynamic_parent, Armature_Targets
 from .retarget_to_mixamo import VIEW3D_PT_retarget_to_mixamo
+from .rig_bow import VIEW3D_PT_rig_bow
 
 classes = (
   VIEW3D_PT_reload_auto_rig_addon,
@@ -24,7 +25,8 @@ classes = (
   VIEW3D_PT_extra_rig,
   VIEW3D_PT_helper,
   VIEW3D_PT_bone_widget,
-  VIEW3D_PT_retarget_to_mixamo
+  VIEW3D_PT_retarget_to_mixamo,
+  VIEW3D_PT_rig_bow
 )
 
 def register():

@@ -19,6 +19,7 @@ from .add_show_wire import add_show_wire
 from .add_translation import add_translation
 from .add_wire_width import add_wire_width
 from .add_retarget_armature import add_retarget_armature
+from .add_bow import add_bow
 
 classes = ()
 
@@ -44,6 +45,7 @@ def register():
   add_translation()
   add_wire_width()
   add_retarget_armature()
+  add_bow()
   
 def unregister():
   # unregister_classes(classes)

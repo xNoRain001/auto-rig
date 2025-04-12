@@ -1,31 +1,6 @@
-from ..libs.blender_utils import get_edit_bone
-from .init_arm_config import arm_tweak_bone_names
-from .init_leg_config import leg_tweak_bone_names
-
-def set_parent (bone, target, use_connect = False):
-  bone.use_connect = use_connect
-  bone.parent = target
-
-def _init_parent (config):
-  # TODO:
-  # for tweak_bone_name in arm_tweak_bone_names:
-  #   # org_arm_01.l
-  #   org_bone = get_edit_bone(tweak_bone_name)
-
-  for item in config:
-    bone_name, parent_bone_name, use_connect = item
-    bone = get_edit_bone(bone_name)
-    parent_bone = get_edit_bone(parent_bone_name) if parent_bone_name else parent_bone_name
-    
-    if not bone:
-      print(f'{ bone_name } 不存在')
-      continue
-
-    set_parent(bone, parent_bone, use_connect)
-
-def init_parent ():
-  # 遍历绑定完成的模型中每一个骨骼，输出它们的父级和连接状态
-  config = [
+# 遍历绑定完成的模型中每一个骨骼，输出它们的父级和连接状态
+def init_human_parent_config ():
+  return [
     # ['def_hips', None, False],
     # ['def_spine_01', 'def_hips', False],
     # ['def_spine_02', 'def_spine_01', False],
@@ -245,5 +220,3 @@ def init_parent ():
     ['ik_hand.l', 'mch_parent_ik_hand.l', False],
     ['mch_ik_fk_foot.l', 'fk_foot.l', False]
   ]
-
-  _init_parent(config)

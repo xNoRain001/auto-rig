@@ -2,7 +2,6 @@ from ..libs.blender_utils import (
   set_mode,
   select_bone,
   get_edit_bone,
-  symmetrize_bones,
   get_operator,
   get_edit_bones,
   active_object_,
@@ -11,41 +10,11 @@ from ..libs.blender_utils import (
   deselect_bones
 )
 
-from ..const import identifier
-from ..drivers import init_drivers
 from ..bones_roll import init_bones_roll
 from ..constraints import init_bone_constraints
-from ..constraints.init_human_constraints import init_human_constraints_config
-from ..bones.init_human_bones import init_human_bones
-from ..bones_roll.human_roll_map import init_human_roll
-from ..hooks import (
-  rename_bones,
-  init_bone_colors,
-  init_bone_widgets, 
-  rename_bones_for_gi,
-  init_bone_collections,
-  rename_bones_for_mixamo
-)
-
-def check_foot_ctrl (
-  self,
-  side_01_head_location,
-  side_02_head_location,
-  heel_location,
-  foot_tip_location
-):
-  passing = True
-
-  if (
-    side_01_head_location == 
-    side_02_head_location == 
-    heel_location == 
-    foot_tip_location
-  ):
-    passing = False
-    report_warning(self, '未设置脚部控制器位置')
-
-  return passing
+from ..bones.init_bow_bones import init_bow_bones
+from ..bones_roll.bow_roll_map import init_bow_roll
+from ..constraints.init_bow_constraints import init_bow_constraints_config
 
 def check_bone_name (self):
   def gen_bone_names ():
@@ -107,25 +76,13 @@ def check_armature (self, armature):
 def run_checker (self, context):
   scene = context.scene
   armature = scene.armature
-  side_01_head_location = scene.side_01_head_location
-  side_02_head_location = scene.side_02_head_location
-  heel_location = scene.heel_location
-  foot_tip_location = scene.foot_tip_location
   passing = True
   checkers = [
     check_armature, 
-    check_foot_ctrl, 
     check_bone_name
   ]
   params = [
     [self, armature],
-    [
-      self,
-      side_01_head_location,
-      side_02_head_location,
-      heel_location,
-      foot_tip_location
-    ],
     [self]
   ]
 
@@ -150,33 +107,17 @@ def symmetrize_bones ():
   symmetrize_bones_()
   deselect_bones()
 
-class OBJECT_OT_auto_rig (get_operator()):
-  bl_idname = 'object.auto_rig'
-  bl_label = 'Auto Rig'
-
-  def invoke(self, context, event):
-    passing = run_checker(self, context)
-  
-    if passing:
-      return self.execute(context)
-    else:
-      return {'CANCELLED'}
+class OBJECT_OT_rig_bow (get_operator()):
+  bl_idname = 'object.rig_bow'
+  bl_label = 'Rig Bow'
 
   def execute(self, context):
     scene = context.scene
-    armature = scene.armature
-
-    rename_bones_for_gi()
-    init_bones_roll(init_human_roll())
-    bone_config = init_human_bones(scene)
-    init_bone_constraints(init_human_constraints_config())
-    init_bone_widgets(scene)
-    symmetrize_bones()
-    init_drivers()
-    init_bone_collections(bone_config)
-    init_bone_colors(scene)
-    rename_bones()
-
-    armature[identifier] = True
+    armature = scene.bow_armature
+    active_object_(armature)
+    set_mode('EDIT')
+    init_bones_roll(init_bow_roll())
+    bow_config = init_bow_bones(scene)
+    init_bone_constraints(init_bow_constraints_config())
 
     return {'FINISHED'}

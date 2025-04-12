@@ -6,10 +6,10 @@ from ..libs.blender_utils import (
   get_pose_bone
 )
 
-from ..bones import _init_bones
-from ..bones.init_parent import _init_parent
-from ..constraints import _init_constraints
+from ..bones import init_bones
+from ..parent import init_bones_parent
 from ..drivers import _init_drivers
+from ..constraints import init_bone_constraints
 from ..bone_patch.add_custom_props import _add_custom_props
 from ..scene.add_weapon_props import add_weapon_props
 from ..hooks.init_bone_collections import move_bones_to_collection
@@ -272,9 +272,9 @@ def rig_weapon (weapon):
     },
   ]
   
-  _init_bones(bone_config)
-  _init_parent(parent_config)
-  _init_constraints(constraint_config)
+  init_bones(bone_config)
+  init_bones_parent(parent_config)
+  init_bone_constraints(constraint_config)
   _init_drivers(driver_config)
   add_weapon_props([weapon])
 
