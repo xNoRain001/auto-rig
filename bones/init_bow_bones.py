@@ -8,6 +8,6 @@ def init_bow_bones (scene):
   config = init_bow_config(scene)
   init_org_bones()
   init_bones(config, scene)
-  init_bones_parent(init_bow_parent_config())
+  init_bones_parent(init_bow_parent_config(scene))
 
   return config

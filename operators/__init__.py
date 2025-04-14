@@ -16,6 +16,7 @@ from .reset_transform import OBJECT_OT_reset_transform
 from .retarget_to_mixamo import OBJECT_OT_retarget_to_mixamo
 from .rig_bow import OBJECT_OT_rig_bow
 from .retarget_to_cascadeur import OBJECT_OT_retarget_to_cascadeur
+from .rig_ball import OBJECT_OT_rig_ball
 
 classes = (
   OBJECT_OT_rig_human,
@@ -34,7 +35,8 @@ classes = (
   OBJECT_OT_reset_transform,
   OBJECT_OT_retarget_to_mixamo,
   OBJECT_OT_rig_bow,
-  OBJECT_OT_retarget_to_cascadeur
+  OBJECT_OT_retarget_to_cascadeur,
+  OBJECT_OT_rig_ball
 )
 
 def register():

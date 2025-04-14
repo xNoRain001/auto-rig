@@ -1,4 +1,3 @@
 from .rename_bones import rename_bones
-from .init_bone_colors import init_bone_colors
 from .rename_bones_for_gi import rename_bones_for_gi
 from .rename_bones_for_mixamo import rename_bones_for_mixamo

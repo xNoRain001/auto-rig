@@ -50,7 +50,11 @@ tweak_wiggle_collection = 'tweak_wiggle'
 fk_wiggle_collection = 'fk_wiggle'
 phy_wiggle_collection = 'phy_wiggle'
 
+# bow
+bow_collection = 'bow'
 bow_def_collection = 'bow_def'
 bow_org_collection = 'bow_org'
-bow_mch_collection = 'bow_mch'
-bow_root_collection = 'bow_root'
+
+# ball
+ball_collection = 'ball'
+ball_def_collection = 'bow_def'

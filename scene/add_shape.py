@@ -107,6 +107,7 @@ def add_shape ():
       ('Line', 'Line', ''),
       ('Paddle', 'Paddle', ''),
       ('Roll', 'Roll', ''),
+      ('Roll 2', 'Roll 2', ''),
       ('Root', 'Root', ''),
       ('Sphere', 'Sphere', '')
     ],

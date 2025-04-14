@@ -2,10 +2,14 @@ from math import radians
 
 from . import def_bone_add_copy_transforms
 
-def init_bow_constraints_config ():
+def init_bow_constraints_config (scene):
+  bowstring = scene.bowstring
+  org_bowstring = bowstring.replace('def_', 'org_')
+  org_bow_limb_upper = scene.bow_limb_upper.replace('def_', 'org_')
+  org_bow_limb_lower = scene.bow_limb_lower.replace('def_', 'org_')
   config = [
     {
-      'name': 'org_bowstring',
+      'name': org_bowstring,
       'type': 'LIMIT_LOCATION',
       'config': {
         'owner_space': 'LOCAL',
@@ -30,10 +34,10 @@ def init_bow_constraints_config ():
     #   }
     # },
     {
-      'name': 'org_bow_limb_upper',
+      'name': org_bow_limb_upper,
       'type': 'TRANSFORM',
       'config': {
-        'subtarget': 'def_bowstring',
+        'subtarget': bowstring,
         'owner_space': 'LOCAL',
         'target_space': 'LOCAL',
         'map_to': 'ROTATION',
@@ -43,10 +47,10 @@ def init_bow_constraints_config ():
       }
     },
     {
-      'name': 'org_bow_limb_lower',
+      'name': org_bow_limb_lower,
       'type': 'TRANSFORM',
       'config': {
-        'subtarget': 'def_bowstring',
+        'subtarget': bowstring,
         'owner_space': 'LOCAL',
         'target_space': 'LOCAL',
         'map_to': 'ROTATION',

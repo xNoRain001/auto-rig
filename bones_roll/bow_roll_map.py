@@ -1,10 +1,10 @@
-def init_bow_roll ():
+def init_bow_roll (scene):
   return {
     'GLOBAL_POS_Z': [
-      'bow_root', 
-      'def_bowstring',
-      'def_bow_limb',
-      'def_bow_limb_upper',
-      'def_bow_limb_lower',
+      scene.bow_root,
+      scene.bowstring,
+      scene.bow_limb,
+      scene.bow_limb_upper,
+      scene.bow_limb_lower
     ]
   }

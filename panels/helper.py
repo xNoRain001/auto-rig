@@ -1,11 +1,8 @@
 from ..libs.blender_utils import get_panel
 
 from ..const import bl_category
+from ..operators import OBJECT_OT_refresh_weapon
 from .custom_props import show_panel_in_pose_mode
-from ..operators import (
-  OBJECT_OT_init_def_bones,
-  OBJECT_OT_refresh_weapon
-)
 
 class VIEW3D_PT_helper (get_panel()):
   bl_space_type = 'VIEW_3D'
@@ -14,9 +11,9 @@ class VIEW3D_PT_helper (get_panel()):
   bl_label = "Helper"
   bl_idname = "VIEW3D_PT_helper"
 
-  @classmethod
-  def poll(cls, context):
-    return show_panel_in_pose_mode()
+  # @classmethod
+  # def poll(cls, context):
+  #   return show_panel_in_pose_mode()
 
   def draw(self, context):
     layout = self.layout
@@ -35,6 +32,12 @@ class VIEW3D_PT_helper (get_panel()):
     row = box.row()
     row.label(text = 'Tweak bones Color')
     row.prop(scene, 'tweak_color', text = '')
+    row = box.row()
+    row.label(text = 'Ball Color')
+    row.prop(scene, 'ball_color', text = '')
+    row = box.row()
+    row.label(text = 'Bow Color')
+    row.prop(scene, 'bow_color', text = '')
 
     box = layout.box()
     row = box.row()

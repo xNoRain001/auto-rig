@@ -20,8 +20,8 @@ def add_bow ():
     max = 90, 
     default = 30
   )
-  add_scene_custom_prop('bow_root', 'String')
-  add_scene_custom_prop('bowstring', 'String')
-  add_scene_custom_prop('bow_limb', 'String')
-  add_scene_custom_prop('bow_limb_upper', 'String')
-  add_scene_custom_prop('bow_limb_lower', 'String')
+  add_scene_custom_prop('bow_root', 'String', 'bow_root')
+  add_scene_custom_prop('bowstring', 'String', 'def_bowstring')
+  add_scene_custom_prop('bow_limb', 'String', 'def_bow_limb')
+  add_scene_custom_prop('bow_limb_upper', 'String', 'def_bow_limb_upper')
+  add_scene_custom_prop('bow_limb_lower', 'String', 'def_bow_limb_lower')

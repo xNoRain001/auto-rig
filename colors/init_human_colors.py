@@ -1,6 +1,6 @@
 from collections import defaultdict
-from ..libs.blender_utils import get_bone_collections, get_pose_bones
 
+from . import init_bones_color
 from ..const import (
   root_collection,
   fk_arm_l_collection,
@@ -64,12 +64,5 @@ def gen_color_map (scene):
 
   return color_map
 
-def init_bone_colors (scene):
-  pose_bones = get_pose_bones()
-  color_map = gen_color_map(scene)
-  bone_collections = get_bone_collections()
-
-  for color, collection_names in color_map.items():
-    for collection_name in collection_names:
-      for bone in bone_collections[collection_name].bones:
-        pose_bones[bone.name].color.palette = color
+def init_human_color (scene):
+  init_bones_color(gen_color_map(scene))

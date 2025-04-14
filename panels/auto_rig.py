@@ -3,6 +3,7 @@ from ..libs.blender_utils import get_panel, get_active_object
 from ..const import bl_category
 from ..operators import OBJECT_OT_rig_weapon
 from ..operators.rig_bow import OBJECT_OT_rig_bow
+from ..operators.rig_ball import OBJECT_OT_rig_ball
 from ..operators.rig_human import OBJECT_OT_rig_human
 from ..operators.bone_wiggle import OBJECT_OT_bone_wiggle
 from ..operators.init_location import OBJECT_OT_init_location
@@ -91,19 +92,44 @@ def init_rig_bow_ui (scene, layout):
   row.label(text = 'Armature ')
   row.prop(scene, 'bow_armature', text = '')
 
-  if not scene.bow_armature:
+  bow_armature = scene.bow_armature
+  if not bow_armature:
     return
   
-  box = layout.box()
+  data = bow_armature.data
+  
+  row = box.row()
+  row.label(text = 'Bow root')
+  row.prop_search(scene, 'bow_root', data, 'bones', text = '')
+  row = box.row()
+  row.label(text = 'Bowstring')
+  row.prop_search(scene, 'bowstring', data, 'bones', text = '')
+  row = box.row()
+  row.label(text = 'Bow limb ')
+  row.prop_search(scene, 'bow_limb', data, 'bones', text = '')
+  row = box.row()
+  row.label(text = 'Bow limb upper')
+  row.prop_search(scene, 'bow_limb_upper', data, 'bones', text = '')
+  row = box.row()
+  row.label(text = 'Bow limb lower')
+  row.prop_search(scene, 'bow_limb_lower', data, 'bones', text = '')
   row = box.row()
   row.label(text = 'Bowstring max distance ')
   row.prop(scene, 'bowstring_max_distance', text = '')
   row = box.row()
   row.label(text = 'Bow limb max angle ')
   row.prop(scene, 'bow_limb_max_angle', text = '')
-  box = layout.box()
-  row = box.row()
-  row.operator(OBJECT_OT_rig_bow.bl_idname, text = 'Rig bow')
+
+  if (
+    bow_armature and 
+    scene.bow_root and 
+    scene.bowstring and 
+    scene.bow_limb and
+    scene.bow_limb_upper and
+    scene.bow_limb_lower
+  ):
+    row = box.row()
+    row.operator(OBJECT_OT_rig_bow.bl_idname, text = 'Rig bow')
 
 def init_rig_weapon_ui (scene, layout):
   box = layout.box()
@@ -127,6 +153,28 @@ def init_rig_physical_ui (scene, layout):
   box = layout.box()
   row = box.row()
   row.operator(OBJECT_OT_bone_wiggle.bl_idname, text = 'Bone Wiggle')
+
+def init_rig_ball_ui (scene, layout):
+  box = layout.box()
+  row = box.row()
+  row.label(text = 'Armature ')
+  row.prop(scene, 'ball_armature', text = '')
+
+  ball_armature = scene.ball_armature
+  if not ball_armature:
+    return
+  
+  row = box.row()
+  data = ball_armature.data
+  row.label(text = 'Ball root')
+  row.prop_search(scene, 'ball_root', data, 'bones', text = '')
+  row = box.row()
+  row.label(text = 'Deformation ')
+  row.prop_search(scene, 'deformation', data, 'bones', text = '')
+
+  if ball_armature and scene.ball_root and scene.deformation:
+    row = box.row()
+    row.operator(OBJECT_OT_rig_ball.bl_idname, text = 'Rig Ball')
 
 class VIEW3D_PT_auto_rig (get_panel()):
   bl_region_type = 'UI'
@@ -152,3 +200,5 @@ class VIEW3D_PT_auto_rig (get_panel()):
       init_rig_weapon_ui(scene, layout)
     elif  rig_type == 'bone wiggle':
       init_rig_physical_ui(scene, layout)
+    elif  rig_type == 'ball':
+      init_rig_ball_ui(scene, layout)

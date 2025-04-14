@@ -10,6 +10,7 @@ def add_armature ():
       ('bow', 'bow', ''),
       ('weapon', 'weapon', ''),
       ('bone wiggle', 'bone wiggle', ''),
+      ('ball', 'ball', ''),
     ]
   )
   add_scene_custom_prop(

@@ -20,9 +20,9 @@ from ..bones.init_human_bones import init_human_bones
 from ..bones_roll.human_roll_map import init_human_roll
 from ..collections.init_human_collections import init_human_collections
 from ..widgets.init_human_widgets import init_human_widgets
+from ..colors.init_human_colors import init_human_color
 from ..hooks import (
   rename_bones,
-  init_bone_colors,
   rename_bones_for_gi
 )
 
@@ -173,7 +173,7 @@ class OBJECT_OT_rig_human (get_operator()):
     symmetrize_bones()
     init_drivers()
     init_human_collections(bone_config)
-    init_bone_colors(scene)
+    init_human_color(scene)
     rename_bones()
 
     armature[identifier] = True

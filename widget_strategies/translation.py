@@ -11,6 +11,7 @@ translation_strategies = {
   'Line': (0, 50, 0),
   'Paddle': (0, 50, 0),
   'Roll': (0, 50, 0),
+  'Roll 2': (0, 50, 0),
   'Root': (0, 0, 0),
   'Sphere': (0, 50, 0)
 }

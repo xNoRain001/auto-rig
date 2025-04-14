@@ -1,11 +1,13 @@
-def init_bow_parent_config ():
+def init_bow_parent_config (scene):
+  root = scene.bow_root
+  org_bowstring = scene.bowstring.replace('def_', 'org_')
+  org_bow_limb = scene.bow_limb.replace('def_', 'org_')
+  org_bow_limb_upper = scene.bow_limb_upper.replace('def_', 'org_')
+  org_bow_limb_lower = scene.bow_limb_lower.replace('def_', 'org_')
+
   return [
-    ['org_bowstring', 'mch_bowstring', False],
-    ['org_bow_limb', 'mch_bow_limb', False],
-    ['org_bow_limb_upper', 'mch_bow_limb_upper', False],
-    ['org_bow_limb_lower', 'mch_bow_limb_lower', False],
-    ['mch_bowstring', 'bow_root', False],
-    ['mch_bow_limb', 'bow_root', False],
-    ['mch_bow_limb_upper', 'bow_root', False],
-    ['mch_bow_limb_lower', 'bow_root', False]
+    [org_bowstring, root, False],
+    [org_bow_limb, root, False],
+    [org_bow_limb_upper, root, False],
+    [org_bow_limb_lower, root, False]
   ]

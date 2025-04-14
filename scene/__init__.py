@@ -1,5 +1,6 @@
 from ..libs.blender_utils import register_classes, unregister_classes
-from .add_bone_colors import add_bone_colors
+from .add_human_collections_color import add_human_collections_color
+from .add_ball_collections_color import add_ball_collections_color
 from .add_armature import add_armature
 from .add_mesh import add_mesh
 from .add_pole_target_normal import add_pole_target_normal
@@ -20,6 +21,8 @@ from .add_translation import add_translation
 from .add_wire_width import add_wire_width
 from .add_retarget_armature import add_retarget_armature
 from .add_bow import add_bow
+from .add_ball import add_ball
+from .add_bow_collections_color import add_bow_collections_color
 
 classes = ()
 
@@ -31,7 +34,9 @@ def register():
   add_rotation_mode()
   add_foot_ctrl()
   add_soft_body_config()
-  add_bone_colors()
+  add_human_collections_color()
+  add_ball_collections_color()
+  add_bow_collections_color()
   add_dynamic_parent()
   add_wiggle_config()
   # add_weapon_props()
@@ -46,6 +51,7 @@ def register():
   add_wire_width()
   add_retarget_armature()
   add_bow()
+  add_ball()
   
 def unregister():
   # unregister_classes(classes)

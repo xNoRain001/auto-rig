@@ -27,6 +27,7 @@ scale_strategies = {
   'Line': scale_2,
   'Paddle': scale_2,
   'Roll': scale_2,
+  'Roll 2': scale_2,
   'Root': scale_2,
   'Sphere': scale_2
 }
