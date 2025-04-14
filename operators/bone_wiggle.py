@@ -14,8 +14,8 @@ from ..parent import init_bones_parent
 from ..constraints import init_bone_constraints
 from ..bones.init_org_bones import init_org_bones
 from ..constraints import def_bone_add_copy_transforms
-from .rig_weapon import common_move_bones_to_collection
 from ..bone_patch.add_custom_props import _add_custom_props
+from ..collections import move_bones_to_collection, update_collections_visibility
 from ..const import (
   mch_collection,
   tweak_wiggle_collection,
@@ -280,6 +280,7 @@ class OBJECT_OT_bone_wiggle (get_operator()):
       }
     }])
     bone_config = init_wiggle(scene)
-    common_move_bones_to_collection(bone_config)
+    move_bones_to_collection(bone_config)
+    update_collections_visibility(set())
 
     return {'FINISHED'}

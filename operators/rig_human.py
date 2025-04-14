@@ -18,13 +18,12 @@ from ..constraints import init_bone_constraints
 from ..constraints.init_human_constraints import init_human_constraints_config
 from ..bones.init_human_bones import init_human_bones
 from ..bones_roll.human_roll_map import init_human_roll
+from ..collections.init_human_collections import init_human_collections
+from ..widgets.init_human_widgets import init_human_widgets
 from ..hooks import (
   rename_bones,
   init_bone_colors,
-  init_bone_widgets, 
-  rename_bones_for_gi,
-  init_bone_collections,
-  rename_bones_for_mixamo
+  rename_bones_for_gi
 )
 
 def check_foot_ctrl (
@@ -150,9 +149,9 @@ def symmetrize_bones ():
   symmetrize_bones_()
   deselect_bones()
 
-class OBJECT_OT_auto_rig (get_operator()):
-  bl_idname = 'object.auto_rig'
-  bl_label = 'Auto Rig'
+class OBJECT_OT_rig_human (get_operator()):
+  bl_idname = 'object.rig_human'
+  bl_label = 'Rig Human'
 
   def invoke(self, context, event):
     passing = run_checker(self, context)
@@ -169,11 +168,11 @@ class OBJECT_OT_auto_rig (get_operator()):
     rename_bones_for_gi()
     init_bones_roll(init_human_roll())
     bone_config = init_human_bones(scene)
-    init_bone_constraints(init_human_constraints_config())
-    init_bone_widgets(scene)
+    init_bone_constraints(init_human_constraints_config(scene))
+    init_human_widgets(bone_config, scene)
     symmetrize_bones()
     init_drivers()
-    init_bone_collections(bone_config)
+    init_human_collections(bone_config)
     init_bone_colors(scene)
     rename_bones()
 

@@ -49,3 +49,8 @@ weapons_collection = 'weapons'
 tweak_wiggle_collection = 'tweak_wiggle'
 fk_wiggle_collection = 'fk_wiggle'
 phy_wiggle_collection = 'phy_wiggle'
+
+bow_def_collection = 'bow_def'
+bow_org_collection = 'bow_org'
+bow_mch_collection = 'bow_mch'
+bow_root_collection = 'bow_root'

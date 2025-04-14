@@ -17,6 +17,10 @@ def init_torso_config (config):
         'head_or_tail': 'head',
         'scale_factor': (0, 3, 0)
       },
+      'widget': 'Cube',
+      'widget_config': {
+        'translation': (0, 0, 0)
+      }
     },
     {
       'name': 'chest',
@@ -26,6 +30,11 @@ def init_torso_config (config):
       'operator_config': {
         'scale_factor': 0.9,
       },
+      'widget': 'Chest',
+      'widget_config': {
+        'translation': (0, 0, 0), 
+        'rotation': (0, 0, 0)
+      }
     },
     {
       'name': 'hips',
@@ -35,6 +44,11 @@ def init_torso_config (config):
       'operator_config': {
         'scale_factor': 0.8,
       },
+      'widget': 'Chest',
+      'widget_config': {
+        'translation': (0, 0, 0), 
+        'rotation': (0, 0, 0)
+      }
     },
     {
       'name': 'fk_spine_01',
@@ -45,6 +59,7 @@ def init_torso_config (config):
         'head_or_tail': 'head',
         'scale_factor': (0, 0, 1)
       },
+      'widget': 'Circle'
     },
     {
       'name': 'fk_hips',
@@ -55,6 +70,7 @@ def init_torso_config (config):
         'head_or_tail': 'tail',
         'scale_factor': (0, 0, 1)
       },
+      'widget': 'Circle'
     },
     {
       'name': 'fk_spine_02',
@@ -64,6 +80,7 @@ def init_torso_config (config):
       'operator_config': {
         'scale_factor': 1,
       },
+      'widget': 'Circle'
     },
     {
       'name': 'fk_chest',
@@ -73,6 +90,7 @@ def init_torso_config (config):
       'operator_config': {
         'scale_factor': 1,
       },
+      'widget': 'Circle'
     },
     {
       'name': 'neck',
@@ -82,6 +100,7 @@ def init_torso_config (config):
       'operator_config': {
         'scale_factor': 1,
       },
+      'widget': 'Circle'
     },
     {
       'name': 'head',
@@ -91,6 +110,7 @@ def init_torso_config (config):
       'operator_config': {
         'scale_factor': 1,
       },
+      'widget': 'Circle'
     },
     # tweak bones
     {

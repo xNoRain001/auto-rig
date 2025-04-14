@@ -9,7 +9,8 @@ def init_props_config (config):
     'operator_config': {
       'head_or_tail': 'tail',
       'scale_factor': (0, 0, 1)
-    }
+    },
+    'widget': 'Gear Complex'
   })
 
   return config

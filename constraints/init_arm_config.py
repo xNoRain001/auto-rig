@@ -1,14 +1,22 @@
+import re
 from ..libs.blender_utils import get_edit_bone
+
 from .init_torso_config import common_stretch_config
 from ..bones.init_arm_config import arm_tweak_bone_names
 
-def init_arm_config (config):
+def get_last_number (string):
+  numbers = re.findall(r'\d+', string)
+  return int(numbers[-1]) if numbers else None
+
+def init_arm_config (scene, config):
   org_bone_names = ['org_arm.l', 'org_forearm.l', 'org_hand.l']
 
   # COPY_ROTATION 要在 STRETCH_TO 之前
-  influence_list = [0.1, 0.3, 0.7, 1, 0.1, 0.3, 0.7, 1]
   for index, org_bone_name in enumerate(arm_tweak_bone_names):
-    if org_bone_name.startswith('org_arm_'):
+    i = get_last_number(org_bone_name)
+    is_arm = org_bone_name.startswith('org_arm_')
+
+    if is_arm:
       prefix = 'mch_switch_arm.l'
     else:
       prefix = 'mch_switch_forearm.l'
@@ -18,7 +26,7 @@ def init_arm_config (config):
       'type': 'COPY_ROTATION',
       'config': {
         'subtarget': prefix,
-        'influence': influence_list[index]
+        'influence': getattr(scene, f'{ "arm" if is_arm else "forearm" }_influence_{ i - 1 }')
       }
     })
 

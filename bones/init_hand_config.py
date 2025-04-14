@@ -48,7 +48,8 @@ def init_hand_config ():
           'operator': 'copy',
           'operator_config': {
             'scale_factor': 1
-          }
+          },
+          'widget': 'Cube_Mini'
         },
         {
           'name': org_bone_name.replace('org_', 'tweak_'),

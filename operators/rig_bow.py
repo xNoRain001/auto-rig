@@ -14,6 +14,7 @@ from ..bones_roll import init_bones_roll
 from ..constraints import init_bone_constraints
 from ..bones.init_bow_bones import init_bow_bones
 from ..bones_roll.bow_roll_map import init_bow_roll
+from ..collections.init_bow_collections import init_bow_collections
 from ..constraints.init_bow_constraints import init_bow_constraints_config
 
 def check_bone_name (self):
@@ -119,5 +120,6 @@ class OBJECT_OT_rig_bow (get_operator()):
     init_bones_roll(init_bow_roll())
     bow_config = init_bow_bones(scene)
     init_bone_constraints(init_bow_constraints_config())
+    init_bow_collections(bow_config)
 
     return {'FINISHED'}

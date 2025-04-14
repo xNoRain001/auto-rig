@@ -26,6 +26,8 @@ def init_arm_config (scene, config):
   last_index = len(org_bone_names) - 1
 
   for index, org_bone_name in enumerate(org_bone_names):
+    has_prefix = org_bone_name in no_mch_prefix_set
+
     config.extend([
       # mch switch bone
       {
@@ -45,20 +47,22 @@ def init_arm_config (scene, config):
         'operator': 'copy',
         'operator_config': {
           'scale_factor': 1
-        }
+        },
+        'widget': 'FK Limb 2'
       },
       # (mch) ik bone
       {
         'name': org_bone_name.replace(
           'org_', 
-          f'{ "" if org_bone_name in no_mch_prefix_set else "mch_" }ik_'
+          f'{ "" if has_prefix else "mch_" }ik_'
         ),
         'source': org_bone_name,
-        'collection': ik_arm_l_collection if org_bone_name in no_mch_prefix_set else mch_collection,
+        'collection': ik_arm_l_collection if has_prefix else mch_collection,
         'operator': 'copy',
         'operator_config': {
           'scale_factor': 1
-        }
+        },
+        'widget': 'Cube' if has_prefix else None
       },
       # tweak bone
       {
@@ -119,7 +123,8 @@ def init_arm_config (scene, config):
       'operator_config': {
         'head_or_tail': 'tail',
         'scale_factor': (0, -0.3, 0)
-      }
+      },
+      'widget': 'Sphere'
     },
     # ik 动态父级时，arm_pole.l 将复制 mch_parent_arm_pole.l 的变换
     {
@@ -141,7 +146,8 @@ def init_arm_config (scene, config):
         'target': 'arm_pole.l',
         'head_or_tail': 'tail',
         'target_head_or_tail': 'tail'
-      }
+      },
+      'widget': 'Line'
     },
     # fk_arm.l 的 pole，当 fk 切换到 ik 时，ik 的 pole 会修改位置为 fk 的 pole
     {

@@ -12,7 +12,7 @@ from ..drivers import _init_drivers
 from ..constraints import init_bone_constraints
 from ..bone_patch.add_custom_props import _add_custom_props
 from ..scene.add_weapon_props import add_weapon_props
-from ..hooks.init_bone_collections import move_bones_to_collection
+from ..collections import move_bones_to_collection
 from ..const import (
   mch_collection,
   weapons_collection,
@@ -280,15 +280,12 @@ def rig_weapon (weapon):
 
   return bone_config
 
-def common_move_bones_to_collection (bone_config):
-  for config in bone_config:
-    bone_name = config['name']
-    collection = config['collection']
-    move_bones_to_collection(collection, bone_name)
-
 def assign_collection (bone_config, weapon):
-  move_bones_to_collection(weapons_collection, weapon)
-  common_move_bones_to_collection(bone_config)
+  bone_config.append({
+    'name': weapon,
+    'collection': weapons_collection
+  })
+  move_bones_to_collection(bone_config)
 
 def check_weapon (self, weapon):
   passing = True

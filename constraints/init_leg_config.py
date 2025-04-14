@@ -1,8 +1,9 @@
 from ..libs.blender_utils import get_edit_bone
 from .init_torso_config import common_stretch_config
 from ..bones.init_leg_config import leg_tweak_bone_names
+from .init_arm_config import get_last_number
 
-def init_leg_config (config):
+def init_leg_config (scene, config):
   org_bone_names = ['org_leg.l', 'org_shin.l', 'org_foot.l']
   org_toes_bone_name = 'org_toes.l'
   has_toes_bone = get_edit_bone(org_toes_bone_name)
@@ -10,9 +11,11 @@ def init_leg_config (config):
     org_bone_names.append(org_toes_bone_name)
  
   # COPY_ROTATION 要在 STRETCH_TO 之前
-  influence_list = [0.1, 0.3, 0.7, 1, 0.1, 0.3, 0.7, 1]
   for index, org_bone_name in enumerate(leg_tweak_bone_names):
-    if org_bone_name.startswith('org_leg_'):
+    i = get_last_number(org_bone_name)
+    is_leg = org_bone_name.startswith('org_leg_')
+
+    if is_leg:
       prefix = 'mch_switch_leg.l'
     else:
       prefix = 'mch_switch_shin.l'
@@ -22,7 +25,7 @@ def init_leg_config (config):
       'type': 'COPY_ROTATION',
       'config': {
         'subtarget': prefix,
-        'influence': influence_list[index]
+        'influence': getattr(scene, f'{ "leg" if is_leg else "shin" }_influence_{ i - 1 }')
       }
     })
 

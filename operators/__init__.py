@@ -1,5 +1,5 @@
 from ..libs.blender_utils import register_classes, unregister_classes
-from .auto_rig import OBJECT_OT_auto_rig
+from .rig_human import OBJECT_OT_rig_human
 from .reload_addon import OBJECT_OT_reload_addon
 from .ik_fk_snap_utils import OBJECT_OT_ik_fk_snap_utils
 from .add_soft_body import OBJECT_OT_add_soft_body
@@ -15,9 +15,10 @@ from .clear_unused_widget import OBJECT_OT_clear_unused_bone_widget
 from .reset_transform import OBJECT_OT_reset_transform
 from .retarget_to_mixamo import OBJECT_OT_retarget_to_mixamo
 from .rig_bow import OBJECT_OT_rig_bow
+from .retarget_to_cascadeur import OBJECT_OT_retarget_to_cascadeur
 
 classes = (
-  OBJECT_OT_auto_rig,
+  OBJECT_OT_rig_human,
   OBJECT_OT_reload_addon,
   OBJECT_OT_ik_fk_snap_utils,
   OBJECT_OT_add_soft_body,
@@ -32,7 +33,8 @@ classes = (
   OBJECT_OT_clear_unused_bone_widget,
   OBJECT_OT_reset_transform,
   OBJECT_OT_retarget_to_mixamo,
-  OBJECT_OT_rig_bow
+  OBJECT_OT_rig_bow,
+  OBJECT_OT_retarget_to_cascadeur
 )
 
 def register():

@@ -21,6 +21,9 @@ def init_leg_config (scene, config):
   last_index = len(org_bone_names) - 1
 
   for index, org_bone_name in enumerate(org_bone_names):
+    has_prefix = org_bone_name in no_mch_prefix_set
+    is_toes = org_bone_name == 'org_toes.l'
+    print(is_toes)
     config.extend([
       {
         'name': org_bone_name.replace('org_', 'mch_switch_'),
@@ -38,19 +41,22 @@ def init_leg_config (scene, config):
         'operator': 'copy',
         'operator_config': {
           'scale_factor': 1
-        }
+        },
+        'widget': 'FK Limb 2'
       },
       {
         'name': org_bone_name.replace(
           'org_', 
-          f'{ "" if org_bone_name in no_mch_prefix_set else "mch_" }ik_'
+          f'{ "" if has_prefix else "mch_" }ik_'
         ),
         'source': org_bone_name,
-        'collection': ik_leg_l_collection if org_bone_name in no_mch_prefix_set else mch_collection,
+        'collection': ik_leg_l_collection if has_prefix else mch_collection,
         'operator': 'copy',
         'operator_config': {
           'scale_factor': 1
-        }
+        },
+        'widget': 'Roll' if is_toes else 'FK Limb 2' if has_prefix else None,
+        'widget_config': { 'rotation': (3.1415, 1.5708, 0) } if is_toes else None
       },
       {
         'name': org_bone_name.replace('org_', 'tweak_'),
@@ -105,7 +111,8 @@ def init_leg_config (scene, config):
       'operator_config': {
         'head_or_tail': 'tail',
         'scale_factor': (0, 0.3, 0)
-      }
+      },
+      'widget': 'Sphere'
     },
     {
       'name': 'mch_parent_leg_pole.l',
@@ -125,7 +132,8 @@ def init_leg_config (scene, config):
         'target': 'leg_pole.l',
         'head_or_tail': 'tail',
         'target_head_or_tail': 'tail'
-      }
+      },
+      'widget': 'Line'
     },
     {
       'name': 'mch_ik_fk_leg_pole.l',
@@ -155,6 +163,7 @@ def init_leg_config (scene, config):
       'operator_config': {
         'scale_factor': 1
       },
+      'widget': 'Cuboid'
     },
     {
       'name': 'mch_ik_fk_foot.l',
@@ -211,6 +220,10 @@ def init_leg_config (scene, config):
       'operator_config': {
         'scale_factor': 1
       },
+      'widget': 'Roll',
+      'widget_config': {
+        'rotation': (1.5708, 0, 1.5708)
+      }
     },
   ])
 

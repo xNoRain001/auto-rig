@@ -37,7 +37,7 @@ custom_props_config = [
       'min': 0,
       'max': 2,
       'description': '0-root | 1-foot | 2-torso',
-      'default': 1
+      'default': 2
     }
   },
   {
@@ -46,7 +46,7 @@ custom_props_config = [
       'min': 0,
       'max': 2,
       'description': '0-root | 1-foot | 2-torso',
-      'default': 1
+      'default': 2
     }
   },
   {
@@ -67,7 +67,7 @@ custom_props_config = [
       'min': 0,
       'max': 4,
       'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
-      'default': 0
+      'default': 1
     }
   },
   {
@@ -76,7 +76,7 @@ custom_props_config = [
       'min': 0,
       'max': 4,
       'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
-      'default': 0
+      'default': 1
     }
   }
 ]
@@ -91,7 +91,8 @@ def _add_custom_props (custom_props_config):
     prop_name = item['prop_name']
     config = item['config']
     # 创建属性
-    pose_bone[prop_name] = config['default']
+    default_value = config['default']
+    pose_bone[prop_name] = default_value
     del config['default']
 
     # 创建属性后才有 ui
@@ -99,6 +100,8 @@ def _add_custom_props (custom_props_config):
       ui = pose_bone.id_properties_ui(prop_name)
       # 更新默认配置
       ui.update(**config)
+
+    config['default'] = default_value
 
   set_mode('EDIT')
 
