@@ -10,7 +10,9 @@ def init_bones_roll (config):
   for roll_type, roll_bone_names in config.items():
     for bone_name in roll_bone_names:
       bone = get_edit_bone(bone_name)
-      bone_names.append(bone_name)
-      calculate_roll(bone, roll_type)
+
+      if bone:
+        bone_names.append(bone_name)
+        calculate_roll(bone, roll_type)
 
   symmetrize_bones(bone_names)

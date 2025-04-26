@@ -33,8 +33,10 @@ def init_tweak_bone_widgets (scene):
   v = l / 4
 
   for pose_bone in get_pose_bones():
-    if pose_bone.name.startswith('tweak_'):
-      is_finger_tweak_bone = pose_bone.name.startswith((
+    bone_name = pose_bone.name
+
+    if bone_name.startswith('tweak_'):
+      is_finger_tweak_bone = bone_name.startswith((
         'tweak_thumb', 
         'tweak_finger', 
         'tweak_tip_thumb', 
@@ -42,7 +44,7 @@ def init_tweak_bone_widgets (scene):
       ))
       add_bone_widget(
         scene, 
-        pose_bone, 
+        bone_name, 
         'Sphere', 
         (0, 0, 0), 
         scale = (v, v, v) if is_finger_tweak_bone else (l, l, l)

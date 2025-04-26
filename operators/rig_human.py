@@ -165,7 +165,8 @@ class OBJECT_OT_rig_human (get_operator()):
     scene = context.scene
     armature = scene.armature
 
-    rename_bones_for_gi()
+    # bpy.ops.object.transform_apply(location=True, rotation=True, scale=True)
+    # rename_bones_for_gi()
     init_bones_roll(init_human_roll())
     bone_config = init_human_bones(scene)
     init_bone_constraints(init_human_constraints_config(scene))
