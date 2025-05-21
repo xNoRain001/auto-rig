@@ -23,7 +23,6 @@ def init_leg_config (scene, config):
   for index, org_bone_name in enumerate(org_bone_names):
     has_prefix = org_bone_name in no_mch_prefix_set
     is_toes = org_bone_name == 'org_toes.l'
-    print(is_toes)
     config.extend([
       {
         'name': org_bone_name.replace('org_', 'mch_switch_'),

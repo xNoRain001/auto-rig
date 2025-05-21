@@ -16,53 +16,7 @@ def common_stretch_config (org_bone_names, config):
     })
 
 def init_torso_config ():
-  common = {
-    'influence': 0.5,
-    'target_space': 'LOCAL', 
-    'owner_space': 'LOCAL'
-  }
-
   config = [
-    {
-      'name': 'mch_spine_02_pivot',
-      'type': 'COPY_TRANSFORMS',
-      'config': {
-        'subtarget': 'fk_spine_01',
-        'influence': 0.5
-      }
-    },
-    {
-      'name': 'mch_fk_chest',
-      'type': 'COPY_TRANSFORMS',
-      'config': {
-        'subtarget': 'chest',
-        **common
-      }
-    },
-    {
-      'name': 'mch_fk_spine_02',
-      'type': 'COPY_TRANSFORMS',
-      'config': {
-        'subtarget': 'chest',
-        **common
-      }
-    },
-    {
-      'name': 'mch_fk_spine_01',
-      'type': 'COPY_TRANSFORMS',
-      'config': {
-        'subtarget': 'hips',
-        **common
-      }
-    },
-    {
-      'name': 'mch_fk_hips.',
-      'type': 'COPY_TRANSFORMS',
-      'config': {
-        'subtarget': 'hips',
-        **common
-      }
-    },
     {
       'name': 'mch_int_neck',
       'type': 'COPY_LOCATION',

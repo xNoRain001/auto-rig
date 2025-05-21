@@ -4,21 +4,11 @@ from ..libs.blender_utils import (
   deselect_pose_bone
 )
 
-def chest_patch ():
-  get_pose_bone('chest').custom_shape_translation[2] = \
-    get_pose_bone('org_spine_02').length + get_pose_bone('chest').length / 2
-
-def hips_patch ():
-  get_pose_bone('hips').custom_shape_translation[2] = \
-    (get_pose_bone('org_spine_01').length + get_pose_bone('hips').length) * -1
-  
 def palm_patch ():
   get_pose_bone('mch_finger_d_01.l').custom_shape_scale_xyz[0] = \
     get_pose_bone('mch_finger_d_01.l').custom_shape_scale_xyz[0] * 2
 
 bone_widget_patchs = {
-  'chest': chest_patch,
-  'hips': hips_patch,
   'mch_finger_d_01.l': palm_patch
 }
 

@@ -19,7 +19,6 @@ from ..const import (
   ik_leg_r_collection,
   tweak_leg_r_collection,
   torso_collection,
-  fk_torso_collection,
   tweak_torso_collection,
   props_collection,
   hand_l_collection,
@@ -57,7 +56,6 @@ def gen_color_map (scene):
   ])
   color_map[torso_color].extend([
     torso_collection,
-    fk_torso_collection,
     root_collection,
     props_collection
   ])

@@ -47,14 +47,14 @@ def init_arm_config (scene, config):
       'name': 'mch_parent_arm_pole.l',
       'type': 'ARMATURE',
       'config': {
-        'subtarget': ['root', 'torso', 'org_spine_01', 'chest', 'head'],
+        'subtarget': ['root', 'cog', 'org_spine_01', 'chest', 'head'],
       }
     },
     {
       'name': 'mch_parent_ik_hand.l',
       'type': 'ARMATURE',
       'config': {
-        'subtarget': ['root', 'torso', 'org_spine_01', 'chest', 'head'],
+        'subtarget': ['root', 'cog', 'org_spine_01', 'chest', 'head'],
       }
     },
     # 解决拉伸缩放问题

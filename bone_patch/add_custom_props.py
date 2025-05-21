@@ -36,7 +36,7 @@ custom_props_config = [
     'config': {
       'min': 0,
       'max': 2,
-      'description': '0-root | 1-foot | 2-torso',
+      'description': '0-root | 1-foot | 2-cog',
       'default': 2
     }
   },
@@ -45,7 +45,7 @@ custom_props_config = [
     'config': {
       'min': 0,
       'max': 2,
-      'description': '0-root | 1-foot | 2-torso',
+      'description': '0-root | 1-foot | 2-cog',
       'default': 2
     }
   },
@@ -66,7 +66,7 @@ custom_props_config = [
     'config': {
       'min': 0,
       'max': 4,
-      'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
+      'description': '0-root | 1-cog | 2-org_spine_01 | 3-org_chest | 4-org_head',
       'default': 1
     }
   },
@@ -75,7 +75,7 @@ custom_props_config = [
     'config': {
       'min': 0,
       'max': 4,
-      'description': '0-root | 1-torso | 2-org_spine_01 | 3-org_chest | 4-org_head',
+      'description': '0-root | 1-cog | 2-org_spine_01 | 3-org_chest | 4-org_head',
       'default': 1
     }
   }

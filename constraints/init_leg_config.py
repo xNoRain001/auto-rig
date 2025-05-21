@@ -49,14 +49,14 @@ def init_leg_config (scene, config):
       'name': 'mch_parent_leg_pole.l',
       'type': 'ARMATURE',
       'config': {
-        'subtarget': ['root', 'ik_foot.l', 'torso'],
+        'subtarget': ['root', 'ik_foot.l', 'cog'],
       }
     },
     {
       'name': 'mch_parent_ik_foot.l',
       'type': 'ARMATURE',
       'config': {
-        'subtarget': ['root', 'torso'],
+        'subtarget': ['root', 'cog'],
       }
     },
     # 解决拉伸缩放问题

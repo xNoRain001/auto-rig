@@ -20,7 +20,6 @@ from ..const import (
   ik_leg_r_collection,
   tweak_leg_r_collection,
   torso_collection,
-  fk_torso_collection,
   tweak_torso_collection,
   hand_l_collection,
   hand_r_collection
@@ -28,7 +27,7 @@ from ..const import (
 
 rig_layer_rows = [
   [root_collection],
-  [torso_collection, fk_torso_collection, tweak_torso_collection],
+  [torso_collection, tweak_torso_collection],
   [fk_arm_l_collection, fk_arm_r_collection],
   [ik_arm_l_collection, ik_arm_r_collection],
   [tweak_arm_l_collection, tweak_arm_r_collection],

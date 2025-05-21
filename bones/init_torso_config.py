@@ -1,7 +1,6 @@
 from ..const import (
   mch_collection,
   torso_collection,
-  fk_torso_collection,
   tweak_torso_collection,
 )
 
@@ -9,7 +8,7 @@ def init_torso_config (config):
   config.extend([
     # fk_bones
     {
-      'name': 'torso',
+      'name': 'cog',
       'source': 'org_spine_02',
       'collection': torso_collection,
       'operator': 'extrude',
@@ -23,74 +22,56 @@ def init_torso_config (config):
       }
     },
     {
-      'name': 'chest',
-      'source': 'torso',
+      'name': 'spine_01',
+      'source': 'org_spine_01',
       'collection': torso_collection,
       'operator': 'copy',
       'operator_config': {
-        'scale_factor': 0.9,
+        'scale_factor': 1,
       },
-      'widget': 'Chest',
+      'widget': 'Circle',
       'widget_config': {
-        'translation': (0, 0, 0), 
-        'rotation': (0, 0, 0)
+        'scale': (0.2, 0.2, 0.2)
       }
     },
     {
       'name': 'hips',
-      'source': 'torso',
+      'source': 'org_hips',
       'collection': torso_collection,
       'operator': 'copy',
       'operator_config': {
-        'scale_factor': 0.8,
+        'scale_factor': 1,
       },
       'widget': 'Chest',
       'widget_config': {
-        'translation': (0, 0, 0), 
-        'rotation': (0, 0, 0)
+        'scale': (0.2, 0.2, 0.2)
       }
     },
     {
-      'name': 'fk_spine_01',
+      'name': 'spine_02',
       'source': 'org_spine_02',
-      'collection': fk_torso_collection,
-      'operator': 'extrude',
-      'operator_config': {
-        'head_or_tail': 'head',
-        'scale_factor': (0, 0, 1)
-      },
-      'widget': 'Circle'
-    },
-    {
-      'name': 'fk_hips',
-      'source': 'org_hips',
-      'collection': fk_torso_collection,
-      'operator': 'extrude',
-      'operator_config': {
-        'head_or_tail': 'tail',
-        'scale_factor': (0, 0, 1)
-      },
-      'widget': 'Circle'
-    },
-    {
-      'name': 'fk_spine_02',
-      'source': 'org_spine_02',
-      'collection': fk_torso_collection,
+      'collection': torso_collection,
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 1,
       },
-      'widget': 'Circle'
+      'widget': 'Circle',
+      'widget_config': {
+        'scale': (0.2, 0.2, 0.2)
+      }
     },
     {
-      'name': 'fk_chest',
+      'name': 'chest',
       'source': 'org_chest',
-      'collection': fk_torso_collection,
+      'collection': torso_collection,
       'operator': 'copy',
       'operator_config': {
         'scale_factor': 1,
       },
-      'widget': 'Circle'
+      'widget': 'Circle',
+      'widget_config': {
+        'scale': (0.2, 0.2, 0.2)
+      }
     },
     {
       'name': 'neck',
@@ -215,56 +196,7 @@ def init_torso_config (config):
       'operator_config': {
         'scale_factor': 0.5,
       }
-    },
-    {
-      'name': 'mch_fk_chest',
-      'source': 'fk_chest',
-      'collection': mch_collection,
-      'operator': 'extrude',
-      'operator_config': {
-        'head_or_tail': 'head',
-        'scale_factor': (0, 0.5, 0),
-      }
-    },
-    {
-      'name': 'mch_fk_spine_02',
-      'source': 'fk_spine_02',
-      'collection': mch_collection,
-      'operator': 'extrude',
-      'operator_config': {
-        'head_or_tail': 'head',
-        'scale_factor': (0, 0.5, 0),
-      }
-    },
-    {
-      'name': 'mch_fk_spine_01',
-      'source': 'fk_spine_01',
-      'collection': mch_collection,
-      'operator': 'extrude',
-      'operator_config': {
-        'head_or_tail': 'head',
-        'scale_factor': (0, 0.5, 0),
-      }
-    },
-    {
-      'name': 'mch_fk_hips',
-      'source': 'fk_hips',
-      'collection': mch_collection,
-      'operator': 'extrude',
-      'operator_config': {
-        'head_or_tail': 'head',
-        'scale_factor': (0, 0.5, 0),
-      }
-    },
-    {
-      'name': 'mch_spine_02_pivot',
-      'source': 'fk_spine_01',
-      'collection': mch_collection,
-      'operator': 'copy',
-      'operator_config': {
-        'scale_factor': 0.5,
-      }
-    },
+    }
   ])
 
   return config
